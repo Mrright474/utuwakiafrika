@@ -3,12 +3,18 @@ import React, { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const closeMenu = () => {
+    setIsMenuOpen(false);
   };
 
   return (
@@ -17,21 +23,21 @@ const Navbar = () => {
         <div className="flex justify-between items-center">
           {/* Logo and brand name */}
           <div className="flex items-center">
-            <Link to="/" className="flex items-center">
+            <Link to="/" className="flex items-center" onClick={closeMenu}>
               <img 
                 src="/lovable-uploads/7645e834-1078-4707-9732-786fd4d93d8c.png" 
                 alt="Utu Wa Kiafrika Logo" 
-                className="h-12 w-auto"
+                className="h-10 sm:h-12 w-auto"
               />
-              <div className="ml-3 hidden md:block">
-                <h1 className="text-xl font-bold text-utu-black">UTU WA KIAFRIKA</h1>
+              <div className="ml-2 sm:ml-3 hidden md:block">
+                <h1 className="text-lg sm:text-xl font-bold text-utu-black">UTU WA KIAFRIKA</h1>
                 <p className="text-xs text-utu-gray">A Helping Hand For Every African</p>
               </div>
             </Link>
           </div>
 
           {/* Desktop navigation */}
-          <div className="hidden md:flex items-center space-x-6">
+          <div className="hidden md:flex items-center space-x-4 lg:space-x-6">
             <Link to="/#about" className="text-utu-black hover:text-utu-red transition-colors font-medium">About</Link>
             <Link to="/#programs" className="text-utu-black hover:text-utu-red transition-colors font-medium">Programs</Link>
             <Link to="/#team" className="text-utu-black hover:text-utu-red transition-colors font-medium">Our Team</Link>
@@ -39,7 +45,6 @@ const Navbar = () => {
             <Link to="/donate">
               <Button className="bg-utu-red hover:bg-red-700 text-white">Donate Now</Button>
             </Link>
-            {/* Admin link removed from main navigation */}
           </div>
 
           {/* Mobile menu button */}
@@ -47,6 +52,7 @@ const Navbar = () => {
             <button
               onClick={toggleMenu}
               className="text-utu-black hover:text-utu-red focus:outline-none"
+              aria-label={isMenuOpen ? "Close menu" : "Open menu"}
             >
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -60,35 +66,34 @@ const Navbar = () => {
               <Link 
                 to="/#about" 
                 className="text-utu-black hover:text-utu-red transition-colors font-medium"
-                onClick={() => setIsMenuOpen(false)}
+                onClick={closeMenu}
               >
                 About
               </Link>
               <Link 
                 to="/#programs" 
                 className="text-utu-black hover:text-utu-red transition-colors font-medium"
-                onClick={() => setIsMenuOpen(false)}
+                onClick={closeMenu}
               >
                 Programs
               </Link>
               <Link 
                 to="/#team" 
                 className="text-utu-black hover:text-utu-red transition-colors font-medium"
-                onClick={() => setIsMenuOpen(false)}
+                onClick={closeMenu}
               >
                 Our Team
               </Link>
               <Link 
                 to="/#contact" 
                 className="text-utu-black hover:text-utu-red transition-colors font-medium"
-                onClick={() => setIsMenuOpen(false)}
+                onClick={closeMenu}
               >
                 Contact
               </Link>
-              <Link to="/donate" onClick={() => setIsMenuOpen(false)}>
+              <Link to="/donate" onClick={closeMenu}>
                 <Button className="bg-utu-red hover:bg-red-700 text-white w-full">Donate Now</Button>
               </Link>
-              {/* Admin link removed from mobile navigation */}
             </div>
           </div>
         )}

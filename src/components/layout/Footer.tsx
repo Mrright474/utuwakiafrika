@@ -5,27 +5,27 @@ import { Facebook, Twitter, Instagram, Mail, Phone, MapPin } from 'lucide-react'
 
 const Footer = () => {
   return (
-    <footer className="bg-utu-black text-white pt-16 pb-8">
+    <footer className="bg-utu-black text-white pt-12 sm:pt-16 pb-6 sm:pb-8">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
           {/* Logo and Mission */}
-          <div>
+          <div className="mb-6 sm:mb-0">
             <img 
               src="/lovable-uploads/7645e834-1078-4707-9732-786fd4d93d8c.png" 
               alt="Utu Wa Kiafrika Logo" 
-              className="h-16 w-auto mb-4"
+              className="h-14 w-auto mb-4"
             />
             <p className="text-gray-400 mb-4">
               A Helping Hand For Every African
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+              <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="Facebook">
                 <Facebook size={20} />
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+              <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="Twitter">
                 <Twitter size={20} />
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+              <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="Instagram">
                 <Instagram size={20} />
               </a>
             </div>
@@ -105,15 +105,15 @@ const Footer = () => {
                   Uganda
                 </span>
               </li>
-              <li className="flex items-center">
-                <Phone className="mr-2 h-5 w-5 text-utu-red shrink-0" />
-                <span className="text-gray-400">
+              <li className="flex items-start">
+                <Phone className="mr-2 h-5 w-5 text-utu-red shrink-0 mt-0.5" />
+                <span className="text-gray-400 text-sm sm:text-base break-words">
                   +256 744 552 195 / +256 778 777 976
                 </span>
               </li>
-              <li className="flex items-center">
-                <Mail className="mr-2 h-5 w-5 text-utu-red shrink-0" />
-                <span className="text-gray-400">
+              <li className="flex items-start">
+                <Mail className="mr-2 h-5 w-5 text-utu-red shrink-0 mt-0.5" />
+                <span className="text-gray-400 text-sm sm:text-base break-words">
                   utuwakiafrikacharity@gmail.com
                 </span>
               </li>
@@ -121,7 +121,7 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-gray-800 text-center text-gray-500 text-sm">
+        <div className="mt-10 pt-6 border-t border-gray-800 text-center text-gray-500 text-xs sm:text-sm">
           <p>&copy; {new Date().getFullYear()} Utu Wa Kiafrika Charity Network. All rights reserved.</p>
         </div>
       </div>

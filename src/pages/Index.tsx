@@ -13,14 +13,16 @@ import Contact from '@/components/home/Contact';
 const Index = () => {
   return (
     <Layout>
-      <Hero />
-      <About />
-      <Programs />
-      <Impact />
-      <Team />
-      <Testimonials />
-      <GetInvolved />
-      <Contact />
+      <div className="overflow-x-hidden">
+        <Hero />
+        <About />
+        <Programs />
+        <Impact />
+        <Team />
+        <Testimonials />
+        <GetInvolved />
+        <Contact />
+      </div>
     </Layout>
   );
 };
