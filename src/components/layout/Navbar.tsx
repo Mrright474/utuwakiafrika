@@ -39,7 +39,7 @@ const Navbar = () => {
             <Link to="/donate">
               <Button className="bg-utu-red hover:bg-red-700 text-white">Donate Now</Button>
             </Link>
-            <Link to="/admin" className="text-utu-black hover:text-utu-red transition-colors font-medium">Admin</Link>
+            {/* Admin link removed from main navigation */}
           </div>
 
           {/* Mobile menu button */}
@@ -88,13 +88,7 @@ const Navbar = () => {
               <Link to="/donate" onClick={() => setIsMenuOpen(false)}>
                 <Button className="bg-utu-red hover:bg-red-700 text-white w-full">Donate Now</Button>
               </Link>
-              <Link 
-                to="/admin" 
-                className="text-utu-black hover:text-utu-red transition-colors font-medium"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Admin
-              </Link>
+              {/* Admin link removed from mobile navigation */}
             </div>
           </div>
         )}

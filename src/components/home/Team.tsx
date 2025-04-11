@@ -76,6 +76,30 @@ const Team = () => {
       name: "Faith Achieng",
       position: "Outreach Coordinator",
       bio: "Faith develops and maintains relationships with communities, volunteers, and partners to advance our mission."
+    },
+    {
+      image: "/placeholder.svg",
+      name: "Position Available",
+      position: "Program Officer",
+      bio: "We're looking for a dedicated individual to join our team and help manage our growing number of programs."
+    },
+    {
+      image: "/placeholder.svg",
+      name: "Position Available",
+      position: "Fundraising Specialist",
+      bio: "We're seeking a motivated professional to help expand our fundraising initiatives and partnerships."
+    },
+    {
+      image: "/placeholder.svg",
+      name: "Position Available",
+      position: "Community Liaison",
+      bio: "This role will serve as a bridge between our organization and the communities we serve."
+    },
+    {
+      image: "/placeholder.svg",
+      name: "Position Available",
+      position: "Volunteer Coordinator",
+      bio: "We're looking for someone to manage our volunteer program and help expand our reach."
     }
   ];
 

@@ -1,94 +1,127 @@
 
 import React from 'react';
-import { Facebook, Twitter, Instagram, Mail, Phone, MapPin } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Link } from 'react-router-dom';
+import { Facebook, Twitter, Instagram, Mail, Phone, MapPin } from 'lucide-react';
 
 const Footer = () => {
   return (
-    <footer className="bg-utu-black text-white pt-12 pb-6">
+    <footer className="bg-utu-black text-white pt-16 pb-8">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {/* Organization info */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          {/* Logo and Mission */}
           <div>
-            <div className="flex items-center mb-4">
-              <img 
-                src="/lovable-uploads/7645e834-1078-4707-9732-786fd4d93d8c.png" 
-                alt="Utu Wa Kiafrika Logo" 
-                className="h-12 w-auto mr-3" 
-              />
-              <div>
-                <h3 className="text-lg font-bold">UTU WA KIAFRIKA</h3>
-                <p className="text-xs">A Helping Hand For Every African</p>
-              </div>
-            </div>
-            <p className="text-sm text-gray-300 mb-4">
-              We are dedicated to providing sustainable solutions and support to African communities through various initiatives and programs.
+            <img 
+              src="/lovable-uploads/7645e834-1078-4707-9732-786fd4d93d8c.png" 
+              alt="Utu Wa Kiafrika Logo" 
+              className="h-16 w-auto mb-4"
+            />
+            <p className="text-gray-400 mb-4">
+              A Helping Hand For Every African
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="text-white hover:text-utu-red transition-colors">
+              <a href="#" className="text-gray-400 hover:text-white transition-colors">
                 <Facebook size={20} />
               </a>
-              <a href="#" className="text-white hover:text-utu-red transition-colors">
+              <a href="#" className="text-gray-400 hover:text-white transition-colors">
                 <Twitter size={20} />
               </a>
-              <a href="#" className="text-white hover:text-utu-red transition-colors">
+              <a href="#" className="text-gray-400 hover:text-white transition-colors">
                 <Instagram size={20} />
               </a>
             </div>
           </div>
 
-          {/* Quick links */}
+          {/* Quick Links */}
           <div>
             <h3 className="text-lg font-bold mb-4">Quick Links</h3>
             <ul className="space-y-2">
-              <li><Link to="/#about" className="text-gray-300 hover:text-white transition-colors">About Us</Link></li>
-              <li><Link to="/#programs" className="text-gray-300 hover:text-white transition-colors">Our Programs</Link></li>
-              <li><Link to="/#team" className="text-gray-300 hover:text-white transition-colors">Our Team</Link></li>
-              <li><Link to="/donate" className="text-gray-300 hover:text-white transition-colors">Donate</Link></li>
-              <li><Link to="/#get-involved" className="text-gray-300 hover:text-white transition-colors">Volunteer</Link></li>
-              <li><Link to="/#contact" className="text-gray-300 hover:text-white transition-colors">Contact Us</Link></li>
+              <li>
+                <Link to="/#about" className="text-gray-400 hover:text-white transition-colors">
+                  About Us
+                </Link>
+              </li>
+              <li>
+                <Link to="/#programs" className="text-gray-400 hover:text-white transition-colors">
+                  Our Programs
+                </Link>
+              </li>
+              <li>
+                <Link to="/#team" className="text-gray-400 hover:text-white transition-colors">
+                  Our Team
+                </Link>
+              </li>
+              <li>
+                <Link to="/donate" className="text-gray-400 hover:text-white transition-colors">
+                  Donate
+                </Link>
+              </li>
+              <li>
+                <Link to="/admin" className="text-gray-400 hover:text-white transition-colors text-xs">
+                  Admin
+                </Link>
+              </li>
             </ul>
           </div>
 
-          {/* Contact information */}
+          {/* Programs */}
+          <div>
+            <h3 className="text-lg font-bold mb-4">Our Programs</h3>
+            <ul className="space-y-2">
+              <li>
+                <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                  Education Support
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                  Healthcare Initiatives
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                  Clean Water Projects
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                  Community Development
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                  Food Security
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Contact Information */}
           <div>
             <h3 className="text-lg font-bold mb-4">Contact Us</h3>
-            <ul className="space-y-3">
+            <ul className="space-y-4">
               <li className="flex items-start">
-                <MapPin size={20} className="mr-2 mt-1 flex-shrink-0" />
-                <span className="text-gray-300">Kampala, Uganda</span>
+                <MapPin className="mr-2 h-5 w-5 text-utu-red shrink-0 mt-0.5" />
+                <span className="text-gray-400">
+                  Uganda
+                </span>
               </li>
               <li className="flex items-center">
-                <Phone size={20} className="mr-2 flex-shrink-0" />
-                <span className="text-gray-300">+256 744 552 195 / 0778 777 976</span>
+                <Phone className="mr-2 h-5 w-5 text-utu-red shrink-0" />
+                <span className="text-gray-400">
+                  +256 744 552 195 / +256 778 777 976
+                </span>
               </li>
               <li className="flex items-center">
-                <Mail size={20} className="mr-2 flex-shrink-0" />
-                <span className="text-gray-300">utuwakiafrikacharitynetwork@gmail.com</span>
+                <Mail className="mr-2 h-5 w-5 text-utu-red shrink-0" />
+                <span className="text-gray-400">
+                  utuwakiafrikacharity@gmail.com
+                </span>
               </li>
             </ul>
-          </div>
-
-          {/* Newsletter */}
-          <div>
-            <h3 className="text-lg font-bold mb-4">Newsletter</h3>
-            <p className="text-sm text-gray-300 mb-4">
-              Subscribe to our newsletter to receive updates on our projects and campaigns.
-            </p>
-            <div className="flex flex-col space-y-2">
-              <Input
-                type="email"
-                placeholder="Your email address"
-                className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
-              />
-              <Button className="bg-utu-red hover:bg-red-700 text-white">Subscribe</Button>
-            </div>
           </div>
         </div>
 
-        <div className="border-t border-white/10 mt-8 pt-6 text-center text-sm text-gray-400">
+        <div className="mt-12 pt-8 border-t border-gray-800 text-center text-gray-500 text-sm">
           <p>&copy; {new Date().getFullYear()} Utu Wa Kiafrika Charity Network. All rights reserved.</p>
         </div>
       </div>
