@@ -89,3 +89,52 @@ h1, h2, h3, h4, h5, h6 {
   word-wrap: break-word;
   hyphens: auto;
 }
+
+/* Ensure all sections have proper padding on mobile */
+section {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 768px) {
+  section {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* Make tables responsive */
+table {
+  width: 100%;
+  overflow-x: auto;
+  display: block;
+}
+
+@media (min-width: 768px) {
+  table {
+    display: table;
+  }
+}
+
+/* Admin dashboard responsiveness */
+.admin-dashboard {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 768px) {
+  .admin-dashboard {
+    flex-direction: row;
+  }
+}
+
+/* Add extra spacing for form elements on mobile */
+input, select, textarea, button {
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 768px) {
+  input, select, textarea, button {
+    margin-bottom: 0.5rem;
+  }
+}

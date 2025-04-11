@@ -13,7 +13,7 @@ import Contact from '@/components/home/Contact';
 const Index = () => {
   return (
     <Layout>
-      <div className="overflow-x-hidden">
+      <div className="overflow-x-hidden w-full">
         <Hero />
         <About />
         <Programs />

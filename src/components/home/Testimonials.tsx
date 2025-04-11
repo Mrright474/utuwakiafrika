@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Quote } from 'lucide-react';
 
 interface TestimonialProps {
@@ -30,7 +30,7 @@ const Testimonial = ({ quote, name, role, image }: TestimonialProps) => {
 };
 
 const Testimonials = () => {
-  const testimonials = [
+  const defaultTestimonials = [
     {
       quote: "The educational support provided by Utu Wa Kiafrika changed my life. I was able to complete my education and now I'm giving back to my community as a teacher.",
       name: "Grace Muthoni",
@@ -50,6 +50,23 @@ const Testimonials = () => {
       image: "/lovable-uploads/a382b382-f2d2-4832-9343-db9d8abb367d.png"
     }
   ];
+
+  const [testimonials, setTestimonials] = useState<TestimonialProps[]>(defaultTestimonials);
+
+  useEffect(() => {
+    // Load testimonials from localStorage if available
+    const savedTestimonials = localStorage.getItem('utu-testimonials');
+    if (savedTestimonials) {
+      try {
+        const parsedData = JSON.parse(savedTestimonials);
+        setTestimonials(parsedData);
+      } catch (error) {
+        console.error("Error parsing testimonials data:", error);
+        // If there's an error, use the default testimonials
+        setTestimonials(defaultTestimonials);
+      }
+    }
+  }, []);
 
   return (
     <section className="py-16 bg-gradient-to-b from-utu-light-gray to-white">
