@@ -3,6 +3,7 @@ import React from 'react';
 import { Facebook, Twitter, Instagram, Mail, Phone, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
@@ -42,12 +43,12 @@ const Footer = () => {
           <div>
             <h3 className="text-lg font-bold mb-4">Quick Links</h3>
             <ul className="space-y-2">
-              <li><a href="#about" className="text-gray-300 hover:text-white transition-colors">About Us</a></li>
-              <li><a href="#programs" className="text-gray-300 hover:text-white transition-colors">Our Programs</a></li>
-              <li><a href="#team" className="text-gray-300 hover:text-white transition-colors">Our Team</a></li>
-              <li><a href="#donate" className="text-gray-300 hover:text-white transition-colors">Donate</a></li>
-              <li><a href="#volunteer" className="text-gray-300 hover:text-white transition-colors">Volunteer</a></li>
-              <li><a href="#contact" className="text-gray-300 hover:text-white transition-colors">Contact Us</a></li>
+              <li><Link to="/#about" className="text-gray-300 hover:text-white transition-colors">About Us</Link></li>
+              <li><Link to="/#programs" className="text-gray-300 hover:text-white transition-colors">Our Programs</Link></li>
+              <li><Link to="/#team" className="text-gray-300 hover:text-white transition-colors">Our Team</Link></li>
+              <li><Link to="/donate" className="text-gray-300 hover:text-white transition-colors">Donate</Link></li>
+              <li><Link to="/#get-involved" className="text-gray-300 hover:text-white transition-colors">Volunteer</Link></li>
+              <li><Link to="/#contact" className="text-gray-300 hover:text-white transition-colors">Contact Us</Link></li>
             </ul>
           </div>
 
@@ -57,15 +58,15 @@ const Footer = () => {
             <ul className="space-y-3">
               <li className="flex items-start">
                 <MapPin size={20} className="mr-2 mt-1 flex-shrink-0" />
-                <span className="text-gray-300">123 Charity Street, Nairobi, Kenya</span>
+                <span className="text-gray-300">Kampala, Uganda</span>
               </li>
               <li className="flex items-center">
                 <Phone size={20} className="mr-2 flex-shrink-0" />
-                <span className="text-gray-300">+254 123 456 789</span>
+                <span className="text-gray-300">+256 744 552 195 / 0778 777 976</span>
               </li>
               <li className="flex items-center">
                 <Mail size={20} className="mr-2 flex-shrink-0" />
-                <span className="text-gray-300">info@utuwakiafrika.org</span>
+                <span className="text-gray-300">utuwakiafrikacharitynetwork@gmail.com</span>
               </li>
             </ul>
           </div>

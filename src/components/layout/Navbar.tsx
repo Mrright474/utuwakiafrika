@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Menu, X, ChevronDown } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 
@@ -32,11 +32,14 @@ const Navbar = () => {
 
           {/* Desktop navigation */}
           <div className="hidden md:flex items-center space-x-6">
-            <a href="#about" className="text-utu-black hover:text-utu-red transition-colors font-medium">About</a>
-            <a href="#programs" className="text-utu-black hover:text-utu-red transition-colors font-medium">Programs</a>
-            <a href="#team" className="text-utu-black hover:text-utu-red transition-colors font-medium">Our Team</a>
-            <a href="#contact" className="text-utu-black hover:text-utu-red transition-colors font-medium">Contact</a>
-            <Button className="bg-utu-red hover:bg-red-700 text-white">Donate Now</Button>
+            <Link to="/#about" className="text-utu-black hover:text-utu-red transition-colors font-medium">About</Link>
+            <Link to="/#programs" className="text-utu-black hover:text-utu-red transition-colors font-medium">Programs</Link>
+            <Link to="/#team" className="text-utu-black hover:text-utu-red transition-colors font-medium">Our Team</Link>
+            <Link to="/#contact" className="text-utu-black hover:text-utu-red transition-colors font-medium">Contact</Link>
+            <Link to="/donate">
+              <Button className="bg-utu-red hover:bg-red-700 text-white">Donate Now</Button>
+            </Link>
+            <Link to="/admin" className="text-utu-black hover:text-utu-red transition-colors font-medium">Admin</Link>
           </div>
 
           {/* Mobile menu button */}
@@ -54,35 +57,44 @@ const Navbar = () => {
         {isMenuOpen && (
           <div className="md:hidden mt-4 pb-4">
             <div className="flex flex-col space-y-4">
-              <a 
-                href="#about" 
+              <Link 
+                to="/#about" 
                 className="text-utu-black hover:text-utu-red transition-colors font-medium"
                 onClick={() => setIsMenuOpen(false)}
               >
                 About
-              </a>
-              <a 
-                href="#programs" 
+              </Link>
+              <Link 
+                to="/#programs" 
                 className="text-utu-black hover:text-utu-red transition-colors font-medium"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Programs
-              </a>
-              <a 
-                href="#team" 
+              </Link>
+              <Link 
+                to="/#team" 
                 className="text-utu-black hover:text-utu-red transition-colors font-medium"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Our Team
-              </a>
-              <a 
-                href="#contact" 
+              </Link>
+              <Link 
+                to="/#contact" 
                 className="text-utu-black hover:text-utu-red transition-colors font-medium"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Contact
-              </a>
-              <Button className="bg-utu-red hover:bg-red-700 text-white w-full">Donate Now</Button>
+              </Link>
+              <Link to="/donate" onClick={() => setIsMenuOpen(false)}>
+                <Button className="bg-utu-red hover:bg-red-700 text-white w-full">Donate Now</Button>
+              </Link>
+              <Link 
+                to="/admin" 
+                className="text-utu-black hover:text-utu-red transition-colors font-medium"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Admin
+              </Link>
             </div>
           </div>
         )}
