@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, LogIn } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -45,10 +44,20 @@ const Navbar = () => {
             <Link to="/donate">
               <Button className="bg-utu-red hover:bg-red-700 text-white">Donate Now</Button>
             </Link>
+            <Link 
+              to="/admin" 
+              className="flex items-center text-utu-black hover:text-utu-red transition-colors font-medium"
+            >
+              <LogIn className="mr-2" size={18} />
+              Admin
+            </Link>
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden">
+          <div className="md:hidden flex items-center space-x-2">
+            <Link to="/admin" className="text-utu-black hover:text-utu-red">
+              <LogIn size={24} />
+            </Link>
             <button
               onClick={toggleMenu}
               className="text-utu-black hover:text-utu-red focus:outline-none"
@@ -93,6 +102,14 @@ const Navbar = () => {
               </Link>
               <Link to="/donate" onClick={closeMenu}>
                 <Button className="bg-utu-red hover:bg-red-700 text-white w-full">Donate Now</Button>
+              </Link>
+              <Link 
+                to="/admin" 
+                className="text-utu-black hover:text-utu-red transition-colors font-medium flex items-center"
+                onClick={closeMenu}
+              >
+                <LogIn className="mr-2" size={18} />
+                Admin Login
               </Link>
             </div>
           </div>

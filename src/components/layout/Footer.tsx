@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Facebook, Twitter, Instagram, Mail, Phone, MapPin } from 'lucide-react';
@@ -56,8 +55,8 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/admin" className="text-gray-400 hover:text-white transition-colors text-xs">
-                  Admin
+                <Link to="/admin" className="text-gray-400 hover:text-white transition-colors text-sm">
+                  Admin Login
                 </Link>
               </li>
             </ul>
