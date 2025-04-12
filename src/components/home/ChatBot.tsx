@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { MessageCircle, Send, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -23,7 +22,7 @@ const predefinedResponses = [
   },
   {
     keywords: ['contact', 'reach', 'call', 'phone', 'email'],
-    response: "You can contact us at +256744552195 or +256778777976. Our email is utuwakiafrikacharity@gmail.com. For more detailed inquiries, I recommend sending an email."
+    response: "You can contact us at +256744552195 or +256778777976. Our email is contact@utuwakiafrika.org. We're always happy to hear from you!"
   },
   {
     keywords: ['program', 'programs', 'initiative', 'projects'],
@@ -31,19 +30,19 @@ const predefinedResponses = [
   },
   {
     keywords: ['volunteer', 'help', 'join', 'participate'],
-    response: "We welcome volunteers! Please send an email to utuwakiafrikacharity@gmail.com with the subject 'Volunteer Inquiry' and we'll get back to you with opportunities."
+    response: "We welcome volunteers! Please email us at contact@utuwakiafrika.org with the subject 'Volunteer Inquiry' and we'll get back to you with opportunities."
   },
   {
     keywords: ['location', 'where', 'address', 'office'],
-    response: "We are located in Uganda. For our specific office address, please email us at utuwakiafrikacharity@gmail.com."
+    response: "We are based in Uganda. For our specific office location, please email us at contact@utuwakiafrika.org."
   }
 ];
 
 const fallbackResponses = [
   "I'm not sure I understand. Could you please rephrase your question?",
-  "For more detailed information, please email us at utuwakiafrikacharity@gmail.com.",
+  "For more detailed information, please email us at contact@utuwakiafrika.org.",
   "I don't have that information right now. Would you like to contact our team directly?",
-  "That's a good question! For a more detailed response, please reach out to our team at utuwakiafrikacharity@gmail.com."
+  "That's a great question! For a comprehensive answer, please reach out to us at contact@utuwakiafrika.org."
 ];
 
 const ChatBot = () => {
