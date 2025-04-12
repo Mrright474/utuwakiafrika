@@ -19,13 +19,13 @@ const Footer = () => {
               A Helping Hand For Every African
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="Facebook">
+              <a href="https://facebook.com/utuwakiafrikacharitynetwork" className="text-gray-400 hover:text-white transition-colors" aria-label="Facebook">
                 <Facebook size={20} />
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="Twitter">
+              <a href="https://twitter.com/utuwakiafrikacharitynetwork" className="text-gray-400 hover:text-white transition-colors" aria-label="Twitter">
                 <Twitter size={20} />
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="Instagram">
+              <a href="https://instagram.com/utuwakiafrikacharitynetwork" className="text-gray-400 hover:text-white transition-colors" aria-label="Instagram">
                 <Instagram size={20} />
               </a>
             </div>
@@ -107,14 +107,14 @@ const Footer = () => {
               </li>
               <li className="flex items-start">
                 <Phone className="mr-2 h-5 w-5 text-utu-red shrink-0 mt-0.5" />
-                <span className="text-gray-400 text-sm sm:text-base break-words">
+                <span className="text-gray-400 text-sm sm:text-base">
                   +256 744 552 195 / +256 778 777 976
                 </span>
               </li>
               <li className="flex items-start">
                 <Mail className="mr-2 h-5 w-5 text-utu-red shrink-0 mt-0.5" />
-                <span className="text-gray-400 text-sm sm:text-base break-words">
-                  utuwakiafrikacharity@gmail.com
+                <span className="text-gray-400 text-sm sm:text-base break-all">
+                  utuwakiafrikacharitynetwork@gmail.com
                 </span>
               </li>
             </ul>

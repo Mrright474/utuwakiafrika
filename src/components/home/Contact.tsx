@@ -30,7 +30,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <h4 className="font-semibold text-utu-black mb-1">Our Address</h4>
-                  <p className="text-utu-gray">123 Charity Street, Nairobi, Kenya</p>
+                  <p className="text-utu-gray">Uganda</p>
                 </div>
               </div>
               
@@ -40,8 +40,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <h4 className="font-semibold text-utu-black mb-1">Email Us</h4>
-                  <p className="text-utu-gray">info@utuwakiafrika.org</p>
-                  <p className="text-utu-gray">support@utuwakiafrika.org</p>
+                  <p className="text-utu-gray break-all">utuwakiafrikacharitynetwork@gmail.com</p>
                 </div>
               </div>
               
@@ -51,8 +50,8 @@ const Contact = () => {
                 </div>
                 <div>
                   <h4 className="font-semibold text-utu-black mb-1">Call Us</h4>
-                  <p className="text-utu-gray">+254 123 456 789</p>
-                  <p className="text-utu-gray">+254 987 654 321</p>
+                  <p className="text-utu-gray">+256 744 552 195</p>
+                  <p className="text-utu-gray">+256 778 777 976</p>
                 </div>
               </div>
               
