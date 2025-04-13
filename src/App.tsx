@@ -10,7 +10,14 @@ import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 import ChatBot from "./components/home/ChatBot";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -22,6 +29,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/donate" element={<Donate />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/admin/*" element={<Admin />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

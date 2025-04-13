@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Facebook, Twitter, Linkedin, Edit, X, Plus, Upload } from 'lucide-react';
 import { 
   Dialog, 
@@ -159,7 +159,7 @@ const Team = () => {
   ]);
 
   // Enable admin mode with a simple keyboard shortcut (Ctrl+Shift+A)
-  React.useEffect(() => {
+  useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.ctrlKey && e.shiftKey && e.key === 'A') {
         setIsAdmin(!isAdmin);
@@ -201,11 +201,23 @@ const Team = () => {
     const file = e.target.files?.[0];
     if (file) {
       setImageFile(file);
+      
+      // Create a local URL for preview
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImagePreview(reader.result as string);
+        const result = reader.result as string;
+        setImagePreview(result);
+        
+        // Log for debugging
+        console.log("Image preview set:", result ? "Image data loaded" : "No image data");
       };
       reader.readAsDataURL(file);
+      
+      // Confirm file selection in UI
+      toast({
+        title: "Image selected",
+        description: `File "${file.name}" selected and ready to upload.`,
+      });
     }
   };
 
@@ -213,11 +225,14 @@ const Team = () => {
     if (!currentTeamMember) return;
 
     // For a real implementation, you would upload the image to a server here
-    // and get back a URL to store in the team member object
+    // In this demo version, we just use the data URL from the preview
     const updatedMember = {
       ...currentTeamMember,
-      image: imageFile ? imagePreview : currentTeamMember.image,
+      image: imagePreview || currentTeamMember.image,
     };
+
+    // Log the image we're saving
+    console.log("Saving member with image:", updatedMember.image.substring(0, 30) + "...");
 
     const updatedMembers = teamMembers.map(member => 
       member.id === updatedMember.id ? updatedMember : member
@@ -238,13 +253,29 @@ const Team = () => {
   };
 
   const handleAddNewMember = () => {
-    if (!currentTeamMember) return;
+    if (!currentTeamMember) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Team member information is missing.",
+      });
+      return;
+    }
+
+    if (!currentTeamMember.name || !currentTeamMember.position) {
+      toast({
+        variant: "destructive",
+        title: "Missing information",
+        description: "Please provide at least a name and position.",
+      });
+      return;
+    }
 
     // For a real implementation, you would upload the image to a server here
-    // and get back a URL to store in the team member object
+    // In this demo version, we just use the data URL from the preview
     const newMember = {
       ...currentTeamMember,
-      image: imageFile ? imagePreview : "/placeholder.svg",
+      image: imagePreview || "/placeholder.svg",
     };
 
     setTeamMembers([...teamMembers, newMember]);
@@ -340,7 +371,7 @@ const Team = () => {
           {currentTeamMember && (
             <div className="grid gap-4 py-4">
               <div className="flex justify-center mb-4">
-                <div className="relative w-32 h-32 rounded-md overflow-hidden">
+                <div className="relative w-32 h-32 rounded-md overflow-hidden border border-gray-300">
                   <img 
                     src={imagePreview} 
                     alt="Profile preview" 
@@ -403,7 +434,9 @@ const Team = () => {
               <X className="mr-2" size={16} />
               Delete
             </Button>
-            <Button onClick={handleSaveMember}>Save Changes</Button>
+            <Button onClick={handleSaveMember} className="bg-utu-red hover:bg-red-700">
+              Save Changes
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -418,7 +451,7 @@ const Team = () => {
           {currentTeamMember && (
             <div className="grid gap-4 py-4">
               <div className="flex justify-center mb-4">
-                <div className="relative w-32 h-32 rounded-md overflow-hidden">
+                <div className="relative w-32 h-32 rounded-md overflow-hidden border border-gray-300">
                   <img 
                     src={imagePreview} 
                     alt="Profile preview" 
@@ -451,6 +484,7 @@ const Team = () => {
                   value={currentTeamMember.name}
                   onChange={handleInputChange}
                   placeholder="Enter team member name"
+                  required
                 />
               </div>
               
@@ -462,6 +496,7 @@ const Team = () => {
                   value={currentTeamMember.position}
                   onChange={handleInputChange}
                   placeholder="Enter position title"
+                  required
                 />
               </div>
               
@@ -481,7 +516,9 @@ const Team = () => {
           
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>Cancel</Button>
-            <Button onClick={handleAddNewMember}>Add Member</Button>
+            <Button onClick={handleAddNewMember} className="bg-utu-red hover:bg-red-700">
+              Add Member
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
