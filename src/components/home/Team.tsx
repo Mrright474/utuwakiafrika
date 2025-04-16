@@ -93,10 +93,10 @@ const Team = () => {
     },
     {
       id: "2",
-      image: "/lovable-uploads/23b57522-ea5d-4ead-b599-c148558a4474.png",
-      name: "Michael Odhiambo",
-      position: "Program Director",
-      bio: "Michael oversees the development and implementation of all our programs, ensuring they create maximum impact."
+      image: "/lovable-uploads/6cc22289-337a-4964-ab0f-4058feb43e63.png",
+      name: "Laura Muwanguzi",
+      position: "Director of Programs",
+      bio: "Laura leads our program development and implementation, ensuring our initiatives create meaningful impact across communities."
     },
     {
       id: "3",
