@@ -1,28 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Facebook, Twitter, Linkedin, Edit, X, Plus, Upload } from 'lucide-react';
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle,
-  DialogFooter,
-  DialogTrigger 
-} from "@/components/ui/dialog";
+import { Plus } from 'lucide-react';
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-
-interface TeamMemberProps {
-  id: string;
-  image: string;
-  name: string;
-  position: string;
-  bio: string;
-  onEdit: (id: string) => void;
-  isAdmin?: boolean;
-}
+import TeamMemberCard from './TeamMemberCard';
+import TeamMemberDialog from './TeamMemberDialog';
 
 interface TeamMember {
   id: string;
@@ -31,48 +13,6 @@ interface TeamMember {
   position: string;
   bio: string;
 }
-
-const TeamMember = ({ id, image, name, position, bio, onEdit, isAdmin = false }: TeamMemberProps) => {
-  return (
-    <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow relative">
-      {isAdmin && (
-        <button 
-          onClick={() => onEdit(id)}
-          className="absolute top-2 right-2 bg-white p-1.5 rounded-full shadow-md z-10 hover:bg-gray-100"
-          aria-label="Edit team member"
-        >
-          <Edit size={16} className="text-utu-red" />
-        </button>
-      )}
-      <div className="aspect-square overflow-hidden">
-        <img 
-          src={image} 
-          alt={name} 
-          className="w-full h-full object-cover"
-          onError={(e) => {
-            (e.target as HTMLImageElement).src = "/placeholder.svg";
-          }}
-        />
-      </div>
-      <div className="p-6">
-        <h3 className="text-xl font-bold mb-1 text-utu-black">{name}</h3>
-        <p className="text-utu-red font-medium mb-3">{position}</p>
-        <p className="text-utu-gray text-sm mb-4">{bio}</p>
-        <div className="flex space-x-3">
-          <a href="#" className="text-gray-500 hover:text-utu-red transition-colors">
-            <Facebook size={18} />
-          </a>
-          <a href="#" className="text-gray-500 hover:text-utu-red transition-colors">
-            <Twitter size={18} />
-          </a>
-          <a href="#" className="text-gray-500 hover:text-utu-red transition-colors">
-            <Linkedin size={18} />
-          </a>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 const Team = () => {
   const { toast } = useToast();
@@ -194,25 +134,12 @@ const Team = () => {
     setIsAddDialogOpen(true);
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setImageFile(file);
-      
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const result = reader.result as string;
-        setImagePreview(result);
-        
-        console.log("Image preview set:", result ? "Image data loaded" : "No image data");
-      };
-      reader.readAsDataURL(file);
-      
-      toast({
-        title: "Image selected",
-        description: `File "${file.name}" selected and ready to upload.`,
-      });
-    }
+  const handleInputChange = (field: string, value: string) => {
+    if (!currentTeamMember) return;
+    setCurrentTeamMember({
+      ...currentTeamMember,
+      [field]: value
+    });
   };
 
   const handleSaveMember = () => {
@@ -222,8 +149,6 @@ const Team = () => {
       ...currentTeamMember,
       image: imagePreview || currentTeamMember.image,
     };
-
-    console.log("Saving member with image:", updatedMember.image.substring(0, 30) + "...");
 
     const updatedMembers = teamMembers.map(member => 
       member.id === updatedMember.id ? updatedMember : member
@@ -237,20 +162,11 @@ const Team = () => {
       description: `${updatedMember.name}'s profile has been updated successfully.`,
     });
 
-    setCurrentTeamMember(null);
-    setImageFile(null);
-    setImagePreview("");
+    resetForm();
   };
 
   const handleAddNewMember = () => {
-    if (!currentTeamMember) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Team member information is missing.",
-      });
-      return;
-    }
+    if (!currentTeamMember) return;
 
     if (!currentTeamMember.name || !currentTeamMember.position) {
       toast({
@@ -274,9 +190,7 @@ const Team = () => {
       description: `${newMember.name} has been added to the team successfully.`,
     });
 
-    setCurrentTeamMember(null);
-    setImageFile(null);
-    setImagePreview("");
+    resetForm();
   };
 
   const handleDeleteMember = () => {
@@ -291,18 +205,13 @@ const Team = () => {
       description: `${currentTeamMember.name} has been removed from the team.`,
     });
 
+    resetForm();
+  };
+
+  const resetForm = () => {
     setCurrentTeamMember(null);
     setImageFile(null);
     setImagePreview("");
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    if (!currentTeamMember) return;
-    
-    setCurrentTeamMember({
-      ...currentTeamMember,
-      [e.target.name]: e.target.value
-    });
   };
 
   return (
@@ -316,30 +225,26 @@ const Team = () => {
             a helping hand for every African.
           </p>
           {isAdmin && (
-            <Button 
-              onClick={handleAddMember} 
-              className="mt-6 bg-utu-red hover:bg-red-700"
-            >
-              <Plus className="mr-2" size={16} />
-              Add Team Member
-            </Button>
-          )}
-          {isAdmin && (
-            <p className="text-sm text-gray-500 mt-4">
-              Admin mode is active. Press Ctrl+Shift+A to toggle admin mode.
-            </p>
+            <>
+              <Button 
+                onClick={handleAddMember} 
+                className="mt-6 bg-utu-red hover:bg-red-700"
+              >
+                <Plus className="mr-2" size={16} />
+                Add Team Member
+              </Button>
+              <p className="text-sm text-gray-500 mt-4">
+                Admin mode is active. Press Ctrl+Shift+A to toggle admin mode.
+              </p>
+            </>
           )}
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {teamMembers.map((member) => (
-            <TeamMember
+            <TeamMemberCard
               key={member.id}
-              id={member.id}
-              image={member.image}
-              name={member.name}
-              position={member.position}
-              bio={member.bio}
+              {...member}
               onEdit={handleEditMember}
               isAdmin={isAdmin}
             />
@@ -348,163 +253,28 @@ const Team = () => {
       </div>
 
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Edit Team Member</DialogTitle>
-          </DialogHeader>
-          
-          {currentTeamMember && (
-            <div className="grid gap-4 py-4">
-              <div className="flex justify-center mb-4">
-                <div className="relative w-32 h-32 rounded-md overflow-hidden border border-gray-300">
-                  <img 
-                    src={imagePreview} 
-                    alt="Profile preview" 
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = "/placeholder.svg";
-                    }}
-                  />
-                  <Label 
-                    htmlFor="image-upload" 
-                    className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity cursor-pointer"
-                  >
-                    <Upload className="text-white" size={24} />
-                  </Label>
-                  <Input
-                    id="image-upload"
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handleImageChange}
-                  />
-                </div>
-              </div>
-              
-              <div className="grid gap-2">
-                <Label htmlFor="name">Name</Label>
-                <Input
-                  id="name"
-                  name="name"
-                  value={currentTeamMember.name}
-                  onChange={handleInputChange}
-                />
-              </div>
-              
-              <div className="grid gap-2">
-                <Label htmlFor="position">Position</Label>
-                <Input
-                  id="position"
-                  name="position"
-                  value={currentTeamMember.position}
-                  onChange={handleInputChange}
-                />
-              </div>
-              
-              <div className="grid gap-2">
-                <Label htmlFor="bio">Bio</Label>
-                <Textarea
-                  id="bio"
-                  name="bio"
-                  value={currentTeamMember.bio}
-                  onChange={handleInputChange}
-                  rows={3}
-                />
-              </div>
-            </div>
-          )}
-          
-          <DialogFooter className="flex justify-between">
-            <Button variant="destructive" onClick={handleDeleteMember}>
-              <X className="mr-2" size={16} />
-              Delete
-            </Button>
-            <Button onClick={handleSaveMember} className="bg-utu-red hover:bg-red-700">
-              Save Changes
-            </Button>
-          </DialogFooter>
-        </DialogContent>
+        {currentTeamMember && (
+          <TeamMemberDialog
+            mode="edit"
+            member={currentTeamMember}
+            onClose={() => setIsEditDialogOpen(false)}
+            onSave={handleSaveMember}
+            onDelete={handleDeleteMember}
+            onChange={handleInputChange}
+          />
+        )}
       </Dialog>
 
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Add New Team Member</DialogTitle>
-          </DialogHeader>
-          
-          {currentTeamMember && (
-            <div className="grid gap-4 py-4">
-              <div className="flex justify-center mb-4">
-                <div className="relative w-32 h-32 rounded-md overflow-hidden border border-gray-300">
-                  <img 
-                    src={imagePreview} 
-                    alt="Profile preview" 
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = "/placeholder.svg";
-                    }}
-                  />
-                  <Label 
-                    htmlFor="new-image-upload" 
-                    className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity cursor-pointer"
-                  >
-                    <Upload className="text-white" size={24} />
-                  </Label>
-                  <Input
-                    id="new-image-upload"
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handleImageChange}
-                  />
-                </div>
-              </div>
-              
-              <div className="grid gap-2">
-                <Label htmlFor="new-name">Name</Label>
-                <Input
-                  id="new-name"
-                  name="name"
-                  value={currentTeamMember.name}
-                  onChange={handleInputChange}
-                  placeholder="Enter team member name"
-                  required
-                />
-              </div>
-              
-              <div className="grid gap-2">
-                <Label htmlFor="new-position">Position</Label>
-                <Input
-                  id="new-position"
-                  name="position"
-                  value={currentTeamMember.position}
-                  onChange={handleInputChange}
-                  placeholder="Enter position title"
-                  required
-                />
-              </div>
-              
-              <div className="grid gap-2">
-                <Label htmlFor="new-bio">Bio</Label>
-                <Textarea
-                  id="new-bio"
-                  name="bio"
-                  value={currentTeamMember.bio}
-                  onChange={handleInputChange}
-                  placeholder="Enter a short bio"
-                  rows={3}
-                />
-              </div>
-            </div>
-          )}
-          
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>Cancel</Button>
-            <Button onClick={handleAddNewMember} className="bg-utu-red hover:bg-red-700">
-              Add Member
-            </Button>
-          </DialogFooter>
-        </DialogContent>
+        {currentTeamMember && (
+          <TeamMemberDialog
+            mode="add"
+            member={currentTeamMember}
+            onClose={() => setIsAddDialogOpen(false)}
+            onSave={handleAddNewMember}
+            onChange={handleInputChange}
+          />
+        )}
       </Dialog>
     </section>
   );
