@@ -128,10 +128,10 @@ const Team = () => {
     },
     {
       id: "7",
-      image: "/placeholder.svg",
-      name: "Position Available",
-      position: "Program Officer",
-      bio: "We're looking for a dedicated individual to join our team and help manage our growing number of programs."
+      image: "/lovable-uploads/da74094e-d355-4e7f-bda9-811435437ab1.png",
+      name: "Ellah Philp",
+      position: "Secretary",
+      bio: "Ellah manages administrative operations and ensures smooth coordination between different departments and stakeholders."
     },
     {
       id: "8",
