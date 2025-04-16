@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Facebook, Twitter, Linkedin, Edit, X, Plus, Upload } from 'lucide-react';
 import { 
@@ -84,14 +83,13 @@ const Team = () => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
   
-  // Initialize team members state from the static array
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([
     {
       id: "1",
-      image: "/lovable-uploads/7e1302ab-dabd-404d-b089-b1c7bdf0e631.png",
-      name: "David Kimani",
+      image: "/lovable-uploads/6e61272d-7786-4ccc-950e-4ae86bc5f39d.png",
+      name: "Ben Kazigo Luweru",
       position: "Executive Director",
-      bio: "With over 10 years of experience in NGO management, David leads our strategic initiatives and operations across Africa."
+      bio: "With over 10 years of experience in NGO management, Ben leads our strategic initiatives and operations across Africa."
     },
     {
       id: "2",
@@ -158,7 +156,6 @@ const Team = () => {
     }
   ]);
 
-  // Enable admin mode with a simple keyboard shortcut (Ctrl+Shift+A)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.ctrlKey && e.shiftKey && e.key === 'A') {
@@ -202,18 +199,15 @@ const Team = () => {
     if (file) {
       setImageFile(file);
       
-      // Create a local URL for preview
       const reader = new FileReader();
       reader.onloadend = () => {
         const result = reader.result as string;
         setImagePreview(result);
         
-        // Log for debugging
         console.log("Image preview set:", result ? "Image data loaded" : "No image data");
       };
       reader.readAsDataURL(file);
       
-      // Confirm file selection in UI
       toast({
         title: "Image selected",
         description: `File "${file.name}" selected and ready to upload.`,
@@ -224,14 +218,11 @@ const Team = () => {
   const handleSaveMember = () => {
     if (!currentTeamMember) return;
 
-    // For a real implementation, you would upload the image to a server here
-    // In this demo version, we just use the data URL from the preview
     const updatedMember = {
       ...currentTeamMember,
       image: imagePreview || currentTeamMember.image,
     };
 
-    // Log the image we're saving
     console.log("Saving member with image:", updatedMember.image.substring(0, 30) + "...");
 
     const updatedMembers = teamMembers.map(member => 
@@ -246,7 +237,6 @@ const Team = () => {
       description: `${updatedMember.name}'s profile has been updated successfully.`,
     });
 
-    // Reset state
     setCurrentTeamMember(null);
     setImageFile(null);
     setImagePreview("");
@@ -271,8 +261,6 @@ const Team = () => {
       return;
     }
 
-    // For a real implementation, you would upload the image to a server here
-    // In this demo version, we just use the data URL from the preview
     const newMember = {
       ...currentTeamMember,
       image: imagePreview || "/placeholder.svg",
@@ -286,7 +274,6 @@ const Team = () => {
       description: `${newMember.name} has been added to the team successfully.`,
     });
 
-    // Reset state
     setCurrentTeamMember(null);
     setImageFile(null);
     setImagePreview("");
@@ -304,7 +291,6 @@ const Team = () => {
       description: `${currentTeamMember.name} has been removed from the team.`,
     });
 
-    // Reset state
     setCurrentTeamMember(null);
     setImageFile(null);
     setImagePreview("");
@@ -361,7 +347,6 @@ const Team = () => {
         </div>
       </div>
 
-      {/* Edit Team Member Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
@@ -441,7 +426,6 @@ const Team = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Add Team Member Dialog */}
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
