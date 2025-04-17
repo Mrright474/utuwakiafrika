@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Plus } from 'lucide-react';
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
@@ -80,20 +79,6 @@ const Team = () => {
       name: "Bule Paul",
       position: "Legal Advisor",
       bio: "Bule provides expert legal counsel and ensures compliance with regulatory requirements across our operations."
-    },
-    {
-      id: "9",
-      image: "/placeholder.svg",
-      name: "Position Available",
-      position: "Community Liaison",
-      bio: "This role will serve as a bridge between our organization and the communities we serve."
-    },
-    {
-      id: "10",
-      image: "/placeholder.svg",
-      name: "Position Available",
-      position: "Volunteer Coordinator",
-      bio: "We're looking for someone to manage our volunteer program and help expand our reach."
     }
   ]);
 
