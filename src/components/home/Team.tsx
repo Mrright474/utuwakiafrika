@@ -25,55 +25,6 @@ const Team = () => {
   
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([
     {
-      id: "1",
-      image: "/lovable-uploads/6e61272d-7786-4ccc-950e-4ae86bc5f39d.png",
-      name: "Ben Kazigo Luweru",
-      position: "Executive Director",
-      bio: "With over 10 years of experience in NGO management, Ben leads our strategic initiatives and operations across Africa."
-    },
-    {
-      id: "2",
-      image: "/lovable-uploads/6cc22289-337a-4964-ab0f-4058feb43e63.png",
-      name: "Laura Muwanguzi",
-      position: "Director of Programs",
-      bio: "Laura leads our program development and implementation, ensuring our initiatives create meaningful impact across communities."
-    },
-    {
-      id: "3",
-      image: "/lovable-uploads/b07d8f50-577a-4699-87ba-8759e7ace688.png",
-      name: "James Otieno",
-      position: "Communications Manager",
-      bio: "James manages our communications strategy, ensuring our message reaches supporters and beneficiaries effectively."
-    },
-    {
-      id: "4",
-      image: "/lovable-uploads/a382b382-f2d2-4832-9343-db9d8abb367d.png",
-      name: "Sarah Mwangi",
-      position: "Finance Director",
-      bio: "Sarah oversees our financial operations, ensuring transparency and accountability in all our financial dealings."
-    },
-    {
-      id: "5",
-      image: "/lovable-uploads/52fedddf-3da6-485c-af83-de0020326139.png",
-      name: "John Kamau",
-      position: "Field Operations Manager",
-      bio: "John coordinates our field teams and ensures smooth implementation of all projects across different regions."
-    },
-    {
-      id: "6",
-      image: "/lovable-uploads/f90b8fff-8fac-4c94-8b28-10ed3702cc33.png",
-      name: "Faith Achieng",
-      position: "Outreach Coordinator",
-      bio: "Faith develops and maintains relationships with communities, volunteers, and partners to advance our mission."
-    },
-    {
-      id: "7",
-      image: "/lovable-uploads/da74094e-d355-4e7f-bda9-811435437ab1.png",
-      name: "Ellah Philp",
-      position: "Secretary",
-      bio: "Ellah manages administrative operations and ensures smooth coordination between different departments and stakeholders."
-    },
-    {
       id: "8",
       image: "/lovable-uploads/c520e25e-9088-4335-9397-90370407dd62.png",
       name: "Bule Paul",
