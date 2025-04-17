@@ -25,6 +25,27 @@ const Team = () => {
   
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([
     {
+      id: "1",
+      image: "/lovable-uploads/6e61272d-7786-4ccc-950e-4ae86bc5f39d.png",
+      name: "Ben Kazigo Luweru",
+      position: "Executive Director",
+      bio: "With over 10 years of experience in NGO management, Ben leads our strategic initiatives and operations across Africa."
+    },
+    {
+      id: "7",
+      image: "/lovable-uploads/da74094e-d355-4e7f-bda9-811435437ab1.png",
+      name: "Ellah Philp",
+      position: "Secretary",
+      bio: "Ellah manages administrative operations and ensures smooth coordination between different departments and stakeholders."
+    },
+    {
+      id: "2",
+      image: "/lovable-uploads/6cc22289-337a-4964-ab0f-4058feb43e63.png",
+      name: "Laura Muwanguzi",
+      position: "Director of Programs",
+      bio: "Laura leads our program development and implementation, ensuring our initiatives create meaningful impact across communities."
+    },
+    {
       id: "8",
       image: "/lovable-uploads/c520e25e-9088-4335-9397-90370407dd62.png",
       name: "Bule Paul",
