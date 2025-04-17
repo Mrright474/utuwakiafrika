@@ -1,6 +1,8 @@
 
 import React from 'react';
-import { Facebook, Twitter, Linkedin, Edit } from 'lucide-react';
+import { Edit } from 'lucide-react';
+import ProfileImage from './ProfileImage';
+import SocialLinks from './SocialLinks';
 
 interface TeamMemberCardProps {
   id: string;
@@ -32,31 +34,12 @@ const TeamMemberCard = ({
           <Edit size={16} className="text-utu-red" />
         </button>
       )}
-      <div className="aspect-square overflow-hidden">
-        <img 
-          src={image} 
-          alt={name} 
-          className="w-full h-full object-cover"
-          onError={(e) => {
-            (e.target as HTMLImageElement).src = "/placeholder.svg";
-          }}
-        />
-      </div>
+      <ProfileImage src={image} alt={name} />
       <div className="p-6">
         <h3 className="text-xl font-bold mb-1 text-utu-black">{name}</h3>
         <p className="text-utu-red font-medium mb-3">{position}</p>
         <p className="text-utu-gray text-sm mb-4">{bio}</p>
-        <div className="flex space-x-3">
-          <a href="#" className="text-gray-500 hover:text-utu-red transition-colors">
-            <Facebook size={18} />
-          </a>
-          <a href="#" className="text-gray-500 hover:text-utu-red transition-colors">
-            <Twitter size={18} />
-          </a>
-          <a href="#" className="text-gray-500 hover:text-utu-red transition-colors">
-            <Linkedin size={18} />
-          </a>
-        </div>
+        <SocialLinks />
       </div>
     </div>
   );

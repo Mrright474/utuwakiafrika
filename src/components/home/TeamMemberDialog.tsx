@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { UploadCloud } from 'lucide-react';
 import { 
   DialogContent, 
   DialogHeader, 
@@ -11,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import ImageUpload from './ImageUpload';
 
 interface TeamMemberDialogProps {
   mode: 'add' | 'edit';
@@ -36,7 +36,6 @@ const TeamMemberDialog = ({
   onChange 
 }: TeamMemberDialogProps) => {
   const title = mode === 'add' ? 'Add New Team Member' : 'Edit Team Member';
-  const imageInputId = `${mode}-team-image`;
 
   return (
     <DialogContent>
@@ -72,25 +71,7 @@ const TeamMemberDialog = ({
             className="min-h-[100px]"
           />
         </div>
-        <div className="space-y-2">
-          <Label>Profile Image</Label>
-          <div className="border-2 border-dashed rounded-lg p-4 text-center">
-            <div className="mx-auto flex flex-col items-center justify-center">
-              <UploadCloud className="h-10 w-10 text-muted-foreground mb-2" />
-              <p className="mb-2 text-sm text-muted-foreground">
-                {mode === 'add' ? 'Upload an image' : 'Upload a new image'}
-              </p>
-              <Input id={imageInputId} type="file" className="hidden" />
-              <Button
-                variant="outline"
-                onClick={() => document.getElementById(imageInputId)?.click()}
-                className="mt-2"
-              >
-                {mode === 'add' ? 'Upload Image' : 'Change Image'}
-              </Button>
-            </div>
-          </div>
-        </div>
+        <ImageUpload mode={mode} />
       </div>
       <DialogFooter className="flex justify-between">
         {mode === 'edit' && onDelete && (
