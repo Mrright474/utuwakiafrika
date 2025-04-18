@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { User, School, Home, Heart, Landmark, Briefcase } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -34,7 +33,6 @@ const StatCard = ({ value, label, icon }: StatCardProps) => {
   );
 };
 
-// Map icon names to components
 const iconMap = {
   'User': <User className="h-6 w-6 sm:h-8 sm:w-8 text-utu-red" />,
   'School': <School className="h-6 w-6 sm:h-8 sm:w-8 text-utu-red" />,
@@ -44,7 +42,6 @@ const iconMap = {
   'Briefcase': <Briefcase className="h-6 w-6 sm:h-8 sm:w-8 text-utu-red" />
 };
 
-// Default impact data
 const defaultImpactData: ImpactData = {
   stats: [
     { value: '5,000+', label: 'People Supported', },
@@ -83,12 +80,29 @@ const Impact = () => {
     }
   }, []);
 
-  // Get default icon if not matching any in our map
   const getIcon = (index: number) => {
     const icons = Object.values(iconMap);
-    // Use the icon from the map if we have one for this index, otherwise cycle through our icons
     return icons[index % icons.length];
   };
+
+  const impactGallery = [
+    {
+      image: "/lovable-uploads/48b1317c-a8a6-4e8b-837f-20bb05632713.png",
+      caption: "Community Cleanup Initiative"
+    },
+    {
+      image: "/lovable-uploads/53460912-2f2a-428b-b6e5-bc12ccf03604.png",
+      caption: "Local Business Support"
+    },
+    {
+      image: "/lovable-uploads/b9465bc7-3765-4b25-a3ec-30f8bed81725.png",
+      caption: "Environmental Protection"
+    },
+    {
+      image: "/lovable-uploads/ed5bbc34-0ff2-46df-8898-3ee804b9d1ce.png",
+      caption: "Volunteer Programs"
+    }
+  ];
 
   return (
     <section id="impact" className="py-12 sm:py-16 bg-gradient-to-r from-utu-black to-gray-800 text-white">
@@ -102,7 +116,6 @@ const Impact = () => {
           </p>
         </div>
 
-        {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {impactData.stats.map((stat, index) => (
             <StatCard 
@@ -114,7 +127,24 @@ const Impact = () => {
           ))}
         </div>
 
-        {/* Success Stories */}
+        <div className="mt-16">
+          <h3 className="text-xl sm:text-2xl font-bold mb-8 text-center font-heading">Our Impact in Pictures</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {impactGallery.map((item, index) => (
+              <div key={index} className="relative group overflow-hidden rounded-lg">
+                <img
+                  src={item.image}
+                  alt={item.caption}
+                  className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-black bg-opacity-40 flex items-end opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <p className="text-white p-4 text-sm">{item.caption}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {impactData.successStories.length > 0 && (
           <div className="mt-16">
             <h3 className="text-xl sm:text-2xl font-bold mb-8 text-center font-heading">Success Stories</h3>
