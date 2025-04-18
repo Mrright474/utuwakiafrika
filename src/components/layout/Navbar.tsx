@@ -17,6 +17,19 @@ const Navbar = () => {
     setIsMenuOpen(false);
   };
 
+  // Function to handle smooth scrolling to anchor elements
+  const scrollToSection = (sectionId: string) => {
+    closeMenu();
+    
+    // Get the section element
+    const section = document.getElementById(sectionId);
+    
+    // If we found the section, scroll to it
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <nav className="bg-white shadow-sm sticky top-0 z-50">
       <div className="container mx-auto px-4 py-3">
@@ -38,10 +51,30 @@ const Navbar = () => {
 
           {/* Desktop navigation */}
           <div className="hidden md:flex items-center space-x-4 lg:space-x-6">
-            <Link to="/#about" className="text-utu-black hover:text-utu-red transition-colors font-medium">About</Link>
-            <Link to="/#programs" className="text-utu-black hover:text-utu-red transition-colors font-medium">Programs</Link>
-            <Link to="/#team" className="text-utu-black hover:text-utu-red transition-colors font-medium">Our Team</Link>
-            <Link to="/#contact" className="text-utu-black hover:text-utu-red transition-colors font-medium">Contact</Link>
+            <button 
+              onClick={() => scrollToSection('about')} 
+              className="text-utu-black hover:text-utu-red transition-colors font-medium"
+            >
+              About
+            </button>
+            <button 
+              onClick={() => scrollToSection('programs')} 
+              className="text-utu-black hover:text-utu-red transition-colors font-medium"
+            >
+              Programs
+            </button>
+            <button 
+              onClick={() => scrollToSection('team')} 
+              className="text-utu-black hover:text-utu-red transition-colors font-medium"
+            >
+              Our Team
+            </button>
+            <button 
+              onClick={() => scrollToSection('contact')} 
+              className="text-utu-black hover:text-utu-red transition-colors font-medium"
+            >
+              Contact
+            </button>
             <Link to="/donate">
               <Button className="bg-utu-red hover:bg-red-700 text-white">Donate Now</Button>
             </Link>
@@ -63,34 +96,30 @@ const Navbar = () => {
         {isMenuOpen && (
           <div className="md:hidden mt-4 pb-4">
             <div className="flex flex-col space-y-4">
-              <Link 
-                to="/#about" 
-                className="text-utu-black hover:text-utu-red transition-colors font-medium"
-                onClick={closeMenu}
+              <button 
+                onClick={() => scrollToSection('about')} 
+                className="text-utu-black hover:text-utu-red transition-colors font-medium text-left"
               >
                 About
-              </Link>
-              <Link 
-                to="/#programs" 
-                className="text-utu-black hover:text-utu-red transition-colors font-medium"
-                onClick={closeMenu}
+              </button>
+              <button 
+                onClick={() => scrollToSection('programs')} 
+                className="text-utu-black hover:text-utu-red transition-colors font-medium text-left"
               >
                 Programs
-              </Link>
-              <Link 
-                to="/#team" 
-                className="text-utu-black hover:text-utu-red transition-colors font-medium"
-                onClick={closeMenu}
+              </button>
+              <button 
+                onClick={() => scrollToSection('team')} 
+                className="text-utu-black hover:text-utu-red transition-colors font-medium text-left"
               >
                 Our Team
-              </Link>
-              <Link 
-                to="/#contact" 
-                className="text-utu-black hover:text-utu-red transition-colors font-medium"
-                onClick={closeMenu}
+              </button>
+              <button 
+                onClick={() => scrollToSection('contact')} 
+                className="text-utu-black hover:text-utu-red transition-colors font-medium text-left"
               >
                 Contact
-              </Link>
+              </button>
               <Link to="/donate" onClick={closeMenu}>
                 <Button className="bg-utu-red hover:bg-red-700 text-white w-full">Donate Now</Button>
               </Link>

@@ -4,15 +4,23 @@ import { useToast } from "@/hooks/use-toast";
 
 export const useAdminMode = () => {
   const { toast } = useToast();
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(() => {
+    // Check if admin mode was stored in localStorage
+    const storedAdminMode = localStorage.getItem('adminMode');
+    return storedAdminMode === 'true';
+  });
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.ctrlKey && e.shiftKey && e.key === 'A') {
-        setIsAdmin(!isAdmin);
+        const newAdminState = !isAdmin;
+        setIsAdmin(newAdminState);
+        // Save admin state to localStorage
+        localStorage.setItem('adminMode', newAdminState.toString());
+        
         toast({
-          title: isAdmin ? "Admin mode disabled" : "Admin mode enabled",
-          description: isAdmin ? "You are now viewing as a regular user" : "You can now edit team members",
+          title: newAdminState ? "Admin mode enabled" : "Admin mode disabled",
+          description: newAdminState ? "You can now edit team members" : "You are now viewing as a regular user",
         });
       }
     };
