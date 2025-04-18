@@ -5,9 +5,22 @@ import { ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Hero = () => {
+  const scrollToSection = (sectionId: string) => {
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <section className="relative bg-utu-black text-white overflow-hidden min-h-[80vh] sm:min-h-[70vh] flex items-center">
+      {/* Background image with overlay */}
       <div className="absolute inset-0 opacity-30 bg-black">
+        <img 
+          src="/lovable-uploads/f90b8fff-8fac-4c94-8b28-10ed3702cc33.png" 
+          alt="African community" 
+          className="w-full h-full object-cover"
+        />
         <div 
           className="absolute inset-0 bg-gradient-to-r from-utu-black to-transparent"
           style={{ mixBlendMode: 'multiply' }}
@@ -30,11 +43,13 @@ const Hero = () => {
                 Donate Now
               </Button>
             </Link>
-            <Link to="/#programs">
-              <Button variant="outline" className="border-white text-white hover:bg-white/10 px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg w-full sm:w-auto">
-                Our Programs <ChevronRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
-              </Button>
-            </Link>
+            <Button 
+              variant="outline" 
+              className="border-white text-white hover:bg-white/10 px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg w-full sm:w-auto"
+              onClick={() => scrollToSection('programs')}
+            >
+              Our Programs <ChevronRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
+            </Button>
           </div>
         </div>
       </div>

@@ -8,11 +8,11 @@ interface ProfileImageProps {
 
 const ProfileImage = ({ src, alt }: ProfileImageProps) => {
   return (
-    <div className="aspect-square overflow-hidden">
+    <div className="aspect-square overflow-hidden rounded-lg shadow-md">
       <img 
         src={src} 
         alt={alt} 
-        className="w-full h-full object-cover"
+        className="w-full h-full object-cover transition-transform hover:scale-105 duration-300"
         onError={(e) => {
           (e.target as HTMLImageElement).src = "/placeholder.svg";
         }}

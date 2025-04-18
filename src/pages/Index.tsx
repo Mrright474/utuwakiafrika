@@ -24,7 +24,18 @@ const Index = () => {
         // Use a small timeout to ensure the page has fully loaded
         setTimeout(() => {
           section.scrollIntoView({ behavior: 'smooth' });
-        }, 100);
+        }, 300); // Increased timeout for more reliable scrolling
+      }
+    } else if (location.hash) {
+      // Handle direct URL hash links like /#programs
+      const sectionId = location.hash.substring(1); // Remove the # character
+      const section = document.getElementById(sectionId);
+      
+      if (section) {
+        // Use a small timeout to ensure the page has fully loaded
+        setTimeout(() => {
+          section.scrollIntoView({ behavior: 'smooth' });
+        }, 300);
       }
     }
   }, [location]);
