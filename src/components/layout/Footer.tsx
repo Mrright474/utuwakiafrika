@@ -1,8 +1,24 @@
+
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Facebook, Twitter, Instagram, Mail, Phone, MapPin } from 'lucide-react';
 
 const Footer = () => {
+  const navigate = useNavigate();
+
+  const navigateToSection = (path: string, sectionId: string) => {
+    if (window.location.pathname === path) {
+      // Already on the right page, just scroll
+      const section = document.getElementById(sectionId);
+      if (section) {
+        section.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      // Navigate to the page first
+      navigate(path, { state: { scrollTo: sectionId } });
+    }
+  };
+
   return (
     <footer className="bg-utu-black text-white pt-12 sm:pt-16 pb-6 sm:pb-8">
       <div className="container mx-auto px-4">
@@ -35,19 +51,28 @@ const Footer = () => {
             <h3 className="text-lg font-bold mb-4">Quick Links</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/#about" className="text-gray-400 hover:text-white transition-colors">
+                <button 
+                  onClick={() => navigateToSection('/', 'about')} 
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
                   About Us
-                </Link>
+                </button>
               </li>
               <li>
-                <Link to="/#programs" className="text-gray-400 hover:text-white transition-colors">
+                <button 
+                  onClick={() => navigateToSection('/', 'programs')} 
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
                   Our Programs
-                </Link>
+                </button>
               </li>
               <li>
-                <Link to="/#team" className="text-gray-400 hover:text-white transition-colors">
+                <button 
+                  onClick={() => navigateToSection('/', 'team')} 
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
                   Our Team
-                </Link>
+                </button>
               </li>
               <li>
                 <Link to="/donate" className="text-gray-400 hover:text-white transition-colors">

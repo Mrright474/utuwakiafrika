@@ -2,12 +2,13 @@
 import React, { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -21,6 +22,12 @@ const Navbar = () => {
   const scrollToSection = (sectionId: string) => {
     closeMenu();
     
+    // If we're not on the home page, navigate there first and then scroll
+    if (window.location.pathname !== '/') {
+      navigate('/', { state: { scrollTo: sectionId } });
+      return;
+    }
+    
     // Get the section element
     const section = document.getElementById(sectionId);
     
@@ -28,6 +35,11 @@ const Navbar = () => {
     if (section) {
       section.scrollIntoView({ behavior: 'smooth' });
     }
+  };
+
+  const handleDonateClick = () => {
+    closeMenu();
+    navigate('/donate');
   };
 
   return (
@@ -75,9 +87,12 @@ const Navbar = () => {
             >
               Contact
             </button>
-            <Link to="/donate">
-              <Button className="bg-utu-red hover:bg-red-700 text-white">Donate Now</Button>
-            </Link>
+            <Button 
+              onClick={handleDonateClick} 
+              className="bg-utu-red hover:bg-red-700 text-white"
+            >
+              Donate Now
+            </Button>
           </div>
 
           {/* Mobile menu button */}
@@ -120,9 +135,12 @@ const Navbar = () => {
               >
                 Contact
               </button>
-              <Link to="/donate" onClick={closeMenu}>
-                <Button className="bg-utu-red hover:bg-red-700 text-white w-full">Donate Now</Button>
-              </Link>
+              <Button 
+                onClick={handleDonateClick}
+                className="bg-utu-red hover:bg-red-700 text-white w-full"
+              >
+                Donate Now
+              </Button>
             </div>
           </div>
         )}
