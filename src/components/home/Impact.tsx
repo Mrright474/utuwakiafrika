@@ -53,12 +53,12 @@ const defaultImpactData: ImpactData = {
     {
       title: "Education for Rural Communities",
       description: "We built 5 new schools in remote villages, providing education to over 500 children who previously had no access to schooling.",
-      image: "/lovable-uploads/969161e6-4a43-456e-8ceb-4578f7e45935.png"
+      image: "/lovable-uploads/52fedddf-3da6-485c-af83-de0020326139.png"
     },
     {
       title: "Clean Water Initiative",
       description: "Our team installed 20 water wells in drought-affected regions, providing clean drinking water to more than 10,000 people.",
-      image: "/lovable-uploads/a382b382-f2d2-4832-9343-db9d8abb367d.png"
+      image: "/lovable-uploads/7e1302ab-dabd-404d-b089-b1c7bdf0e631.png"
     }
   ]
 };
