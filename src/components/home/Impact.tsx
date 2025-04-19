@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { User, School, Home, Heart, Landmark, Briefcase } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -53,12 +54,12 @@ const defaultImpactData: ImpactData = {
     {
       title: "Education for Rural Communities",
       description: "We built 5 new schools in remote villages, providing education to over 500 children who previously had no access to schooling.",
-      image: "/lovable-uploads/52fedddf-3da6-485c-af83-de0020326139.png"
+      image: "/lovable-uploads/b07d8f50-577a-4699-87ba-8759e7ace688.png"
     },
     {
       title: "Clean Water Initiative",
       description: "Our team installed 20 water wells in drought-affected regions, providing clean drinking water to more than 10,000 people.",
-      image: "/lovable-uploads/7e1302ab-dabd-404d-b089-b1c7bdf0e631.png"
+      image: "/lovable-uploads/f90b8fff-8fac-4c94-8b28-10ed3702cc33.png"
     }
   ]
 };
