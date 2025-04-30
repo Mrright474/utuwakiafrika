@@ -17,8 +17,8 @@ const Hero = () => {
       {/* Background image with overlay */}
       <div className="absolute inset-0 opacity-30 bg-black">
         <img 
-          src="/lovable-uploads/f90b8fff-8fac-4c94-8b28-10ed3702cc33.png" 
-          alt="African community" 
+          src="/lovable-uploads/b07d8f50-577a-4699-87ba-8759e7ace688.png" 
+          alt="African children at school" 
           className="w-full h-full object-cover"
         />
         <div 
