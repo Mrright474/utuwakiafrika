@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Navbar from './Navbar';
 import Footer from './Footer';
@@ -38,15 +39,45 @@ const Layout = ({ children }: LayoutProps) => {
     if (!localStorage.getItem('utu-team')) {
       const defaultTeam = [
         {
+          name: "Ben Kazigo Luweru",
+          role: "Executive Director",
+          bio: "With over 10 years of experience in NGO management, Ben leads our strategic initiatives and operations across Africa.",
+          image: "/lovable-uploads/6e61272d-7786-4ccc-950e-4ae86bc5f39d.png"
+        },
+        {
+          name: "Lwasa Abdulbast",
+          role: "Deputy Director",
+          bio: "Lwasa oversees the implementation of our organizational strategies and ensures effective coordination between departments.",
+          image: "/lovable-uploads/6f761c26-afdc-468f-8580-4cbc8c3cab83.png"
+        },
+        {
+          name: "Laura Muwanguzi",
+          role: "Director of Programs",
+          bio: "Laura leads our program development and implementation, ensuring our initiatives create meaningful impact across communities.",
+          image: "/lovable-uploads/6cc22289-337a-4964-ab0f-4058feb43e63.png"
+        },
+        {
+          name: "Ellah Philp",
+          role: "Secretary",
+          bio: "Ellah manages administrative operations and ensures smooth coordination between different departments and stakeholders.",
+          image: "/lovable-uploads/da74094e-d355-4e7f-bda9-811435437ab1.png"
+        },
+        {
+          name: "Bule Paul",
+          role: "Legal Advisor",
+          bio: "Bule provides expert legal counsel and ensures compliance with regulatory requirements across our operations.",
+          image: "/lovable-uploads/c520e25e-9088-4335-9397-90370407dd62.png"
+        },
+        {
           name: "Dr. Amina Kenyatta",
-          role: "Founder & Executive Director",
-          bio: "Dr. Amina has over 15 years of experience in international development and a passion for empowering African communities.",
+          role: "Health Programs Coordinator",
+          bio: "Dr. Amina leads our healthcare initiatives and mobile clinics, bringing vital care to remote communities.",
           image: "/lovable-uploads/f18d343d-5225-4a78-9319-ab494bfd2de3.png"
         },
         {
           name: "Joseph Mwangi",
-          role: "Director of Programs",
-          bio: "Joseph oversees all our educational and health initiatives across East Africa.",
+          role: "Education Director",
+          bio: "Joseph oversees our educational programs, working to improve access to quality education across East Africa.",
           image: "/lovable-uploads/eccb4f96-1438-49ba-947c-c55ac2356fd0.png"
         },
         {
@@ -54,12 +85,6 @@ const Layout = ({ children }: LayoutProps) => {
           role: "Community Outreach Manager",
           bio: "Sarah works directly with local communities to identify needs and implement sustainable solutions.",
           image: "/lovable-uploads/a382b382-f2d2-4832-9343-db9d8abb367d.png"
-        },
-        {
-          name: "David Kariuki",
-          role: "Finance Director",
-          bio: "David ensures transparency and accountability in all our financial operations.",
-          image: "/lovable-uploads/f18d343d-5225-4a78-9319-ab494bfd2de3.png"
         }
       ];
       localStorage.setItem('utu-team', JSON.stringify(defaultTeam));
@@ -103,13 +128,13 @@ const Layout = ({ children }: LayoutProps) => {
         ],
         successStories: [
           {
-            title: "Kibera School Transformation",
-            description: "Renovated facilities and provided educational materials to a school in Kibera, improving attendance by 35%.",
+            title: "Education for Rural Communities",
+            description: "We built 5 new schools in remote villages, providing education to over 500 children who previously had no access to schooling.",
             image: "/lovable-uploads/b07d8f50-577a-4699-87ba-8759e7ace688.png"
           },
           {
-            title: "Masai Mara Clean Water",
-            description: "Installed water filtration systems in 5 villages, reducing waterborne diseases by 60%.",
+            title: "Clean Water Initiative",
+            description: "Our team installed 20 water wells in drought-affected regions, providing clean drinking water to more than 10,000 people.",
             image: "/lovable-uploads/f90b8fff-8fac-4c94-8b28-10ed3702cc33.png"
           }
         ]
