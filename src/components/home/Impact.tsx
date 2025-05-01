@@ -52,14 +52,24 @@ const defaultImpactData: ImpactData = {
   ],
   successStories: [
     {
-      title: "Education for Rural Communities",
-      description: "We built 5 new schools in remote villages, providing education to over 500 children who previously had no access to schooling.",
+      title: "Education for Kibera Children",
+      description: "We built 3 new schools in Kibera, Kenya's largest urban slum, providing quality education to over 500 children who previously had no access to proper schooling facilities.",
       image: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=500&auto=format&fit=crop"
     },
     {
-      title: "Clean Water Initiative",
-      description: "Our team installed 20 water wells in drought-affected regions, providing clean drinking water to more than 10,000 people.",
-      image: "https://images.unsplash.com/photo-1603977682662-f4fbee100052?q=80&w=500&auto=format&fit=crop"
+      title: "Masai Community Water Initiative",
+      description: "Our team installed 15 water wells in Masai Mara regions, providing clean drinking water to more than 8,000 people and reducing water-borne diseases by 60%.",
+      image: "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?q=80&w=500&auto=format&fit=crop"
+    },
+    {
+      title: "Kibera Youth Entrepreneurship",
+      description: "We've empowered 200 young adults in Kibera with business skills and microloans, leading to the creation of 75 sustainable small businesses within the community.",
+      image: "https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?q=80&w=500&auto=format&fit=crop"
+    },
+    {
+      title: "Masai Healthcare Outreach",
+      description: "Our mobile clinics have provided essential healthcare services to remote Masai villages, treating over 3,000 patients and administering vaccinations to 1,200 children.",
+      image: "https://images.unsplash.com/photo-1469041797191-50ace28483c3?q=80&w=500&auto=format&fit=crop"
     }
   ]
 };
@@ -88,20 +98,20 @@ const Impact = () => {
 
   const impactGallery = [
     {
-      image: "https://images.unsplash.com/photo-1469571486292-b53926c9bf6c?q=80&w=500&auto=format&fit=crop",
-      caption: "Community Cleanup Initiative"
+      image: "https://images.unsplash.com/photo-1526766489887-ca6e6e44f012?q=80&w=500&auto=format&fit=crop",
+      caption: "Kibera Community Projects"
     },
     {
       image: "https://images.unsplash.com/photo-1608531628147-46760e9a313c?q=80&w=500&auto=format&fit=crop",
-      caption: "Local Business Support"
+      caption: "Masai Village Support"
     },
     {
-      image: "https://images.unsplash.com/photo-1561731216-c3a4d99437d5?q=80&w=500&auto=format&fit=crop",
-      caption: "Environmental Protection"
+      image: "https://images.unsplash.com/photo-1466721591366-2d5fba72006d?q=80&w=500&auto=format&fit=crop",
+      caption: "Masai Wildlife Conservation"
     },
     {
-      image: "https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?q=80&w=500&auto=format&fit=crop",
-      caption: "Volunteer Programs"
+      image: "https://images.unsplash.com/photo-1484712401471-05c7215830eb?q=80&w=500&auto=format&fit=crop",
+      caption: "Kibera Youth Programs"
     }
   ];
 
@@ -137,6 +147,9 @@ const Impact = () => {
                   src={item.image}
                   alt={item.caption}
                   className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = "/placeholder.svg";
+                  }}
                 />
                 <div className="absolute inset-0 bg-black bg-opacity-40 flex items-end opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <p className="text-white p-4 text-sm">{item.caption}</p>
@@ -149,7 +162,7 @@ const Impact = () => {
         {impactData.successStories.length > 0 && (
           <div className="mt-16 animate-on-scroll opacity-0 translate-y-10 transition-all duration-700">
             <h3 className="text-xl sm:text-2xl font-bold mb-8 text-center font-heading">Success Stories</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
               {impactData.successStories.map((story, index) => (
                 <Card key={index} className="bg-white/10 backdrop-blur-sm border-0 overflow-hidden hover:bg-white/15 transition-colors duration-300">
                   <div className="flex flex-col md:flex-row">
@@ -159,6 +172,9 @@ const Impact = () => {
                           src={story.image} 
                           alt={story.title} 
                           className="w-full h-full object-cover"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = "/placeholder.svg";
+                          }}
                         />
                       </div>
                     )}

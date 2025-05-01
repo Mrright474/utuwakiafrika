@@ -18,7 +18,10 @@ const Testimonial = ({ quote, name, role, image }: TestimonialProps) => {
         <img 
           src={image} 
           alt={name}
-          className="w-12 h-12 rounded-full object-cover mr-4" 
+          className="w-12 h-12 rounded-full object-cover mr-4"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = "/placeholder.svg";
+          }}
         />
         <div>
           <h4 className="font-bold text-utu-black">{name}</h4>
@@ -32,22 +35,22 @@ const Testimonial = ({ quote, name, role, image }: TestimonialProps) => {
 const Testimonials = () => {
   const defaultTestimonials = [
     {
-      quote: "The educational support provided by Utu Wa Kiafrika changed my life. I was able to complete my education and now I'm giving back to my community as a teacher.",
-      name: "Grace Muthoni",
-      role: "Teacher, Kenya",
-      image: "https://images.unsplash.com/photo-1542810634-71277d95dcbb?q=80&w=200&auto=format&fit=crop"
+      quote: "The educational programs in Kibera have transformed our community. My daughter is the first in our family to attend high school, thanks to Utu Wa Kiafrika's scholarship program.",
+      name: "Wangari Muthoni",
+      role: "Parent, Kibera, Kenya",
+      image: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?q=80&w=200&auto=format&fit=crop"
     },
     {
-      quote: "The clean water project in our village has dramatically reduced waterborne diseases. Children now spend more time in school instead of fetching water from distant sources.",
-      name: "Joseph Onyango",
-      role: "Community Leader, Tanzania",
-      image: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=200&auto=format&fit=crop"
+      quote: "As a Masai elder, I've seen how the clean water wells have changed our village. Children are healthier, and women no longer walk for hours to fetch water.",
+      name: "Lenkume Konee",
+      role: "Community Elder, Masai Mara",
+      image: "https://images.unsplash.com/photo-1586657463815-2ceec4d2f4e3?q=80&w=200&auto=format&fit=crop"
     },
     {
-      quote: "The entrepreneurship training and microloan I received helped me start my small business. Now I can provide for my family and employ three people from my community.",
-      name: "Amina Mohammed",
-      role: "Entrepreneur, Uganda",
-      image: "https://images.unsplash.com/photo-1637417494726-6e074eb3ee07?q=80&w=200&auto=format&fit=crop"
+      quote: "The entrepreneurship training I received in Kibera helped me start my tailoring business. Now I employ four other women from my community, creating a ripple effect.",
+      name: "Akinyi Otieno",
+      role: "Entrepreneur, Kibera",
+      image: "https://images.unsplash.com/photo-1531123414780-f74242c2b052?q=80&w=200&auto=format&fit=crop"
     }
   ];
 
@@ -75,7 +78,7 @@ const Testimonials = () => {
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-utu-black font-heading">Testimonials</h2>
           <div className="w-20 h-1 bg-utu-red mx-auto mb-6"></div>
           <p className="text-lg text-utu-gray">
-            Hear from individuals whose lives have been transformed through our programs and initiatives.
+            Hear from individuals whose lives have been transformed through our programs and initiatives in communities like Kibera and Masai Mara.
           </p>
         </div>
 
