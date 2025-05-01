@@ -35,7 +35,11 @@ const TeamMemberCard = ({
         </button>
       )}
       <div className="overflow-hidden">
-        <ProfileImage src={image} alt={name} className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105" />
+        <ProfileImage 
+          src={image} 
+          alt={name} 
+          className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105" 
+        />
       </div>
       <div className="p-6">
         <h3 className="text-xl font-bold mb-1 text-utu-black">{name}</h3>
