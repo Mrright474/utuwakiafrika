@@ -11,7 +11,7 @@ interface TestimonialProps {
 
 const Testimonial = ({ quote, name, role, image }: TestimonialProps) => {
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
+    <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
       <Quote className="h-10 w-10 text-utu-red/30 mb-4" />
       <p className="text-utu-gray mb-6 italic">"{quote}"</p>
       <div className="flex items-center">
@@ -35,19 +35,19 @@ const Testimonials = () => {
       quote: "The educational support provided by Utu Wa Kiafrika changed my life. I was able to complete my education and now I'm giving back to my community as a teacher.",
       name: "Grace Muthoni",
       role: "Teacher, Kenya",
-      image: "/lovable-uploads/f18d343d-5225-4a78-9319-ab494bfd2de3.png"
+      image: "https://images.unsplash.com/photo-1542810634-71277d95dcbb?q=80&w=200&auto=format&fit=crop"
     },
     {
       quote: "The clean water project in our village has dramatically reduced waterborne diseases. Children now spend more time in school instead of fetching water from distant sources.",
       name: "Joseph Onyango",
       role: "Community Leader, Tanzania",
-      image: "/lovable-uploads/eccb4f96-1438-49ba-947c-c55ac2356fd0.png"
+      image: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=200&auto=format&fit=crop"
     },
     {
       quote: "The entrepreneurship training and microloan I received helped me start my small business. Now I can provide for my family and employ three people from my community.",
       name: "Amina Mohammed",
       role: "Entrepreneur, Uganda",
-      image: "/lovable-uploads/a382b382-f2d2-4832-9343-db9d8abb367d.png"
+      image: "https://images.unsplash.com/photo-1637417494726-6e074eb3ee07?q=80&w=200&auto=format&fit=crop"
     }
   ];
 
@@ -69,7 +69,7 @@ const Testimonials = () => {
   }, []);
 
   return (
-    <section className="py-16 bg-gradient-to-b from-utu-light-gray to-white">
+    <section className="py-16 bg-gradient-to-b from-utu-light-gray to-white animate-on-scroll opacity-0 translate-y-10 transition-all duration-700">
       <div className="container mx-auto px-4">
         <div className="text-center max-w-3xl mx-auto mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-utu-black font-heading">Testimonials</h2>

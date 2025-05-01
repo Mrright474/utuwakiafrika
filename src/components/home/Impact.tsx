@@ -54,12 +54,12 @@ const defaultImpactData: ImpactData = {
     {
       title: "Education for Rural Communities",
       description: "We built 5 new schools in remote villages, providing education to over 500 children who previously had no access to schooling.",
-      image: "/lovable-uploads/b07d8f50-577a-4699-87ba-8759e7ace688.png"
+      image: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=500&auto=format&fit=crop"
     },
     {
       title: "Clean Water Initiative",
       description: "Our team installed 20 water wells in drought-affected regions, providing clean drinking water to more than 10,000 people.",
-      image: "/lovable-uploads/f90b8fff-8fac-4c94-8b28-10ed3702cc33.png"
+      image: "https://images.unsplash.com/photo-1603977682662-f4fbee100052?q=80&w=500&auto=format&fit=crop"
     }
   ]
 };
@@ -88,19 +88,19 @@ const Impact = () => {
 
   const impactGallery = [
     {
-      image: "/lovable-uploads/48b1317c-a8a6-4e8b-837f-20bb05632713.png",
+      image: "https://images.unsplash.com/photo-1469571486292-b53926c9bf6c?q=80&w=500&auto=format&fit=crop",
       caption: "Community Cleanup Initiative"
     },
     {
-      image: "/lovable-uploads/53460912-2f2a-428b-b6e5-bc12ccf03604.png",
+      image: "https://images.unsplash.com/photo-1608531628147-46760e9a313c?q=80&w=500&auto=format&fit=crop",
       caption: "Local Business Support"
     },
     {
-      image: "/lovable-uploads/b9465bc7-3765-4b25-a3ec-30f8bed81725.png",
+      image: "https://images.unsplash.com/photo-1561731216-c3a4d99437d5?q=80&w=500&auto=format&fit=crop",
       caption: "Environmental Protection"
     },
     {
-      image: "/lovable-uploads/ed5bbc34-0ff2-46df-8898-3ee804b9d1ce.png",
+      image: "https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?q=80&w=500&auto=format&fit=crop",
       caption: "Volunteer Programs"
     }
   ];
@@ -108,7 +108,7 @@ const Impact = () => {
   return (
     <section id="impact" className="py-12 sm:py-16 bg-gradient-to-r from-utu-black to-gray-800 text-white">
       <div className="container mx-auto px-4">
-        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-16">
+        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-16 animate-on-scroll opacity-0 translate-y-10 transition-all duration-700">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 font-heading">Our Impact</h2>
           <div className="w-16 sm:w-20 h-1 bg-utu-red mx-auto mb-4 sm:mb-6"></div>
           <p className="text-base sm:text-lg text-gray-300">
@@ -117,7 +117,7 @@ const Impact = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 animate-on-scroll opacity-0 translate-y-10 transition-all duration-700">
           {impactData.stats.map((stat, index) => (
             <StatCard 
               key={index}
@@ -128,7 +128,7 @@ const Impact = () => {
           ))}
         </div>
 
-        <div className="mt-16">
+        <div className="mt-16 animate-on-scroll opacity-0 translate-y-10 transition-all duration-700">
           <h3 className="text-xl sm:text-2xl font-bold mb-8 text-center font-heading">Our Impact in Pictures</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {impactGallery.map((item, index) => (
@@ -147,11 +147,11 @@ const Impact = () => {
         </div>
 
         {impactData.successStories.length > 0 && (
-          <div className="mt-16">
+          <div className="mt-16 animate-on-scroll opacity-0 translate-y-10 transition-all duration-700">
             <h3 className="text-xl sm:text-2xl font-bold mb-8 text-center font-heading">Success Stories</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
               {impactData.successStories.map((story, index) => (
-                <Card key={index} className="bg-white/10 backdrop-blur-sm border-0 overflow-hidden">
+                <Card key={index} className="bg-white/10 backdrop-blur-sm border-0 overflow-hidden hover:bg-white/15 transition-colors duration-300">
                   <div className="flex flex-col md:flex-row">
                     {story.image && (
                       <div className="md:w-1/3 h-48 md:h-auto">
@@ -165,7 +165,7 @@ const Impact = () => {
                     <div className={`p-6 ${story.image ? 'md:w-2/3' : 'w-full'}`}>
                       <h4 className="text-xl font-bold mb-2">{story.title}</h4>
                       <p className="text-gray-300 mb-4">{story.description}</p>
-                      <Button variant="outline" className="border-white text-white hover:bg-white/20">
+                      <Button variant="outline" className="border-white text-white hover:bg-white/20 transition-colors duration-300">
                         Read More
                       </Button>
                     </div>
