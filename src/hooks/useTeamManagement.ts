@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useToast } from "@/hooks/use-toast";
 
@@ -62,9 +63,9 @@ const initialTeamMembers: TeamMember[] = [
   {
     id: "8",
     image: "/lovable-uploads/a382b382-f2d2-4832-9343-db9d8abb367d.png",
-    name: "Sarah Ochieng",
+    name: "Bakasumba Arnest",
     position: "Community Outreach Manager",
-    bio: "Sarah works directly with local communities to identify needs and implement sustainable solutions."
+    bio: "Bakasumba works directly with local communities to identify needs and implement sustainable solutions."
   }
 ];
 

@@ -24,7 +24,7 @@ const TeamMemberCard = ({
   isAdmin = false 
 }: TeamMemberCardProps) => {
   return (
-    <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow relative">
+    <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow relative group">
       {isAdmin && (
         <button 
           onClick={() => onEdit?.(id)}
@@ -34,11 +34,13 @@ const TeamMemberCard = ({
           <Edit size={16} className="text-utu-red" />
         </button>
       )}
-      <ProfileImage src={image} alt={name} />
+      <div className="overflow-hidden">
+        <ProfileImage src={image} alt={name} className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105" />
+      </div>
       <div className="p-6">
         <h3 className="text-xl font-bold mb-1 text-utu-black">{name}</h3>
         <p className="text-utu-red font-medium mb-3">{position}</p>
-        <p className="text-utu-gray text-sm mb-4">{bio}</p>
+        <p className="text-utu-gray text-sm mb-4 line-clamp-3">{bio}</p>
         <SocialLinks />
       </div>
     </div>
