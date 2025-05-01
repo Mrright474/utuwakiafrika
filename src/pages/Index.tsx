@@ -6,9 +6,8 @@ import Hero from '@/components/home/Hero';
 import About from '@/components/home/About';
 import Programs from '@/components/home/Programs';
 import Impact from '@/components/home/Impact';
-import Team from '@/components/home/Team';
-import GetInvolved from '@/components/home/GetInvolved';
 import Testimonials from '@/components/home/Testimonials';
+import GetInvolved from '@/components/home/GetInvolved';
 import Contact from '@/components/home/Contact';
 
 const Index = () => {
@@ -70,7 +69,6 @@ const Index = () => {
         <About />
         <Programs />
         <Impact />
-        <Team />
         <Testimonials />
         <GetInvolved />
         <Contact />

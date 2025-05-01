@@ -102,7 +102,7 @@ const Impact = () => {
       caption: "Kibera Community Projects"
     },
     {
-      image: "https://images.unsplash.com/photo-1608531628147-46760e9a313c?q=80&w=500&auto=format&fit=crop",
+      image: "https://images.unsplash.com/photo-1493962853295-0fd70327578a?q=80&w=500&auto=format&fit=crop",
       caption: "Masai Village Support"
     },
     {
