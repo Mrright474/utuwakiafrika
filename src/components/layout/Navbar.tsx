@@ -76,10 +76,10 @@ const Navbar = () => {
               Programs
             </button>
             <button 
-              onClick={() => scrollToSection('team')} 
+              onClick={() => scrollToSection('impact')} 
               className="text-utu-black hover:text-utu-red transition-colors font-medium"
             >
-              Our Team
+              Our Impact
             </button>
             <button 
               onClick={() => scrollToSection('contact')} 
@@ -124,10 +124,10 @@ const Navbar = () => {
                 Programs
               </button>
               <button 
-                onClick={() => scrollToSection('team')} 
+                onClick={() => scrollToSection('impact')} 
                 className="text-utu-black hover:text-utu-red transition-colors font-medium text-left"
               >
-                Our Team
+                Our Impact
               </button>
               <button 
                 onClick={() => scrollToSection('contact')} 
