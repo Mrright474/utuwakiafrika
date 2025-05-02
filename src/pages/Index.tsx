@@ -5,10 +5,10 @@ import Layout from '@/components/layout/Layout';
 import Hero from '@/components/home/Hero';
 import About from '@/components/home/About';
 import Programs from '@/components/home/Programs';
-import Impact from '@/components/home/Impact';
 import Testimonials from '@/components/home/Testimonials';
 import GetInvolved from '@/components/home/GetInvolved';
 import Contact from '@/components/home/Contact';
+import Team from '@/components/home/Team';
 
 const Index = () => {
   const location = useLocation();
@@ -68,7 +68,7 @@ const Index = () => {
         <Hero />
         <About />
         <Programs />
-        <Impact />
+        <Team />
         <Testimonials />
         <GetInvolved />
         <Contact />
