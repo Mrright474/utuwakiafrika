@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { MapPin, Users, Award, School, Heart, Book } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -35,10 +34,10 @@ interface ImpactData {
 
 const defaultImpactData: ImpactData = {
   stats: [
-    { value: '15+', label: 'Projects in Uganda', icon: 'Award' },
-    { value: '5,000+', label: 'Ugandans Supported', icon: 'Users' },
-    { value: '12', label: 'Districts Reached', icon: 'MapPin' },
-    { value: '8', label: 'Years in Uganda', icon: 'Heart' }
+    { value: '8+', label: 'Projects in Uganda', icon: 'Award' },
+    { value: '2,000+', label: 'Ugandans Supported', icon: 'Users' },
+    { value: '5', label: 'Districts Reached', icon: 'MapPin' },
+    { value: '1', label: 'Years in Uganda', icon: 'Heart' }
   ],
   ugandaProjects: [
     {
@@ -46,31 +45,31 @@ const defaultImpactData: ImpactData = {
       description: "Installed 8 water purification systems serving 2,500 residents in slum areas of Kampala, reducing waterborne disease incidents by 65%.",
       location: "Kampala",
       image: "/lovable-uploads/7e1302ab-dabd-404d-b089-b1c7bdf0e631.png",
-      year: 2022,
+      year: 2023,
       beneficiaries: 2500
     },
     {
       title: "Rural Education Support in Jinja",
       description: "Built 3 classrooms and provided educational materials to 4 schools in Jinja district, enabling 450 more children to access quality education.",
       location: "Jinja",
-      image: "/lovable-uploads/969161e6-4a43-456e-8ceb-4578f7e45935.png",
-      year: 2021,
+      image: "/lovable-uploads/53460912-2f2a-428b-b6e5-bc12ccf03604.png",
+      year: 2023,
       beneficiaries: 450
     },
     {
       title: "Women's Empowerment in Mbale",
       description: "Trained 120 women in entrepreneurship and provided microloans, resulting in 85 sustainable small businesses in Mbale communities.",
       location: "Mbale",
-      image: "/lovable-uploads/b07d8f50-577a-4699-87ba-8759e7ace688.png",
-      year: 2022,
+      image: "/lovable-uploads/da74094e-d355-4e7f-bda9-811435437ab1.png",
+      year: 2024,
       beneficiaries: 120
     },
     {
       title: "Healthcare Outreach in Gulu",
       description: "Mobile clinics provided essential healthcare services to 1,800 patients in remote villages of Gulu district, with focus on maternal care.",
       location: "Gulu",
-      image: "/lovable-uploads/52fedddf-3da6-485c-af83-de0020326139.png",
-      year: 2023,
+      image: "/lovable-uploads/6f761c26-afdc-468f-8580-4cbc8c3cab83.png",
+      year: 2024,
       beneficiaries: 1800
     }
   ],
@@ -137,8 +136,8 @@ const Impact = () => {
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 font-heading text-utu-black">Our Impact in Uganda</h2>
           <div className="w-16 sm:w-20 h-1 bg-utu-red mx-auto mb-6"></div>
           <p className="text-base sm:text-lg text-utu-gray">
-            Since beginning our work in Uganda, we've made significant strides in improving lives across the country.
-            From education and healthcare to clean water and economic empowerment, our initiatives have reached thousands.
+            Since beginning our work in Uganda in 2023, we've made significant strides in improving lives across the country.
+            From education and healthcare to clean water and economic empowerment, our new initiatives have already reached thousands.
           </p>
         </div>
 
@@ -165,7 +164,6 @@ const Impact = () => {
                 alt="Map of Uganda showing our impact locations"
                 className="w-full h-auto object-contain rounded-md"
               />
-              {/* Map pins could be added here with absolute positioning if needed */}
             </div>
           </div>
         </div>
