@@ -82,6 +82,12 @@ const Navbar = () => {
               Our Team
             </button>
             <button 
+              onClick={() => scrollToSection('impact')} 
+              className="text-utu-black hover:text-utu-red transition-colors font-medium"
+            >
+              Uganda Impact
+            </button>
+            <button 
               onClick={() => scrollToSection('contact')} 
               className="text-utu-black hover:text-utu-red transition-colors font-medium"
             >
@@ -128,6 +134,12 @@ const Navbar = () => {
                 className="text-utu-black hover:text-utu-red transition-colors font-medium text-left"
               >
                 Our Team
+              </button>
+              <button 
+                onClick={() => scrollToSection('impact')} 
+                className="text-utu-black hover:text-utu-red transition-colors font-medium text-left"
+              >
+                Uganda Impact
               </button>
               <button 
                 onClick={() => scrollToSection('contact')} 

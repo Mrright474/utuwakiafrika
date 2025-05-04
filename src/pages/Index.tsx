@@ -9,6 +9,7 @@ import Testimonials from '@/components/home/Testimonials';
 import GetInvolved from '@/components/home/GetInvolved';
 import Contact from '@/components/home/Contact';
 import Team from '@/components/home/Team';
+import Impact from '@/components/home/Impact';
 
 const Index = () => {
   const location = useLocation();
@@ -69,6 +70,7 @@ const Index = () => {
         <About />
         <Programs />
         <Team />
+        <Impact />
         <Testimonials />
         <GetInvolved />
         <Contact />

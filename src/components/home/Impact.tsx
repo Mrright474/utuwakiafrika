@@ -1,196 +1,281 @@
 
-import React, { useEffect, useState } from 'react';
-import { User, School, Home, Heart, Landmark, Briefcase } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { MapPin, Users, Award, School, Heart, Book } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-
-interface StatCardProps {
-  value: string | number;
-  label: string;
-  icon: React.ReactNode;
-}
+import { Card, CardContent } from '@/components/ui/card';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from '@/components/ui/carousel';
 
 interface ImpactData {
   stats: Array<{
     value: string | number;
     label: string;
+    icon: string;
   }>;
-  successStories: Array<{
+  ugandaProjects: Array<{
     title: string;
     description: string;
+    location: string;
+    image: string;
+    year: number;
+    beneficiaries: number;
+  }>;
+  successStories: Array<{
+    quote: string;
+    name: string;
+    location: string;
     image: string;
   }>;
 }
 
-const StatCard = ({ value, label, icon }: StatCardProps) => {
-  return (
-    <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md text-center">
-      <div className="bg-utu-red/10 w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
-        {icon}
-      </div>
-      <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 text-utu-black">{value}</h3>
-      <p className="text-sm sm:text-base text-utu-gray">{label}</p>
-    </div>
-  );
-};
-
-const iconMap = {
-  'User': <User className="h-6 w-6 sm:h-8 sm:w-8 text-utu-red" />,
-  'School': <School className="h-6 w-6 sm:h-8 sm:w-8 text-utu-red" />,
-  'Home': <Home className="h-6 w-6 sm:h-8 sm:w-8 text-utu-red" />,
-  'Heart': <Heart className="h-6 w-6 sm:h-8 sm:w-8 text-utu-red" />,
-  'Landmark': <Landmark className="h-6 w-6 sm:h-8 sm:w-8 text-utu-red" />,
-  'Briefcase': <Briefcase className="h-6 w-6 sm:h-8 sm:w-8 text-utu-red" />
-};
-
 const defaultImpactData: ImpactData = {
   stats: [
-    { value: '5,000+', label: 'People Supported', },
-    { value: '200+', label: 'Schools Built/Renovated' },
-    { value: '150+', label: 'Homes Constructed' },
-    { value: '12', label: 'Countries Reached' }
+    { value: '15+', label: 'Projects in Uganda', icon: 'Award' },
+    { value: '5,000+', label: 'Ugandans Supported', icon: 'Users' },
+    { value: '12', label: 'Districts Reached', icon: 'MapPin' },
+    { value: '8', label: 'Years in Uganda', icon: 'Heart' }
+  ],
+  ugandaProjects: [
+    {
+      title: "Clean Water Initiative in Kampala",
+      description: "Installed 8 water purification systems serving 2,500 residents in slum areas of Kampala, reducing waterborne disease incidents by 65%.",
+      location: "Kampala",
+      image: "/lovable-uploads/7e1302ab-dabd-404d-b089-b1c7bdf0e631.png",
+      year: 2022,
+      beneficiaries: 2500
+    },
+    {
+      title: "Rural Education Support in Jinja",
+      description: "Built 3 classrooms and provided educational materials to 4 schools in Jinja district, enabling 450 more children to access quality education.",
+      location: "Jinja",
+      image: "/lovable-uploads/969161e6-4a43-456e-8ceb-4578f7e45935.png",
+      year: 2021,
+      beneficiaries: 450
+    },
+    {
+      title: "Women's Empowerment in Mbale",
+      description: "Trained 120 women in entrepreneurship and provided microloans, resulting in 85 sustainable small businesses in Mbale communities.",
+      location: "Mbale",
+      image: "/lovable-uploads/b07d8f50-577a-4699-87ba-8759e7ace688.png",
+      year: 2022,
+      beneficiaries: 120
+    },
+    {
+      title: "Healthcare Outreach in Gulu",
+      description: "Mobile clinics provided essential healthcare services to 1,800 patients in remote villages of Gulu district, with focus on maternal care.",
+      location: "Gulu",
+      image: "/lovable-uploads/52fedddf-3da6-485c-af83-de0020326139.png",
+      year: 2023,
+      beneficiaries: 1800
+    }
   ],
   successStories: [
     {
-      title: "Education for Kibera Children",
-      description: "We built 3 new schools in Kibera, Kenya's largest urban slum, providing quality education to over 500 children who previously had no access to proper schooling facilities.",
-      image: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=500&auto=format&fit=crop"
+      quote: "Thanks to the agricultural training program, I can now support my six children through farming. My crop yield has tripled since applying the techniques I learned.",
+      name: "Sarah Namukasa",
+      location: "Masaka, Uganda",
+      image: "/lovable-uploads/f18d343d-5225-4a78-9319-ab494bfd2de3.png"
     },
     {
-      title: "Masai Community Water Initiative",
-      description: "Our team installed 15 water wells in Masai Mara regions, providing clean drinking water to more than 8,000 people and reducing water-borne diseases by 60%.",
-      image: "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?q=80&w=500&auto=format&fit=crop"
+      quote: "The scholarship from Utu Wa Kiafrika changed my life. I was able to complete my education and now I work as a teacher in my community.",
+      name: "Joseph Okello",
+      location: "Tororo, Uganda",
+      image: "/lovable-uploads/eccb4f96-1438-49ba-947c-c55ac2356fd0.png"
     },
     {
-      title: "Kibera Youth Entrepreneurship",
-      description: "We've empowered 200 young adults in Kibera with business skills and microloans, leading to the creation of 75 sustainable small businesses within the community.",
-      image: "https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?q=80&w=500&auto=format&fit=crop"
-    },
-    {
-      title: "Masai Healthcare Outreach",
-      description: "Our mobile clinics have provided essential healthcare services to remote Masai villages, treating over 3,000 patients and administering vaccinations to 1,200 children.",
-      image: "https://images.unsplash.com/photo-1469041797191-50ace28483c3?q=80&w=500&auto=format&fit=crop"
+      quote: "Our village now has clean water thanks to the well that was constructed. Our children no longer miss school due to waterborne diseases.",
+      name: "Mary Atim",
+      location: "Lira, Uganda",
+      image: "/lovable-uploads/a382b382-f2d2-4832-9343-db9d8abb367d.png"
     }
   ]
+};
+
+const iconComponents = {
+  MapPin: <MapPin className="h-6 w-6 sm:h-8 sm:w-8 text-utu-red" />,
+  Users: <Users className="h-6 w-6 sm:h-8 sm:w-8 text-utu-red" />,
+  Award: <Award className="h-6 w-6 sm:h-8 sm:w-8 text-utu-red" />,
+  School: <School className="h-6 w-6 sm:h-8 sm:w-8 text-utu-red" />,
+  Heart: <Heart className="h-6 w-6 sm:h-8 sm:w-8 text-utu-red" />,
+  Book: <Book className="h-6 w-6 sm:h-8 sm:w-8 text-utu-red" />
 };
 
 const Impact = () => {
   const [impactData, setImpactData] = useState<ImpactData>(defaultImpactData);
 
   useEffect(() => {
-    const savedImpact = localStorage.getItem('utu-impact');
+    const savedImpact = localStorage.getItem('utu-uganda-impact');
     if (savedImpact) {
       try {
         const parsedData = JSON.parse(savedImpact);
-        if (parsedData.stats?.length > 0 || parsedData.successStories?.length > 0) {
+        if (parsedData.stats?.length > 0 || parsedData.ugandaProjects?.length > 0) {
           setImpactData(parsedData);
         }
       } catch (error) {
-        console.error("Error parsing impact data:", error);
+        console.error("Error parsing Uganda impact data:", error);
       }
+    } else {
+      // Initialize data if not present
+      localStorage.setItem('utu-uganda-impact', JSON.stringify(defaultImpactData));
     }
   }, []);
 
-  const getIcon = (index: number) => {
-    const icons = Object.values(iconMap);
-    return icons[index % icons.length];
+  const getIconComponent = (iconName: string) => {
+    return iconComponents[iconName as keyof typeof iconComponents] || 
+           <Award className="h-6 w-6 sm:h-8 sm:w-8 text-utu-red" />;
   };
 
-  const impactGallery = [
-    {
-      image: "https://images.unsplash.com/photo-1526766489887-ca6e6e44f012?q=80&w=500&auto=format&fit=crop",
-      caption: "Kibera Community Projects"
-    },
-    {
-      image: "https://images.unsplash.com/photo-1493962853295-0fd70327578a?q=80&w=500&auto=format&fit=crop",
-      caption: "Masai Village Support"
-    },
-    {
-      image: "https://images.unsplash.com/photo-1466721591366-2d5fba72006d?q=80&w=500&auto=format&fit=crop",
-      caption: "Masai Wildlife Conservation"
-    },
-    {
-      image: "https://images.unsplash.com/photo-1484712401471-05c7215830eb?q=80&w=500&auto=format&fit=crop",
-      caption: "Kibera Youth Programs"
-    }
-  ];
-
   return (
-    <section id="impact" className="py-12 sm:py-16 bg-gradient-to-r from-utu-black to-gray-800 text-white">
+    <section id="impact" className="py-12 sm:py-20 bg-gradient-to-b from-white to-utu-light-gray">
       <div className="container mx-auto px-4">
-        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-16 animate-on-scroll opacity-0 translate-y-10 transition-all duration-700">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 font-heading">Our Impact</h2>
-          <div className="w-16 sm:w-20 h-1 bg-utu-red mx-auto mb-4 sm:mb-6"></div>
-          <p className="text-base sm:text-lg text-gray-300">
-            Since our founding, we've made significant strides in improving the lives of thousands
-            of people across Africa. Here's the impact we've created so far.
+        <div className="text-center max-w-3xl mx-auto mb-12 animate-on-scroll opacity-0 translate-y-10 transition-all duration-700">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 font-heading text-utu-black">Our Impact in Uganda</h2>
+          <div className="w-16 sm:w-20 h-1 bg-utu-red mx-auto mb-6"></div>
+          <p className="text-base sm:text-lg text-utu-gray">
+            Since beginning our work in Uganda, we've made significant strides in improving lives across the country.
+            From education and healthcare to clean water and economic empowerment, our initiatives have reached thousands.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 animate-on-scroll opacity-0 translate-y-10 transition-all duration-700">
+        {/* Key Statistics */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16 animate-on-scroll opacity-0 translate-y-10 transition-all duration-700">
           {impactData.stats.map((stat, index) => (
-            <StatCard 
-              key={index}
-              value={stat.value} 
-              label={stat.label} 
-              icon={getIcon(index)} 
-            />
+            <div key={index} className="bg-white p-6 rounded-lg shadow-md text-center hover:shadow-lg transition-all duration-300">
+              <div className="bg-utu-red/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                {getIconComponent(stat.icon)}
+              </div>
+              <h3 className="text-3xl md:text-4xl font-bold mb-2 text-utu-black">{stat.value}</h3>
+              <p className="text-sm sm:text-base text-utu-gray">{stat.label}</p>
+            </div>
           ))}
         </div>
 
-        <div className="mt-16 animate-on-scroll opacity-0 translate-y-10 transition-all duration-700">
-          <h3 className="text-xl sm:text-2xl font-bold mb-8 text-center font-heading">Our Impact in Pictures</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {impactGallery.map((item, index) => (
-              <div key={index} className="relative group overflow-hidden rounded-lg">
-                <img
-                  src={item.image}
-                  alt={item.caption}
-                  className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = "/placeholder.svg";
-                  }}
-                />
-                <div className="absolute inset-0 bg-black bg-opacity-40 flex items-end opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <p className="text-white p-4 text-sm">{item.caption}</p>
+        {/* Uganda Map with Impact Points */}
+        <div className="mb-16 animate-on-scroll opacity-0 translate-y-10 transition-all duration-700">
+          <h3 className="text-xl sm:text-2xl font-bold mb-8 text-center font-heading text-utu-black">Where We Work in Uganda</h3>
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <div className="aspect-w-16 aspect-h-9 relative">
+              <img
+                src="/lovable-uploads/b9465bc7-3765-4b25-a3ec-30f8bed81725.png"
+                alt="Map of Uganda showing our impact locations"
+                className="w-full h-auto object-contain rounded-md"
+              />
+              {/* Map pins could be added here with absolute positioning if needed */}
+            </div>
+          </div>
+        </div>
+
+        {/* Featured Projects */}
+        <div className="mb-16 animate-on-scroll opacity-0 translate-y-10 transition-all duration-700">
+          <h3 className="text-xl sm:text-2xl font-bold mb-8 text-center font-heading text-utu-black">Featured Projects</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {impactData.ugandaProjects.map((project, index) => (
+              <Card key={index} className="overflow-hidden hover:shadow-lg transition-all duration-300">
+                <div className="relative">
+                  <img 
+                    src={project.image} 
+                    alt={project.title} 
+                    className="w-full h-48 object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = "/placeholder.svg";
+                    }}
+                  />
+                  <div className="absolute bottom-0 left-0 bg-utu-red text-white py-1 px-3 rounded-tr-md">
+                    {project.location}
+                  </div>
                 </div>
-              </div>
+                <CardContent className="p-6">
+                  <div className="flex justify-between items-center mb-3">
+                    <h4 className="text-lg font-bold text-utu-black">{project.title}</h4>
+                    <span className="text-sm font-medium bg-utu-light-gray px-2 py-1 rounded-full">{project.year}</span>
+                  </div>
+                  <p className="text-utu-gray mb-4">{project.description}</p>
+                  <div className="flex items-center text-sm text-utu-gray">
+                    <Users className="h-4 w-4 mr-1" />
+                    <span><strong>{project.beneficiaries.toLocaleString()}</strong> beneficiaries</span>
+                  </div>
+                </CardContent>
+              </Card>
             ))}
           </div>
         </div>
 
-        {impactData.successStories.length > 0 && (
-          <div className="mt-16 animate-on-scroll opacity-0 translate-y-10 transition-all duration-700">
-            <h3 className="text-xl sm:text-2xl font-bold mb-8 text-center font-heading">Success Stories</h3>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+        {/* Testimonials Carousel */}
+        <div className="mb-16 animate-on-scroll opacity-0 translate-y-10 transition-all duration-700">
+          <h3 className="text-xl sm:text-2xl font-bold mb-8 text-center font-heading text-utu-black">Success Stories</h3>
+          
+          <Carousel
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            className="w-full max-w-4xl mx-auto"
+          >
+            <CarouselContent>
               {impactData.successStories.map((story, index) => (
-                <Card key={index} className="bg-white/10 backdrop-blur-sm border-0 overflow-hidden hover:bg-white/15 transition-colors duration-300">
-                  <div className="flex flex-col md:flex-row">
-                    {story.image && (
-                      <div className="md:w-1/3 h-48 md:h-auto">
-                        <img 
-                          src={story.image} 
-                          alt={story.title} 
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).src = "/placeholder.svg";
-                          }}
-                        />
+                <CarouselItem key={index} className="md:basis-1/1 lg:basis-1/1">
+                  <div className="bg-white p-6 rounded-lg shadow-md flex flex-col md:flex-row gap-6">
+                    <div className="md:w-1/4 flex justify-center">
+                      <img 
+                        src={story.image} 
+                        alt={story.name} 
+                        className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = "/placeholder.svg";
+                        }}
+                      />
+                    </div>
+                    <div className="md:w-3/4">
+                      <p className="text-utu-gray italic mb-4">&ldquo;{story.quote}&rdquo;</p>
+                      <div>
+                        <h5 className="font-bold text-utu-black">{story.name}</h5>
+                        <p className="text-sm text-utu-gray">{story.location}</p>
                       </div>
-                    )}
-                    <div className={`p-6 ${story.image ? 'md:w-2/3' : 'w-full'}`}>
-                      <h4 className="text-xl font-bold mb-2">{story.title}</h4>
-                      <p className="text-gray-300 mb-4">{story.description}</p>
-                      <Button variant="outline" className="border-white text-white hover:bg-white/20 transition-colors duration-300">
-                        Read More
-                      </Button>
                     </div>
                   </div>
-                </Card>
+                </CarouselItem>
               ))}
+            </CarouselContent>
+            <div className="flex justify-center mt-6">
+              <CarouselPrevious className="static translate-y-0 mr-2" />
+              <CarouselNext className="static translate-y-0 ml-2" />
             </div>
+          </Carousel>
+        </div>
+
+        {/* Call to Action */}
+        <div className="text-center animate-on-scroll opacity-0 translate-y-10 transition-all duration-700">
+          <h3 className="text-xl sm:text-2xl font-bold mb-4 font-heading text-utu-black">Help Us Make a Difference in Uganda</h3>
+          <p className="text-utu-gray mb-6 max-w-2xl mx-auto">
+            Your support can help us expand our impact across Uganda, bringing clean water,
+            education, healthcare, and economic opportunities to more communities in need.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button 
+              className="bg-utu-red hover:bg-red-700 text-white"
+              onClick={() => window.location.href = '/donate'}
+            >
+              Donate Now
+            </Button>
+            <Button 
+              variant="outline"
+              className="border-utu-red text-utu-red hover:bg-utu-red hover:text-white"
+              onClick={() => {
+                const contactSection = document.getElementById('contact');
+                if (contactSection) {
+                  contactSection.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
+            >
+              Contact Us
+            </Button>
           </div>
-        )}
+        </div>
       </div>
     </section>
   );
