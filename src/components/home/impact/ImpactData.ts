@@ -33,7 +33,7 @@ export const defaultImpactData: ImpactData = {
       title: "Clean Water Initiative in Kampala",
       description: "Installed 8 water purification systems serving 2,500 residents in slum areas of Kampala, reducing waterborne disease incidents by 65%.",
       location: "Kampala",
-      image: "/lovable-uploads/7e1302ab-dabd-404d-b089-b1c7bdf0e631.png",
+      image: "https://images.unsplash.com/photo-1592999660130-fe8886846390?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
       year: 2023,
       beneficiaries: 2500
     },
@@ -41,7 +41,7 @@ export const defaultImpactData: ImpactData = {
       title: "Rural Education Support in Jinja",
       description: "Built 3 classrooms and provided educational materials to 4 schools in Jinja district, enabling 450 more children to access quality education.",
       location: "Jinja",
-      image: "/lovable-uploads/53460912-2f2a-428b-b6e5-bc12ccf03604.png",
+      image: "https://images.unsplash.com/photo-1613896640137-bb5a118d3525?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
       year: 2023,
       beneficiaries: 450
     },
@@ -49,7 +49,7 @@ export const defaultImpactData: ImpactData = {
       title: "Women's Empowerment in Mbale",
       description: "Trained 120 women in entrepreneurship and provided microloans, resulting in 85 sustainable small businesses in Mbale communities.",
       location: "Mbale",
-      image: "/lovable-uploads/da74094e-d355-4e7f-bda9-811435437ab1.png",
+      image: "https://images.unsplash.com/photo-1623582854588-d60de57fa33f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
       year: 2024,
       beneficiaries: 120
     },
@@ -57,7 +57,7 @@ export const defaultImpactData: ImpactData = {
       title: "Healthcare Outreach in Gulu",
       description: "Mobile clinics provided essential healthcare services to 1,800 patients in remote villages of Gulu district, with focus on maternal care.",
       location: "Gulu",
-      image: "/lovable-uploads/6f761c26-afdc-468f-8580-4cbc8c3cab83.png",
+      image: "https://images.unsplash.com/photo-1504607798333-52a30db54a5d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
       year: 2024,
       beneficiaries: 1800
     }
