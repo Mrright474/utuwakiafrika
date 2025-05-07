@@ -18,25 +18,6 @@ const Navbar = () => {
     setIsMenuOpen(false);
   };
 
-  // Function to handle smooth scrolling to anchor elements
-  const scrollToSection = (sectionId: string) => {
-    closeMenu();
-    
-    // If we're not on the home page, navigate there first and then scroll
-    if (window.location.pathname !== '/') {
-      navigate('/', { state: { scrollTo: sectionId } });
-      return;
-    }
-    
-    // Get the section element
-    const section = document.getElementById(sectionId);
-    
-    // If we found the section, scroll to it
-    if (section) {
-      section.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
   const handleDonateClick = () => {
     closeMenu();
     navigate('/donate');
@@ -63,36 +44,41 @@ const Navbar = () => {
 
           {/* Desktop navigation */}
           <div className="hidden md:flex items-center space-x-4 lg:space-x-6">
-            <button 
-              onClick={() => scrollToSection('about')} 
+            <Link 
+              to="/about"
               className="text-utu-black hover:text-utu-red transition-colors font-medium"
+              onClick={closeMenu}
             >
               About
-            </button>
-            <button 
-              onClick={() => scrollToSection('programs')} 
+            </Link>
+            <Link 
+              to="/programs"
               className="text-utu-black hover:text-utu-red transition-colors font-medium"
+              onClick={closeMenu}
             >
               Programs
-            </button>
-            <button 
-              onClick={() => scrollToSection('team')} 
+            </Link>
+            <Link 
+              to="/team"
               className="text-utu-black hover:text-utu-red transition-colors font-medium"
+              onClick={closeMenu}
             >
               Our Team
-            </button>
-            <button 
-              onClick={() => scrollToSection('impact')} 
+            </Link>
+            <Link 
+              to="/impact"
               className="text-utu-black hover:text-utu-red transition-colors font-medium"
+              onClick={closeMenu}
             >
-              Uganda Impact
-            </button>
-            <button 
-              onClick={() => scrollToSection('contact')} 
+              Impact
+            </Link>
+            <Link 
+              to="/contact"
               className="text-utu-black hover:text-utu-red transition-colors font-medium"
+              onClick={closeMenu}
             >
               Contact
-            </button>
+            </Link>
             <Button 
               onClick={handleDonateClick} 
               className="bg-utu-red hover:bg-red-700 text-white"
@@ -117,36 +103,41 @@ const Navbar = () => {
         {isMenuOpen && (
           <div className="md:hidden mt-4 pb-4">
             <div className="flex flex-col space-y-4">
-              <button 
-                onClick={() => scrollToSection('about')} 
+              <Link 
+                to="/about"
                 className="text-utu-black hover:text-utu-red transition-colors font-medium text-left"
+                onClick={closeMenu}
               >
                 About
-              </button>
-              <button 
-                onClick={() => scrollToSection('programs')} 
+              </Link>
+              <Link 
+                to="/programs"
                 className="text-utu-black hover:text-utu-red transition-colors font-medium text-left"
+                onClick={closeMenu}
               >
                 Programs
-              </button>
-              <button 
-                onClick={() => scrollToSection('team')} 
+              </Link>
+              <Link 
+                to="/team"
                 className="text-utu-black hover:text-utu-red transition-colors font-medium text-left"
+                onClick={closeMenu}
               >
                 Our Team
-              </button>
-              <button 
-                onClick={() => scrollToSection('impact')} 
+              </Link>
+              <Link 
+                to="/impact"
                 className="text-utu-black hover:text-utu-red transition-colors font-medium text-left"
+                onClick={closeMenu}
               >
-                Uganda Impact
-              </button>
-              <button 
-                onClick={() => scrollToSection('contact')} 
+                Impact
+              </Link>
+              <Link 
+                to="/contact"
                 className="text-utu-black hover:text-utu-red transition-colors font-medium text-left"
+                onClick={closeMenu}
               >
                 Contact
-              </button>
+              </Link>
               <Button 
                 onClick={handleDonateClick}
                 className="bg-utu-red hover:bg-red-700 text-white w-full"

@@ -1,33 +1,29 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 
 const CallToAction = () => {
   return (
     <div className="text-center animate-on-scroll opacity-0 translate-y-10 transition-all duration-700">
-      <h3 className="text-xl sm:text-2xl font-bold mb-4 font-heading text-utu-black">Help Us Make a Difference in Uganda</h3>
+      <h3 className="text-xl sm:text-2xl font-bold mb-4 font-heading text-utu-black">Help Us Make a Difference</h3>
       <p className="text-utu-gray mb-6 max-w-2xl mx-auto">
-        Your support can help us expand our impact across Uganda, bringing clean water,
+        Your support can help us expand our impact across Africa, bringing clean water,
         education, healthcare, and economic opportunities to more communities in need.
       </p>
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
         <Button 
           className="bg-utu-red hover:bg-red-700 text-white"
-          onClick={() => window.location.href = '/donate'}
+          asChild
         >
-          Donate Now
+          <Link to="/donate">Donate Now</Link>
         </Button>
         <Button 
           variant="outline"
           className="border-utu-red text-utu-red hover:bg-utu-red hover:text-white"
-          onClick={() => {
-            const contactSection = document.getElementById('contact');
-            if (contactSection) {
-              contactSection.scrollIntoView({ behavior: 'smooth' });
-            }
-          }}
+          asChild
         >
-          Contact Us
+          <Link to="/contact">Contact Us</Link>
         </Button>
       </div>
     </div>

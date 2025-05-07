@@ -5,14 +5,6 @@ export interface ImpactData {
     label: string;
     icon: string;
   }>;
-  ugandaProjects: Array<{
-    title: string;
-    description: string;
-    location: string;
-    image: string;
-    year: number;
-    beneficiaries: number;
-  }>;
   successStories: Array<{
     quote: string;
     name: string;
@@ -23,44 +15,10 @@ export interface ImpactData {
 
 export const defaultImpactData: ImpactData = {
   stats: [
-    { value: '8+', label: 'Projects in Uganda', icon: 'Award' },
-    { value: '2,000+', label: 'Ugandans Supported', icon: 'Users' },
-    { value: '5', label: 'Districts Reached', icon: 'MapPin' },
-    { value: '1', label: 'Years in Uganda', icon: 'Heart' }
-  ],
-  ugandaProjects: [
-    {
-      title: "Clean Water Initiative in Kampala",
-      description: "Installed 8 water purification systems serving 2,500 residents in slum areas of Kampala, reducing waterborne disease incidents by 65%.",
-      location: "Kampala",
-      image: "https://images.unsplash.com/photo-1544958581-1f7eb2deb781?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-      year: 2023,
-      beneficiaries: 2500
-    },
-    {
-      title: "Rural Education Support in Jinja",
-      description: "Built 3 classrooms and provided educational materials to 4 schools in Jinja district, enabling 450 more children to access quality education.",
-      location: "Jinja",
-      image: "https://images.unsplash.com/photo-1588072432836-e10032774350?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-      year: 2023,
-      beneficiaries: 450
-    },
-    {
-      title: "Women's Empowerment in Mbale",
-      description: "Trained 120 women in entrepreneurship and provided microloans, resulting in 85 sustainable small businesses in Mbale communities.",
-      location: "Mbale",
-      image: "https://images.unsplash.com/photo-1487546331507-fcf8a5d27ab3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-      year: 2024,
-      beneficiaries: 120
-    },
-    {
-      title: "Healthcare Outreach in Gulu",
-      description: "Mobile clinics provided essential healthcare services to 1,800 patients in remote villages of Gulu district, with focus on maternal care.",
-      location: "Gulu",
-      image: "https://images.unsplash.com/photo-1584362917165-526a968579e8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-      year: 2024,
-      beneficiaries: 1800
-    }
+    { value: '25+', label: 'Projects Across Africa', icon: 'Award' },
+    { value: '10,000+', label: 'Lives Impacted', icon: 'Users' },
+    { value: '12', label: 'Communities Reached', icon: 'MapPin' },
+    { value: '5', label: 'Years of Service', icon: 'Heart' }
   ],
   successStories: [
     {

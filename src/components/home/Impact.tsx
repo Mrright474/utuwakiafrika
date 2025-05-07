@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { MapPin, Users, Award, Heart } from 'lucide-react';
 import { ImpactData, defaultImpactData } from './impact/ImpactData';
 import StatsSection from './impact/StatsSection';
-import UgandaMap from './impact/UgandaMap';
 import SuccessStories from './impact/SuccessStories';
 import CallToAction from './impact/CallToAction';
 
@@ -18,19 +17,19 @@ const Impact = () => {
   const [impactData, setImpactData] = useState<ImpactData>(defaultImpactData);
 
   useEffect(() => {
-    const savedImpact = localStorage.getItem('utu-uganda-impact');
+    const savedImpact = localStorage.getItem('utu-impact');
     if (savedImpact) {
       try {
         const parsedData = JSON.parse(savedImpact);
-        if (parsedData.stats?.length > 0 || parsedData.ugandaProjects?.length > 0) {
+        if (parsedData.stats?.length > 0) {
           setImpactData(parsedData);
         }
       } catch (error) {
-        console.error("Error parsing Uganda impact data:", error);
+        console.error("Error parsing impact data:", error);
       }
     } else {
       // Initialize data if not present
-      localStorage.setItem('utu-uganda-impact', JSON.stringify(defaultImpactData));
+      localStorage.setItem('utu-impact', JSON.stringify(defaultImpactData));
     }
   }, []);
 
@@ -38,19 +37,17 @@ const Impact = () => {
     <section id="impact" className="py-12 sm:py-20 bg-gradient-to-b from-white to-utu-light-gray">
       <div className="container mx-auto px-4">
         <div className="text-center max-w-3xl mx-auto mb-12 animate-on-scroll opacity-0 translate-y-10 transition-all duration-700">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 font-heading text-utu-black">Our Impact in Uganda</h2>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 font-heading text-utu-black">Our Impact</h2>
           <div className="w-16 sm:w-20 h-1 bg-utu-red mx-auto mb-6"></div>
           <p className="text-base sm:text-lg text-utu-gray">
-            Since beginning our work in Uganda in 2023, we've made significant strides in improving lives across the country.
-            From education and healthcare to clean water and economic empowerment, our new initiatives have already reached thousands.
+            Since our founding, we've made significant strides in improving lives across Africa.
+            From education and healthcare to clean water and economic empowerment, our initiatives 
+            have already reached thousands of people in need.
           </p>
         </div>
 
         {/* Key Statistics */}
         <StatsSection stats={impactData.stats} iconComponents={iconComponents} />
-
-        {/* Uganda Map with Impact Points */}
-        <UgandaMap />
 
         {/* Testimonials Carousel */}
         <SuccessStories stories={impactData.successStories} />
