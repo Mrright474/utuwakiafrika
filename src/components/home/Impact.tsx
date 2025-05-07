@@ -4,7 +4,6 @@ import { MapPin, Users, Award, Heart } from 'lucide-react';
 import { ImpactData, defaultImpactData } from './impact/ImpactData';
 import StatsSection from './impact/StatsSection';
 import UgandaMap from './impact/UgandaMap';
-import ProjectCards from './impact/ProjectCards';
 import SuccessStories from './impact/SuccessStories';
 import CallToAction from './impact/CallToAction';
 
@@ -52,9 +51,6 @@ const Impact = () => {
 
         {/* Uganda Map with Impact Points */}
         <UgandaMap />
-
-        {/* Featured Projects */}
-        <ProjectCards projects={impactData.ugandaProjects} />
 
         {/* Testimonials Carousel */}
         <SuccessStories stories={impactData.successStories} />
