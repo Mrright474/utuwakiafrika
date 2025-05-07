@@ -24,6 +24,7 @@ const ProjectCard = ({ project }: { project: Project }) => (
         alt={project.title} 
         className="w-full h-48 object-cover"
         onError={(e) => {
+          console.log("Image failed to load:", project.image);
           (e.target as HTMLImageElement).src = "/placeholder.svg";
         }}
       />
