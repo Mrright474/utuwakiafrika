@@ -46,6 +46,9 @@ const Index = () => {
           section.scrollIntoView({ behavior: 'smooth' });
         }, 500);
       }
+    } else {
+      // If no specific scroll target, ensure we're at the top of the page
+      window.scrollTo(0, 0);
     }
   }, [location.state]);
 

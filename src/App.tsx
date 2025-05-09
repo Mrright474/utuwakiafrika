@@ -14,6 +14,7 @@ import Donate from "./pages/Donate";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 import ChatBot from "./components/home/ChatBot";
+import ScrollToTop from "./components/layout/ScrollToTop";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -30,6 +31,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/about" element={<AboutPage />} />

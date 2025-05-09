@@ -22,6 +22,17 @@ const Navbar = () => {
   const handleDonateClick = () => {
     closeMenu();
     navigate('/donate');
+    window.scrollTo(0, 0);
+  };
+
+  const handleNavLinkClick = (path: string) => {
+    closeMenu();
+    if (location.pathname === path) {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
   };
 
   const isActive = (path: string) => {
@@ -34,7 +45,7 @@ const Navbar = () => {
         <div className="flex justify-between items-center">
           {/* Logo and brand name */}
           <div className="flex items-center">
-            <Link to="/" className="flex items-center" onClick={closeMenu}>
+            <Link to="/" className="flex items-center" onClick={() => handleNavLinkClick('/')}>
               <img 
                 src="/lovable-uploads/7645e834-1078-4707-9732-786fd4d93d8c.png" 
                 alt="Utu Wa Kiafrika Logo" 
@@ -52,7 +63,7 @@ const Navbar = () => {
             <Link 
               to="/"
               className={`flex items-center gap-1 ${isActive('/') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium`}
-              onClick={closeMenu}
+              onClick={() => handleNavLinkClick('/')}
             >
               <Home size={18} />
               Home
@@ -60,35 +71,35 @@ const Navbar = () => {
             <Link 
               to="/about"
               className={`${isActive('/about') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium`}
-              onClick={closeMenu}
+              onClick={() => handleNavLinkClick('/about')}
             >
               About
             </Link>
             <Link 
               to="/programs"
               className={`${isActive('/programs') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium`}
-              onClick={closeMenu}
+              onClick={() => handleNavLinkClick('/programs')}
             >
               Programs
             </Link>
             <Link 
               to="/team"
               className={`${isActive('/team') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium`}
-              onClick={closeMenu}
+              onClick={() => handleNavLinkClick('/team')}
             >
               Our Team
             </Link>
             <Link 
               to="/impact"
               className={`${isActive('/impact') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium`}
-              onClick={closeMenu}
+              onClick={() => handleNavLinkClick('/impact')}
             >
               Impact
             </Link>
             <Link 
               to="/contact"
               className={`${isActive('/contact') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium`}
-              onClick={closeMenu}
+              onClick={() => handleNavLinkClick('/contact')}
             >
               Contact
             </Link>
@@ -119,7 +130,7 @@ const Navbar = () => {
               <Link 
                 to="/"
                 className={`flex items-center gap-1 ${isActive('/') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium text-left`}
-                onClick={closeMenu}
+                onClick={() => handleNavLinkClick('/')}
               >
                 <Home size={18} />
                 Home
@@ -127,35 +138,35 @@ const Navbar = () => {
               <Link 
                 to="/about"
                 className={`${isActive('/about') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium text-left`}
-                onClick={closeMenu}
+                onClick={() => handleNavLinkClick('/about')}
               >
                 About
               </Link>
               <Link 
                 to="/programs"
                 className={`${isActive('/programs') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium text-left`}
-                onClick={closeMenu}
+                onClick={() => handleNavLinkClick('/programs')}
               >
                 Programs
               </Link>
               <Link 
                 to="/team"
                 className={`${isActive('/team') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium text-left`}
-                onClick={closeMenu}
+                onClick={() => handleNavLinkClick('/team')}
               >
                 Our Team
               </Link>
               <Link 
                 to="/impact"
                 className={`${isActive('/impact') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium text-left`}
-                onClick={closeMenu}
+                onClick={() => handleNavLinkClick('/impact')}
               >
                 Impact
               </Link>
               <Link 
                 to="/contact"
                 className={`${isActive('/contact') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium text-left`}
-                onClick={closeMenu}
+                onClick={() => handleNavLinkClick('/contact')}
               >
                 Contact
               </Link>

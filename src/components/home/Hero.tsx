@@ -42,7 +42,7 @@ const Hero = () => {
             and economic development.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
-            <Link to="/donate">
+            <Link to="/donate" onClick={() => window.scrollTo(0, 0)}>
               <Button className="bg-utu-red hover:bg-red-700 text-white px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg w-full sm:w-auto transition-transform hover:scale-105 flex items-center gap-2">
                 <Heart size={18} />
                 Donate Now
