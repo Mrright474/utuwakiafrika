@@ -61,9 +61,9 @@ const Index = () => {
         <Programs />
         <VisualGallery />
         <Impact />
-        <Team />
         <Testimonials />
         <GetInvolved />
+        <Team />
         <Contact />
       </div>
     </Layout>
