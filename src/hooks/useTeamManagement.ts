@@ -8,7 +8,7 @@ export interface TeamMember {
   name: string;
   position: string;
   bio: string;
-  role: string; // Added the missing 'role' property
+  role: string; // This is required according to the interface
 }
 
 const initialTeamMembers: TeamMember[] = [
@@ -98,7 +98,8 @@ export const useTeamManagement = () => {
       image: "/placeholder.svg",
       name: "",
       position: "",
-      bio: ""
+      bio: "",
+      role: "" // Added the missing role property with an empty string default
     });
     setImagePreview("/placeholder.svg");
   };
