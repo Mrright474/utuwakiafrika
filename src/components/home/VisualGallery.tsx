@@ -107,7 +107,7 @@ const VisualGallery = () => {
         </div>
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="max-w-4xl bg-black/95 text-white border-none p-0 overflow-hidden" closeButton={false}>
+          <DialogContent className="max-w-4xl bg-black/95 text-white border-none p-0 overflow-hidden">
             {selectedImageIndex !== null && (
               <div className="relative">
                 <img
