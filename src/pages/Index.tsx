@@ -9,6 +9,7 @@ import About from '@/components/home/About';
 import Team from '@/components/home/Team';
 import Impact from '@/components/home/Impact';
 import Contact from '@/components/home/Contact';
+import VisualGallery from '@/components/home/VisualGallery';
 import { useLocation } from 'react-router-dom';
 
 const Index = () => {
@@ -58,6 +59,7 @@ const Index = () => {
         <Hero />
         <About />
         <Programs />
+        <VisualGallery />
         <Impact />
         <Team />
         <Testimonials />
