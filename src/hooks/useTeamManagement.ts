@@ -8,6 +8,7 @@ export interface TeamMember {
   name: string;
   position: string;
   bio: string;
+  role: string; // Added the missing 'role' property
 }
 
 const initialTeamMembers: TeamMember[] = [
@@ -16,56 +17,64 @@ const initialTeamMembers: TeamMember[] = [
     image: "/lovable-uploads/6e61272d-7786-4ccc-950e-4ae86bc5f39d.png",
     name: "Ben Kazigo Luweru",
     position: "Executive Director",
-    bio: "With over 10 years of experience in NGO management, Ben leads our strategic initiatives and operations across Africa."
+    bio: "With over 10 years of experience in NGO management, Ben leads our strategic initiatives and operations across Africa.",
+    role: "Executive" // Added role property to match the filters in Team.tsx
   },
   {
     id: "2",
     image: "/lovable-uploads/6f761c26-afdc-468f-8580-4cbc8c3cab83.png",
     name: "Lwasa Abdulbast",
     position: "Deputy Director",
-    bio: "Lwasa oversees the implementation of our organizational strategies and ensures effective coordination between departments."
+    bio: "Lwasa oversees the implementation of our organizational strategies and ensures effective coordination between departments.",
+    role: "Director" // Added role property
   },
   {
     id: "3",
     image: "/lovable-uploads/6cc22289-337a-4964-ab0f-4058feb43e63.png",
     name: "Laura Muwanguzi",
     position: "Director of Programs",
-    bio: "Laura leads our program development and implementation, ensuring our initiatives create meaningful impact across communities."
+    bio: "Laura leads our program development and implementation, ensuring our initiatives create meaningful impact across communities.",
+    role: "Director" // Added role property
   },
   {
     id: "4",
     image: "/lovable-uploads/da74094e-d355-4e7f-bda9-811435437ab1.png",
     name: "Ellah Philp",
     position: "Secretary",
-    bio: "Ellah manages administrative operations and ensures smooth coordination between different departments and stakeholders."
+    bio: "Ellah manages administrative operations and ensures smooth coordination between different departments and stakeholders.",
+    role: "Secretary" // Added role property
   },
   {
     id: "5",
     image: "/lovable-uploads/c520e25e-9088-4335-9397-90370407dd62.png",
     name: "Bule Paul",
     position: "Legal Advisor",
-    bio: "Bule provides expert legal counsel and ensures compliance with regulatory requirements across our operations."
+    bio: "Bule provides expert legal counsel and ensures compliance with regulatory requirements across our operations.",
+    role: "Advisor" // Added role property
   },
   {
     id: "6",
     image: "/lovable-uploads/f18d343d-5225-4a78-9319-ab494bfd2de3.png",
     name: "Dr. Amina Kenyatta",
     position: "Health Programs Coordinator",
-    bio: "Dr. Amina leads our healthcare initiatives and mobile clinics, bringing vital care to remote communities."
+    bio: "Dr. Amina leads our healthcare initiatives and mobile clinics, bringing vital care to remote communities.",
+    role: "Coordinator" // Added role property
   },
   {
     id: "7",
     image: "/lovable-uploads/eccb4f96-1438-49ba-947c-c55ac2356fd0.png",
     name: "Joseph Mwangi",
     position: "Education Director",
-    bio: "Joseph oversees our educational programs, working to improve access to quality education across East Africa."
+    bio: "Joseph oversees our educational programs, working to improve access to quality education across East Africa.",
+    role: "Director" // Added role property
   },
   {
     id: "8",
     image: "/lovable-uploads/a382b382-f2d2-4832-9343-db9d8abb367d.png",
     name: "Bakasumba Arnest",
     position: "Community Outreach Manager",
-    bio: "Bakasumba works directly with local communities to identify needs and implement sustainable solutions."
+    bio: "Bakasumba works directly with local communities to identify needs and implement sustainable solutions.",
+    role: "Manager" // Added role property
   }
 ];
 

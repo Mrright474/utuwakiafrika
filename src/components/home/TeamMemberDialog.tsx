@@ -20,6 +20,7 @@ interface TeamMemberDialogProps {
     position: string;
     bio: string;
     image: string;
+    role?: string; // Added role as optional to match existing structure
   };
   onClose: () => void;
   onSave: () => void;
@@ -59,6 +60,15 @@ const TeamMemberDialog = ({
             value={member.position}
             onChange={(e) => onChange('position', e.target.value)}
             placeholder="Job Title"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor={`${mode}-role`}>Role Category</Label>
+          <Input 
+            id={`${mode}-role`}
+            value={member.role || ''}
+            onChange={(e) => onChange('role', e.target.value)}
+            placeholder="Director, Coordinator, Manager, etc."
           />
         </div>
         <div className="space-y-2">

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog } from "@/components/ui/dialog";
 import TeamMemberCard from './TeamMemberCard';
@@ -55,11 +54,13 @@ const Team = () => {
           <h3 className="text-xl font-bold mb-6 text-center text-utu-black">Leadership Team</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {teamMembers.filter((member) => 
-              member.role.includes("Director") || 
-              member.role.includes("Executive") || 
-              member.role.includes("President") ||
-              member.role.includes("Secretary") ||
-              member.role.includes("Advisor")
+              member.role && (
+                member.role.includes("Director") || 
+                member.role.includes("Executive") || 
+                member.role.includes("President") ||
+                member.role.includes("Secretary") ||
+                member.role.includes("Advisor")
+              )
             ).map((member) => (
               <TeamMemberCard
                 key={member.id}
@@ -79,14 +80,16 @@ const Team = () => {
           <h3 className="text-xl font-bold mb-6 text-center text-utu-black">Program Team</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-6 md:gap-8">
             {teamMembers.filter((member) => 
-              member.role.includes("Coordinator") || 
-              member.role.includes("Manager") ||
-              !(
-                member.role.includes("Director") || 
-                member.role.includes("Executive") || 
-                member.role.includes("President") ||
-                member.role.includes("Secretary") ||
-                member.role.includes("Advisor")
+              member.role && (
+                member.role.includes("Coordinator") || 
+                member.role.includes("Manager") ||
+                !(
+                  member.role.includes("Director") || 
+                  member.role.includes("Executive") || 
+                  member.role.includes("President") ||
+                  member.role.includes("Secretary") ||
+                  member.role.includes("Advisor")
+                )
               )
             ).map((member) => (
               <TeamMemberCard
