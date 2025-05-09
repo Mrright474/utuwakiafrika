@@ -1,14 +1,15 @@
 
 import React, { useState } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const isMobile = useIsMobile();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -21,6 +22,10 @@ const Navbar = () => {
   const handleDonateClick = () => {
     closeMenu();
     navigate('/donate');
+  };
+
+  const isActive = (path: string) => {
+    return location.pathname === path;
   };
 
   return (
@@ -45,36 +50,44 @@ const Navbar = () => {
           {/* Desktop navigation */}
           <div className="hidden md:flex items-center space-x-4 lg:space-x-6">
             <Link 
+              to="/"
+              className={`flex items-center gap-1 ${isActive('/') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium`}
+              onClick={closeMenu}
+            >
+              <Home size={18} />
+              Home
+            </Link>
+            <Link 
               to="/about"
-              className="text-utu-black hover:text-utu-red transition-colors font-medium"
+              className={`${isActive('/about') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium`}
               onClick={closeMenu}
             >
               About
             </Link>
             <Link 
               to="/programs"
-              className="text-utu-black hover:text-utu-red transition-colors font-medium"
+              className={`${isActive('/programs') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium`}
               onClick={closeMenu}
             >
               Programs
             </Link>
             <Link 
               to="/team"
-              className="text-utu-black hover:text-utu-red transition-colors font-medium"
+              className={`${isActive('/team') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium`}
               onClick={closeMenu}
             >
               Our Team
             </Link>
             <Link 
               to="/impact"
-              className="text-utu-black hover:text-utu-red transition-colors font-medium"
+              className={`${isActive('/impact') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium`}
               onClick={closeMenu}
             >
               Impact
             </Link>
             <Link 
               to="/contact"
-              className="text-utu-black hover:text-utu-red transition-colors font-medium"
+              className={`${isActive('/contact') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium`}
               onClick={closeMenu}
             >
               Contact
@@ -104,36 +117,44 @@ const Navbar = () => {
           <div className="md:hidden mt-4 pb-4">
             <div className="flex flex-col space-y-4">
               <Link 
+                to="/"
+                className={`flex items-center gap-1 ${isActive('/') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium text-left`}
+                onClick={closeMenu}
+              >
+                <Home size={18} />
+                Home
+              </Link>
+              <Link 
                 to="/about"
-                className="text-utu-black hover:text-utu-red transition-colors font-medium text-left"
+                className={`${isActive('/about') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium text-left`}
                 onClick={closeMenu}
               >
                 About
               </Link>
               <Link 
                 to="/programs"
-                className="text-utu-black hover:text-utu-red transition-colors font-medium text-left"
+                className={`${isActive('/programs') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium text-left`}
                 onClick={closeMenu}
               >
                 Programs
               </Link>
               <Link 
                 to="/team"
-                className="text-utu-black hover:text-utu-red transition-colors font-medium text-left"
+                className={`${isActive('/team') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium text-left`}
                 onClick={closeMenu}
               >
                 Our Team
               </Link>
               <Link 
                 to="/impact"
-                className="text-utu-black hover:text-utu-red transition-colors font-medium text-left"
+                className={`${isActive('/impact') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium text-left`}
                 onClick={closeMenu}
               >
                 Impact
               </Link>
               <Link 
                 to="/contact"
-                className="text-utu-black hover:text-utu-red transition-colors font-medium text-left"
+                className={`${isActive('/contact') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium text-left`}
                 onClick={closeMenu}
               >
                 Contact

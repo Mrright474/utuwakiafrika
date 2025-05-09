@@ -3,8 +3,17 @@ import React, { useEffect } from 'react';
 import Layout from '@/components/layout/Layout';
 import Hero from '@/components/home/Hero';
 import GetInvolved from '@/components/home/GetInvolved';
+import Testimonials from '@/components/home/Testimonials';
+import Programs from '@/components/home/Programs';
+import About from '@/components/home/About';
+import Team from '@/components/home/Team';
+import Impact from '@/components/home/Impact';
+import Contact from '@/components/home/Contact';
+import { useLocation } from 'react-router-dom';
 
 const Index = () => {
+  const location = useLocation();
+
   // Add intersection observer for animation on scroll
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -28,11 +37,29 @@ const Index = () => {
     };
   }, []);
 
+  // Scroll to section if coming from another page with a specific target
+  useEffect(() => {
+    if (location.state && location.state.scrollTo) {
+      const section = document.getElementById(location.state.scrollTo);
+      if (section) {
+        setTimeout(() => {
+          section.scrollIntoView({ behavior: 'smooth' });
+        }, 500);
+      }
+    }
+  }, [location.state]);
+
   return (
     <Layout>
       <div className="overflow-x-hidden w-full">
         <Hero />
+        <About />
+        <Programs />
+        <Impact />
+        <Team />
+        <Testimonials />
         <GetInvolved />
+        <Contact />
       </div>
     </Layout>
   );
