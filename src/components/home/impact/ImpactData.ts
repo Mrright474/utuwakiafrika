@@ -15,9 +15,9 @@ export interface ImpactData {
 
 export const defaultImpactData: ImpactData = {
   stats: [
-    { value: '25+', label: 'Projects Across Africa', icon: 'Award' },
+    { value: '25+', label: 'Projects Completed', icon: 'Award' },
     { value: '10,000+', label: 'Lives Impacted', icon: 'Users' },
-    { value: '12', label: 'Communities Reached', icon: 'MapPin' },
+    { value: '12', label: 'Countries Reached', icon: 'MapPin' },
     { value: '5', label: 'Years of Service', icon: 'Heart' }
   ],
   successStories: [
@@ -38,6 +38,12 @@ export const defaultImpactData: ImpactData = {
       name: "Mary Atim",
       location: "Lira, Uganda",
       image: "/lovable-uploads/a382b382-f2d2-4832-9343-db9d8abb367d.png"
+    },
+    {
+      quote: "The microfinance loan helped me start my tailoring business. Now I employ three other women from my village and can afford to send my children to school.",
+      name: "Florence Achieng",
+      location: "Kampala, Uganda",
+      image: "/lovable-uploads/da74094e-d355-4e7f-bda9-811435437ab1.png"
     }
   ]
 };
