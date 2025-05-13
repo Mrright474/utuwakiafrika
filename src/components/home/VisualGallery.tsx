@@ -111,51 +111,55 @@ const VisualGallery = () => {
   };
 
   return (
-    <section className="py-16 md:py-24 bg-gradient-to-b from-utu-light-gray to-white">
-      <div className="container mx-auto px-4">
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-utu-black font-heading">Our Impact Gallery</h2>
-          <div className="w-20 h-1 bg-utu-red mx-auto mb-6"></div>
-          <p className="text-lg text-utu-gray">
-            Witness our journey through these visual stories from communities across Africa.
-            Each image represents lives touched and communities transformed since our inception in 2024.
+    <section className="py-24 md:py-32 bg-gradient-to-b from-white to-utu-light-gray overflow-hidden">
+      <div className="container mx-auto px-6 md:px-8">
+        <div className="text-center max-w-4xl mx-auto mb-20">
+          <p className="text-utu-red font-semibold mb-2">OUR WORK IN ACTION</p>
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-utu-black font-heading">Impact Gallery</h2>
+          <div className="w-24 h-1 bg-utu-red mx-auto mb-8"></div>
+          <p className="text-xl text-utu-gray">
+            Discover the transformative power of our initiatives through these visual stories 
+            from communities across Africa.
           </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
           {visibleImages.map((image, index) => (
             <div
               key={index}
-              className="relative group overflow-hidden rounded-lg cursor-pointer animate-on-scroll opacity-0 translate-y-10 transition-all duration-700 aspect-square"
-              style={{ animationDelay: `${index * 100}ms` }}
+              className="relative group overflow-hidden rounded-2xl cursor-pointer animate-on-scroll opacity-0 translate-y-10 transition-all duration-700 aspect-[4/5] shadow-lg"
+              style={{ animationDelay: `${index * 150}ms` }}
               onClick={() => handleImageClick(index)}
             >
               <img
                 src={image.src}
                 alt={image.alt}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
-                <p className="text-white text-sm font-semibold">{image.alt}</p>
-                <p className="text-white/80 text-xs flex items-center mt-1">
-                  <Info className="h-3 w-3 mr-1" />
-                  {image.location}
-                </p>
-                <p className="text-white/70 text-xs flex items-center mt-1">
-                  <Calendar className="h-3 w-3 mr-1" />
-                  {image.date}
-                </p>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute bottom-0 left-0 right-0 p-6 transform translate-y-6 group-hover:translate-y-0 transition-transform duration-300">
+                  <p className="text-white text-lg font-semibold mb-2">{image.alt}</p>
+                  <div className="flex flex-col space-y-2">
+                    <p className="text-white/90 text-sm flex items-center">
+                      <Info className="h-4 w-4 mr-2" />
+                      {image.location}
+                    </p>
+                    <p className="text-white/80 text-sm flex items-center">
+                      <Calendar className="h-4 w-4 mr-2" />
+                      {image.date}
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           ))}
         </div>
 
         {visibleImages.length < galleryImages.length && (
-          <div className="mt-8 text-center">
+          <div className="mt-14 text-center">
             <Button 
               onClick={handleViewMore} 
-              variant="outline"
-              className="border-utu-red text-utu-red hover:bg-utu-red hover:text-white"
+              className="bg-transparent hover:bg-utu-red border-2 border-utu-red text-utu-red hover:text-white text-lg py-6 px-10 rounded-full transition-colors duration-300"
             >
               View More Images
             </Button>
@@ -163,32 +167,32 @@ const VisualGallery = () => {
         )}
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="max-w-5xl bg-black/95 text-white border-none p-0 overflow-hidden">
+          <DialogContent className="max-w-5xl bg-black/95 text-white border-none p-0 overflow-hidden rounded-2xl">
             {selectedImageIndex !== null && (
               <div className="relative">
                 <img
                   src={galleryImages[selectedImageIndex].src}
                   alt={galleryImages[selectedImageIndex].alt}
-                  className="w-full max-h-[70vh] object-contain"
+                  className="w-full max-h-[80vh] object-contain"
                 />
                 <Button
                   variant="outline"
                   size="icon"
-                  className="absolute top-4 right-4 rounded-full bg-black/50 border-none text-white hover:bg-black/70"
+                  className="absolute top-4 right-4 rounded-full bg-black/60 border-none text-white hover:bg-black/80"
                   onClick={() => setIsDialogOpen(false)}
                 >
                   <X className="h-6 w-6" />
                 </Button>
-                <div className="absolute bottom-0 left-0 right-0 bg-black/70 p-4">
-                  <h3 className="font-bold text-lg">{galleryImages[selectedImageIndex].alt}</h3>
-                  <p className="text-sm text-gray-300">{galleryImages[selectedImageIndex].caption}</p>
-                  <div className="flex items-center justify-between mt-2">
-                    <div className="flex items-center text-xs text-gray-400">
-                      <Info className="h-4 w-4 mr-1" />
+                <div className="absolute bottom-0 left-0 right-0 bg-black/70 backdrop-blur-sm p-6">
+                  <h3 className="font-bold text-xl">{galleryImages[selectedImageIndex].alt}</h3>
+                  <p className="text-base text-gray-300 mt-2">{galleryImages[selectedImageIndex].caption}</p>
+                  <div className="flex items-center justify-between mt-4">
+                    <div className="flex items-center text-sm text-gray-400">
+                      <Info className="h-4 w-4 mr-2" />
                       {galleryImages[selectedImageIndex].location}
                     </div>
-                    <div className="flex items-center text-xs text-gray-400">
-                      <Calendar className="h-4 w-4 mr-1" />
+                    <div className="flex items-center text-sm text-gray-400">
+                      <Calendar className="h-4 w-4 mr-2" />
                       {galleryImages[selectedImageIndex].date}
                     </div>
                   </div>
@@ -196,7 +200,7 @@ const VisualGallery = () => {
                 <Button
                   variant="outline"
                   size="icon"
-                  className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-black/50 border-none text-white hover:bg-black/70"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-black/60 border-none text-white hover:bg-black/80"
                   onClick={handlePrevious}
                 >
                   <ChevronLeft className="h-6 w-6" />
@@ -204,7 +208,7 @@ const VisualGallery = () => {
                 <Button
                   variant="outline"
                   size="icon"
-                  className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-black/50 border-none text-white hover:bg-black/70"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-black/60 border-none text-white hover:bg-black/80"
                   onClick={handleNext}
                 >
                   <ChevronRight className="h-6 w-6" />
@@ -214,57 +218,57 @@ const VisualGallery = () => {
           </DialogContent>
         </Dialog>
 
-        <div className="mt-16 bg-white p-8 rounded-lg shadow-md">
-          <h3 className="text-xl font-bold mb-4 text-center text-utu-black">Our Visual Impact Journey</h3>
-          <p className="text-utu-gray mb-6 text-center">
+        <div className="mt-20 bg-white p-12 rounded-2xl shadow-xl">
+          <h3 className="text-2xl font-bold mb-6 text-center text-utu-black">Our Visual Impact Journey</h3>
+          <p className="text-utu-gray mb-10 text-center text-lg max-w-4xl mx-auto">
             Since our founding in 2024, we've been dedicated to creating meaningful change across African communities.
             Our visual journey showcases the real impact of our programs and initiatives.
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="text-center p-4">
-              <div className="bg-utu-red/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Calendar className="h-8 w-8 text-utu-red" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+            <div className="text-center p-6 rounded-xl hover:bg-utu-light-gray transition-colors duration-300">
+              <div className="bg-utu-red/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Calendar className="h-10 w-10 text-utu-red" />
               </div>
-              <h4 className="font-semibold mb-2">Started in 2024</h4>
-              <p className="text-sm text-utu-gray">
+              <h4 className="font-bold text-xl mb-3">Started in 2024</h4>
+              <p className="text-utu-gray">
                 Our journey began with a commitment to sustainable development and community empowerment.
               </p>
             </div>
-            <div className="text-center p-4">
-              <div className="bg-utu-red/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="text-center p-6 rounded-xl hover:bg-utu-light-gray transition-colors duration-300">
+              <div className="bg-utu-red/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
                 <img 
                   src="/lovable-uploads/53460912-2f2a-428b-b6e5-bc12ccf03604.png" 
                   alt="Impact"
-                  className="w-8 h-8 rounded-full object-cover"
+                  className="w-10 h-10 rounded-full object-cover"
                 />
               </div>
-              <h4 className="font-semibold mb-2">Real Stories</h4>
-              <p className="text-sm text-utu-gray">
+              <h4 className="font-bold text-xl mb-3">Real Stories</h4>
+              <p className="text-utu-gray">
                 Each image represents authentic stories of transformation and hope from the communities we serve.
               </p>
             </div>
-            <div className="text-center p-4">
-              <div className="bg-utu-red/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="text-center p-6 rounded-xl hover:bg-utu-light-gray transition-colors duration-300">
+              <div className="bg-utu-red/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
                 <img 
                   src="/lovable-uploads/969161e6-4a43-456e-8ceb-4578f7e45935.png" 
                   alt="Community"
-                  className="w-8 h-8 rounded-full object-cover"
+                  className="w-10 h-10 rounded-full object-cover"
                 />
               </div>
-              <h4 className="font-semibold mb-2">Community-Centered</h4>
-              <p className="text-sm text-utu-gray">
+              <h4 className="font-bold text-xl mb-3">Community-Centered</h4>
+              <p className="text-utu-gray">
                 Our work is driven by the needs and aspirations of the communities we partner with across Africa.
               </p>
             </div>
           </div>
         </div>
 
-        <div className="mt-12 text-center">
+        <div className="mt-16 text-center">
           <Button 
             asChild
-            className="bg-utu-red hover:bg-red-700 text-white"
+            className="bg-utu-red hover:bg-red-700 text-white text-lg py-6 px-10 rounded-full"
           >
-            <a href="/impact">Explore Our Full Impact</a>
+            <a href="/impact">Explore Full Impact Report</a>
           </Button>
         </div>
       </div>

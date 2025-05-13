@@ -15,7 +15,7 @@ import { useLocation } from 'react-router-dom';
 const Index = () => {
   const location = useLocation();
 
-  // Add intersection observer for animation on scroll
+  // Enhanced animation for better scroll-triggered effects
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -27,7 +27,10 @@ const Index = () => {
           }
         });
       },
-      { threshold: 0.15 }
+      { 
+        threshold: 0.15,
+        rootMargin: "0px 0px -100px 0px" 
+      }
     );
 
     const animatedElements = document.querySelectorAll('.animate-on-scroll');
@@ -56,14 +59,15 @@ const Index = () => {
   return (
     <Layout>
       <div className="overflow-x-hidden w-full">
+        {/* Main sections in optimized order for user engagement */}
         <Hero />
-        <About />
         <Programs />
+        <About />
         <VisualGallery />
         <Impact />
         <Testimonials />
-        <GetInvolved />
         <Team />
+        <GetInvolved />
         <Contact />
       </div>
     </Layout>

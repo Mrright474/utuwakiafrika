@@ -31,86 +31,88 @@ const Hero = () => {
       
       <div className="container mx-auto px-4 py-16 md:py-24 relative z-10">
         <div className="flex flex-col md:flex-row items-center">
-          <div className="w-full md:w-2/3 lg:w-1/2 animate-on-scroll opacity-0 translate-y-10 transition-all duration-700 md:pr-8">
+          <div className="w-full md:w-3/5 lg:w-1/2 animate-on-scroll opacity-0 translate-y-10 transition-all duration-700 md:pr-8">
             <div className="flex items-center mb-4">
-              <div className="w-10 h-1 bg-utu-red mr-2"></div>
+              <div className="w-24 h-1 bg-utu-red mr-3"></div>
               <p className="text-lg font-medium text-gray-200">Since 2024</p>
             </div>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 font-heading leading-tight">
-              Empowering <span className="text-utu-red">African Communities</span> Through Sustainable Change
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 sm:mb-8 font-heading leading-tight">
+              Creating <span className="text-utu-red">Sustainable Impact</span> Across Africa
             </h1>
-            <p className="text-base sm:text-lg md:text-xl mb-6 sm:mb-8 text-gray-200 max-w-2xl">
-              Utu Wa Kiafrika Charity Network is committed to creating lasting impact through education,
-              healthcare, infrastructure, and economic development programs across Africa.
+            <p className="text-base sm:text-lg md:text-xl mb-8 sm:mb-10 text-gray-200 max-w-2xl">
+              Utu Wa Kiafrika Charity Network delivers transformative programs in education, healthcare, 
+              clean water, and economic empowerment to build resilient communities.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col sm:flex-row gap-5">
               <Link to="/donate" onClick={() => window.scrollTo(0, 0)}>
-                <Button className="bg-utu-red hover:bg-red-700 text-white px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg w-full sm:w-auto transition-transform hover:scale-105 flex items-center gap-2">
-                  <Heart size={18} />
+                <Button className="bg-utu-red hover:bg-red-700 text-white px-8 sm:px-10 py-6 sm:py-7 text-lg sm:text-xl w-full sm:w-auto transition-transform hover:scale-105 flex items-center gap-3 rounded-full">
+                  <Heart size={24} />
                   Donate Now
                 </Button>
               </Link>
               <Button 
                 variant="outline" 
-                className="border-white text-white hover:bg-white/10 px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg w-full sm:w-auto transition-transform hover:scale-105"
+                className="border-2 border-white text-white hover:bg-white/10 px-8 sm:px-10 py-6 sm:py-7 text-lg sm:text-xl w-full sm:w-auto transition-transform hover:scale-105 rounded-full"
                 onClick={() => scrollToSection('programs')}
               >
-                Our Programs <ChevronRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
+                Our Programs <ChevronRight className="ml-2 h-5 w-5 sm:h-6 sm:w-6" />
               </Button>
             </div>
             
             {/* Impact Statistics */}
-            <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4 bg-black/30 backdrop-blur-sm p-6 rounded-lg border border-white/10">
+            <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6 bg-black/40 backdrop-blur-sm p-8 rounded-2xl border border-white/10">
               <div className="text-center">
-                <p className="text-2xl md:text-3xl font-bold text-white">150+</p>
-                <p className="text-gray-300 text-sm">Schools Supported</p>
+                <p className="text-3xl md:text-4xl font-bold text-white">150+</p>
+                <p className="text-gray-300 text-sm mt-1">Schools Supported</p>
               </div>
               <div className="text-center">
-                <p className="text-2xl md:text-3xl font-bold text-white">75</p>
-                <p className="text-gray-300 text-sm">Water Projects</p>
+                <p className="text-3xl md:text-4xl font-bold text-white">75</p>
+                <p className="text-gray-300 text-sm mt-1">Water Projects</p>
               </div>
               <div className="text-center">
-                <p className="text-2xl md:text-3xl font-bold text-white">25K+</p>
-                <p className="text-gray-300 text-sm">Lives Impacted</p>
+                <p className="text-3xl md:text-4xl font-bold text-white">25K+</p>
+                <p className="text-gray-300 text-sm mt-1">Lives Impacted</p>
               </div>
               <div className="text-center">
-                <p className="text-2xl md:text-3xl font-bold text-white">45</p>
-                <p className="text-gray-300 text-sm">Communities</p>
+                <p className="text-3xl md:text-4xl font-bold text-white">45</p>
+                <p className="text-gray-300 text-sm mt-1">Communities</p>
               </div>
             </div>
           </div>
           
-          <div className="w-full md:w-1/3 lg:w-1/2 mt-12 md:mt-0 hidden md:block">
+          <div className="w-full md:w-2/5 lg:w-1/2 mt-16 md:mt-0 hidden md:flex justify-center items-center">
             <div className="relative">
-              <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
+              <div className="absolute -z-10 w-72 h-72 bg-utu-red/20 rounded-full blur-3xl"></div>
+              <div className="absolute -z-10 w-64 h-64 bg-white/10 rounded-full blur-2xl -right-10 -top-10"></div>
+              <div className="grid grid-cols-2 gap-6 max-w-lg">
                 <img 
                   src="/lovable-uploads/c520e25e-9088-4335-9397-90370407dd62.png" 
                   alt="Water project" 
-                  className="rounded-lg shadow-xl h-40 object-cover w-full transform rotate-2"
+                  className="rounded-2xl shadow-xl h-48 object-cover w-full transform rotate-3 border-4 border-white/20"
                 />
                 <img 
                   src="/lovable-uploads/7e1302ab-dabd-404d-b089-b1c7bdf0e631.png" 
                   alt="Education initiative" 
-                  className="rounded-lg shadow-xl h-40 object-cover w-full transform -rotate-2"
+                  className="rounded-2xl shadow-xl h-48 object-cover w-full transform -rotate-3 border-4 border-white/20"
                 />
                 <img 
                   src="/lovable-uploads/6e61272d-7786-4ccc-950e-4ae86bc5f39d.png" 
                   alt="School classroom" 
-                  className="rounded-lg shadow-xl h-40 object-cover w-full transform -rotate-3"
+                  className="rounded-2xl shadow-xl h-48 object-cover w-full transform -rotate-6 border-4 border-white/20"
                 />
                 <img 
                   src="/lovable-uploads/53460912-2f2a-428b-b6e5-bc12ccf03604.png" 
                   alt="Healthcare initiative" 
-                  className="rounded-lg shadow-xl h-40 object-cover w-full transform rotate-3"
+                  className="rounded-2xl shadow-xl h-48 object-cover w-full transform rotate-6 border-4 border-white/20"
                 />
               </div>
-              <div className="absolute -bottom-4 -left-4 bg-utu-red p-4 rounded-lg text-white rotate-3 shadow-lg">
-                <p className="font-bold">Est. 2024</p>
-                <p className="text-sm">Building brighter futures</p>
+              <div className="absolute -bottom-8 -left-8 bg-utu-red p-6 rounded-2xl text-white rotate-6 shadow-lg">
+                <p className="font-bold text-lg">Est. 2024</p>
+                <p>Making a difference</p>
               </div>
-              <div className="absolute -top-6 -right-6 p-4 rounded-full bg-white/10 backdrop-blur-sm shadow-xl">
-                <PlayCircle className="h-16 w-16 text-utu-red" />
-              </div>
+              <button className="absolute -top-10 -right-10 p-5 rounded-full bg-white/10 backdrop-blur-sm shadow-xl hover:bg-white/20 transition-all duration-300">
+                <PlayCircle className="h-20 w-20 text-utu-red" />
+              </button>
             </div>
           </div>
         </div>
