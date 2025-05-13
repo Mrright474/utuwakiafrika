@@ -5,10 +5,6 @@ import Hero from '@/components/home/Hero';
 import GetInvolved from '@/components/home/GetInvolved';
 import Testimonials from '@/components/home/Testimonials';
 import Programs from '@/components/home/Programs';
-import About from '@/components/home/About';
-import Team from '@/components/home/Team';
-import Impact from '@/components/home/Impact';
-import Contact from '@/components/home/Contact';
 import VisualGallery from '@/components/home/VisualGallery';
 import { useLocation } from 'react-router-dom';
 
@@ -59,16 +55,12 @@ const Index = () => {
   return (
     <Layout>
       <div className="overflow-x-hidden w-full">
-        {/* Main sections in optimized order for user engagement */}
+        {/* Home page sections only */}
         <Hero />
         <Programs />
-        <About />
         <VisualGallery />
-        <Impact />
         <Testimonials />
-        <Team />
         <GetInvolved />
-        <Contact />
       </div>
     </Layout>
   );
