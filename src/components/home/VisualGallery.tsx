@@ -38,7 +38,8 @@ const VisualGallery = () => {
         <div className="text-center max-w-2xl mx-auto mb-12">
           <h2 className="text-3xl font-bold mb-4 text-utu-black">Our Work in Action</h2>
           <p className="text-utu-gray">
-            Discover how our initiatives are creating positive change across communities in Africa.
+            Explore visual stories of our initiatives creating positive change across communities in Africa.
+            <span className="block mt-2 text-sm italic">*Images created with AI to protect privacy while representing our work</span>
           </p>
         </div>
 
