@@ -2,6 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
+import { CreditCard } from 'lucide-react';
 
 const CallToAction = () => {
   return (
@@ -13,10 +14,13 @@ const CallToAction = () => {
       </p>
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
         <Button 
-          className="bg-utu-red hover:bg-red-700 text-white"
+          className="bg-utu-red hover:bg-red-700 text-white flex items-center gap-2"
           asChild
         >
-          <Link to="/donate">Donate Now</Link>
+          <Link to="/donate">
+            <CreditCard className="h-4 w-4" />
+            Donate via Airtel Money Card
+          </Link>
         </Button>
         <Button 
           variant="outline"

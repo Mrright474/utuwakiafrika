@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Layout from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
@@ -65,13 +64,14 @@ const Donate = () => {
                 <CardDescription>Choose how you would like to donate</CardDescription>
               </CardHeader>
               <CardContent>
-                <Tabs defaultValue="mobileMoney" className="w-full">
+                <Tabs defaultValue="card" className="w-full">
                   <TabsList className="grid w-full grid-cols-3">
                     <TabsTrigger value="mobileMoney">Mobile Money</TabsTrigger>
                     <TabsTrigger value="bankTransfer">Bank Transfer</TabsTrigger>
-                    <TabsTrigger value="card">Credit Card</TabsTrigger>
+                    <TabsTrigger value="card">Airtel Money Card</TabsTrigger>
                   </TabsList>
                   
+                  {/* Mobile Money Tab Content */}
                   <TabsContent value="mobileMoney">
                     <form onSubmit={handleDonation} className="space-y-6 py-4">
                       <div className="space-y-4">
@@ -186,6 +186,7 @@ const Donate = () => {
                     </form>
                   </TabsContent>
                   
+                  {/* Bank Transfer Tab Content */}
                   <TabsContent value="bankTransfer">
                     <div className="space-y-6 py-4">
                       <div className="space-y-4">
@@ -235,6 +236,7 @@ const Donate = () => {
                     </div>
                   </TabsContent>
                   
+                  {/* Card Tab Content - Updated for Airtel Money Global Pay */}
                   <TabsContent value="card">
                     <form onSubmit={handleDonation} className="space-y-6 py-4">
                       <div className="space-y-4">
@@ -252,7 +254,6 @@ const Donate = () => {
                             </Label>
                           </div>
                           
-                          {/* Repeat for other amounts as in Mobile Money tab */}
                           <div>
                             <RadioGroupItem value="25" id="card-amount-25" className="peer sr-only" />
                             <Label
@@ -272,6 +273,17 @@ const Donate = () => {
                             >
                               <DollarSign className="mb-2 h-6 w-6" />
                               $50
+                            </Label>
+                          </div>
+                          
+                          <div>
+                            <RadioGroupItem value="100" id="card-amount-100" className="peer sr-only" />
+                            <Label
+                              htmlFor="card-amount-100"
+                              className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-utu-red [&:has([data-state=checked])]:border-utu-red"
+                            >
+                              <DollarSign className="mb-2 h-6 w-6" />
+                              $100
                             </Label>
                           </div>
                           
@@ -302,6 +314,17 @@ const Donate = () => {
                           </div>
                         )}
                         
+                        <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
+                          <h4 className="font-medium flex items-center text-utu-black">
+                            <CreditCard className="mr-2 h-5 w-5 text-utu-red" />
+                            Airtel Money Global Pay (Mastercard)
+                          </h4>
+                          <p className="text-sm text-gray-600 mt-2">
+                            We accept secure payments through Airtel Money Global Pay Mastercard. Your donation 
+                            will be processed immediately and you'll receive a confirmation email.
+                          </p>
+                        </div>
+                        
                         <div className="space-y-2 mt-6">
                           <h3 className="text-lg font-medium">Card Details</h3>
                           <div className="space-y-4">
@@ -329,7 +352,7 @@ const Donate = () => {
                       
                       <Button type="submit" className="w-full bg-utu-red hover:bg-red-700 text-white">
                         <CreditCard className="mr-2 h-4 w-4" />
-                        Complete Donation
+                        Complete Donation via Airtel Money Mastercard
                       </Button>
                     </form>
                   </TabsContent>
@@ -340,6 +363,11 @@ const Donate = () => {
                   Your donation helps us make a difference in the lives of people across Africa.
                   Thank you for your generosity.
                 </p>
+                <img 
+                  src="https://www.mastercard.com/content/dam/public/mastercardcom/na/global-site/images/logos/mc-logo-52.svg" 
+                  alt="Mastercard Logo" 
+                  className="h-8 mt-2"
+                />
               </CardFooter>
             </Card>
           </div>
