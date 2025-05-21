@@ -22,20 +22,6 @@ const CallToAction = () => {
             Donate via Airtel Money Card
           </Link>
         </Button>
-        <Button 
-          variant="outline"
-          className="border-utu-red text-utu-red hover:bg-utu-red hover:text-white"
-          asChild
-        >
-          <Link to="/contact">Contact Us</Link>
-        </Button>
-        <Button 
-          variant="outline"
-          className="border-utu-red text-utu-red hover:bg-utu-red hover:text-white"
-          asChild
-        >
-          <Link to="/programs">Our Programs</Link>
-        </Button>
       </div>
     </div>
   );
