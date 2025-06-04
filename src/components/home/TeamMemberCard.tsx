@@ -24,29 +24,37 @@ const TeamMemberCard = ({
   isAdmin = false 
 }: TeamMemberCardProps) => {
   return (
-    <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow relative group">
+    <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 relative group transform hover:-translate-y-1">
       {isAdmin && (
         <button 
           onClick={() => onEdit?.(id)}
-          className="absolute top-2 right-2 bg-white p-1.5 rounded-full shadow-md z-10 hover:bg-gray-100"
+          className="absolute top-2 right-2 bg-white p-1.5 rounded-full shadow-md z-10 hover:bg-gray-100 opacity-0 group-hover:opacity-100 transition-opacity"
           aria-label="Edit team member"
         >
           <Edit size={16} className="text-utu-red" />
         </button>
       )}
       <div className="overflow-hidden">
-        <ProfileImage 
-          src={image} 
-          alt={name} 
-          className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105" 
-        />
+        <div className="w-full h-48 overflow-hidden">
+          <img 
+            src={image} 
+            alt={name} 
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 rounded-t-lg" 
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = "/placeholder.svg";
+            }}
+          />
+        </div>
       </div>
       <div className="p-6">
-        <h3 className="text-xl font-bold mb-1 text-utu-black">{name}</h3>
-        <p className="text-utu-red font-medium mb-3">{position}</p>
-        <p className="text-utu-gray text-sm mb-4 line-clamp-3">{bio}</p>
+        <h3 className="text-lg font-bold mb-1 text-utu-black leading-tight">{name}</h3>
+        <p className="text-utu-red font-medium mb-3 text-sm">{position}</p>
+        <p className="text-utu-gray text-sm mb-4 line-clamp-3 leading-relaxed">{bio}</p>
         <SocialLinks />
       </div>
+      
+      {/* African-inspired accent border */}
+      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-utu-red via-utu-gold to-utu-green opacity-60"></div>
     </div>
   );
 };
