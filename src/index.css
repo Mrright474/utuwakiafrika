@@ -36,19 +36,12 @@
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
@@ -107,6 +100,18 @@
   }
 }
 
+/* Ubuntu Philosophy Inspired Patterns */
+.ubuntu-pattern {
+  background-image: 
+    radial-gradient(circle at 20% 80%, rgba(229, 43, 56, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 193, 7, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(46, 125, 50, 0.1) 0%, transparent 50%);
+}
+
+.african-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e52b38' fill-opacity='0.05' fill-rule='nonzero'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
 @layer components {
   .animate-fade-in {
     @apply opacity-0 transition-opacity duration-500;
@@ -120,17 +125,70 @@
   .card-hover {
     @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
   }
+
+  .ubuntu-gradient {
+    background: linear-gradient(135deg, 
+      rgba(229, 43, 56, 0.8) 0%, 
+      rgba(46, 125, 50, 0.8) 50%, 
+      rgba(255, 193, 7, 0.8) 100%);
+  }
+
+  .africa-section {
+    @apply py-16 md:py-24 relative overflow-hidden;
+  }
+
+  .africa-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%23e52b38' d='M47.1,-57.8C59.9,-45.2,68.3,-29.1,71.8,-11.8C75.3,5.5,73.9,24,64.8,37.8C55.7,51.6,39,60.7,21.4,65.1C3.8,69.5,-14.7,69.2,-29.9,62.2C-45.1,55.2,-56.9,41.5,-63.4,25.7C-69.9,9.9,-71.1,-7.9,-66.7,-23.8C-62.3,-39.7,-52.3,-53.7,-39.1,-66.1C-25.9,-78.5,-9.5,-89.3,5.8,-86.8C21.1,-84.3,34.3,-70.4,47.1,-57.8Z' transform='translate(100 100)' /%3E%3C/svg%3E");
+    background-size: 400px 400px;
+    background-repeat: repeat;
+  }
+
+  .text-gradient {
+    background: linear-gradient(135deg, #e52b38, #2e7d32, #ffc107);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .ubuntu-card {
+    @apply bg-white/90 backdrop-blur-sm border border-white/20 shadow-lg;
+    background-image: 
+      radial-gradient(circle at top left, rgba(229, 43, 56, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at bottom right, rgba(46, 125, 50, 0.1) 0%, transparent 50%);
+  }
 }
 
 @keyframes fadeIn {
   0% {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(20px);
   }
   100% {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+@keyframes pulse-ubuntu {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+}
+
+.pulse-ubuntu {
+  animation: pulse-ubuntu 3s ease-in-out infinite;
 }
 
 /* Responsive utilities */
@@ -183,60 +241,40 @@ h1, h2, h3, h4, h5, h6 {
   hyphens: auto;
 }
 
-/* Ensure all sections have proper padding on mobile */
-section {
-  padding-left: 1rem;
-  padding-right: 1rem;
+/* Ubuntu-inspired section styling */
+.section-ubuntu {
+  position: relative;
 }
 
-@media (min-width: 768px) {
-  section {
-    padding-left: 2rem;
-    padding-right: 2rem;
-  }
+.section-ubuntu::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  opacity: 0.03;
+  background: 
+    radial-gradient(circle at 25% 25%, #e52b38 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, #2e7d32 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, #ffc107 0%, transparent 50%);
 }
 
-/* Make tables responsive */
-table {
-  width: 100%;
-  overflow-x: auto;
-  display: block;
-}
-
-@media (min-width: 768px) {
-  table {
-    display: table;
-  }
-}
-
-/* Admin dashboard responsiveness */
-.admin-dashboard {
-  display: flex;
-  flex-direction: column;
-}
-
-@media (min-width: 768px) {
-  .admin-dashboard {
-    flex-direction: row;
-  }
-}
-
-/* Add extra spacing for form elements on mobile */
-input, select, textarea, button {
-  margin-bottom: 1rem;
-}
-
-@media (min-width: 768px) {
-  input, select, textarea, button {
-    margin-bottom: 0.5rem;
-  }
-}
-
-/* Ensure long email addresses and text break properly */
+/* Make sure long text breaks properly */
 .break-all {
   word-break: break-all;
 }
 
 .break-word {
   word-break: break-word;
+}
+
+/* Enhanced button styling for donation CTAs */
+.donate-button {
+  @apply bg-gradient-to-r from-utu-red to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold px-8 py-3 rounded-full shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl;
+}
+
+.donate-button:hover {
+  box-shadow: 0 10px 30px rgba(229, 43, 56, 0.3);
 }
