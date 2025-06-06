@@ -33,8 +33,10 @@ const StatsSection = ({ stats, iconComponents }: StatsSectionProps) => {
            <Award className="h-6 w-6 sm:h-8 sm:w-8 text-utu-red" />;
   };
 
+  console.log("StatsSection rendering with stats:", stats);
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16 animate-on-scroll opacity-0 translate-y-10 transition-all duration-700">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
       {stats.map((stat, index) => (
         <StatItem 
           key={index} 

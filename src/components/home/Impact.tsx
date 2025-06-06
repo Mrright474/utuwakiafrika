@@ -8,6 +8,7 @@ import ImpactAreas from './impact/ImpactAreas';
 import SuccessStories from './impact/SuccessStories';
 import AnnualReport from './impact/AnnualReport';
 import CallToAction from './impact/CallToAction';
+import UgandaMap from './impact/UgandaMap';
 
 const iconComponents = {
   MapPin: <MapPin className="h-6 w-6 sm:h-8 sm:w-8 text-utu-red" />,
@@ -36,12 +37,15 @@ const Impact = () => {
     }
   }, []);
 
+  console.log("Impact component rendering with data:", impactData);
+
   return (
     <section id="impact" className="py-12 sm:py-20 bg-gradient-to-b from-white to-utu-light-gray">
       <div className="container mx-auto px-4">
         <ImpactHeader />
         <StatsSection stats={impactData.stats} iconComponents={iconComponents} />
         <ImpactAreas />
+        <UgandaMap />
         <SuccessStories stories={impactData.successStories} />
         <AnnualReport />
         <CallToAction />

@@ -71,8 +71,10 @@ const ImpactAreas = () => {
     }
   ];
 
+  console.log("ImpactAreas component rendering");
+
   return (
-    <div className="mb-16 animate-on-scroll opacity-0 translate-y-10 transition-all duration-700">
+    <div className="mb-16">
       <h3 className="text-xl sm:text-2xl font-bold mb-8 text-center font-heading text-utu-black">Areas of Impact</h3>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
