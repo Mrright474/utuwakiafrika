@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -6,12 +5,14 @@ import { Users, Globe, Heart } from 'lucide-react';
 import TeamMemberCard from './TeamMemberCard';
 import TeamMemberDialog from './TeamMemberDialog';
 import TeamHeader from './TeamHeader';
+import VolunteerFormDialog from './VolunteerFormDialog';
 import { useTeamManagement } from '@/hooks/useTeamManagement';
 import { useAdminMode } from '@/hooks/useAdminMode';
 
 const Team = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isVolunteerFormOpen, setIsVolunteerFormOpen] = useState(false);
   const { isAdmin } = useAdminMode();
   const {
     teamMembers,
@@ -35,7 +36,7 @@ const Team = () => {
 
   const executiveLeadership = teamMembers.filter(member => 
     member.role && (
-      member.role.toLowerCase().includes("executive director") ||
+      member.role.toLowerCase().includes("executive") ||
       member.role.toLowerCase().includes("deputy director") ||
       member.role.toLowerCase().includes("ceo") ||
       member.role.toLowerCase().includes("founder")
@@ -245,7 +246,10 @@ const Team = () => {
           )}
 
           <div className="text-center">
-            <Button className="bg-utu-red hover:bg-red-700 text-white px-8 py-3 rounded-md transition-colors text-lg">
+            <Button 
+              onClick={() => setIsVolunteerFormOpen(true)}
+              className="bg-utu-red hover:bg-red-700 text-white px-8 py-3 rounded-md transition-colors text-lg"
+            >
               <Users className="w-5 h-5 mr-2" />
               Join Our Volunteer Family
             </Button>
@@ -297,10 +301,16 @@ const Team = () => {
             board members. If you're committed to making a difference in African communities, we'd love to hear from you.
           </p>
           <div className="flex justify-center gap-4">
-            <button className="bg-utu-red hover:bg-red-700 text-white px-6 py-2 rounded-md transition-colors">
+            <button 
+              onClick={() => setIsVolunteerFormOpen(true)}
+              className="bg-utu-red hover:bg-red-700 text-white px-6 py-2 rounded-md transition-colors"
+            >
               View Open Positions
             </button>
-            <button className="border border-utu-red text-utu-red hover:bg-utu-red hover:text-white px-6 py-2 rounded-md transition-colors">
+            <button 
+              onClick={() => setIsVolunteerFormOpen(true)}
+              className="border border-utu-red text-utu-red hover:bg-utu-red hover:text-white px-6 py-2 rounded-md transition-colors"
+            >
               Volunteer With Us
             </button>
           </div>
@@ -340,6 +350,11 @@ const Team = () => {
           />
         )}
       </Dialog>
+
+      <VolunteerFormDialog 
+        open={isVolunteerFormOpen} 
+        onOpenChange={setIsVolunteerFormOpen} 
+      />
     </section>
   );
 };
