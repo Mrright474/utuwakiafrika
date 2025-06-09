@@ -38,7 +38,7 @@ const DonationForm = () => {
     
     toast({
       title: "Thank you for your donation!",
-      description: `Your donation of $${donationAmount} is being processed via Airtel Money Card. You will receive a confirmation shortly.`,
+      description: `Your donation of $${donationAmount} is being processed. You will receive a confirmation shortly.`,
     });
   };
 
@@ -46,8 +46,8 @@ const DonationForm = () => {
     <div className="max-w-4xl mx-auto">
       <Card className="border-2">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Donate with Airtel Money Card</CardTitle>
-          <CardDescription>Make a secure donation using Airtel Money Global Pay Mastercard</CardDescription>
+          <CardTitle className="text-2xl">Make a Secure Donation</CardTitle>
+          <CardDescription>Support our mission with a secure donation using any major payment method</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleDonation} className="space-y-6 py-4">
@@ -62,7 +62,7 @@ const DonationForm = () => {
             
             <Button type="submit" className="w-full bg-utu-red hover:bg-red-700 text-white">
               <CreditCard className="mr-2 h-4 w-4" />
-              Complete Donation via Airtel Money Mastercard
+              Complete Secure Donation
             </Button>
           </form>
         </CardContent>
@@ -71,11 +71,19 @@ const DonationForm = () => {
             Your donation helps us make a difference in the lives of people across Africa.
             Thank you for your generosity.
           </p>
-          <img 
-            src="https://www.mastercard.com/content/dam/public/mastercardcom/na/global-site/images/logos/mc-logo-52.svg" 
-            alt="Mastercard Logo" 
-            className="h-8 mt-2"
-          />
+          <div className="flex items-center justify-center mt-4 space-x-4">
+            <img 
+              src="https://www.mastercard.com/content/dam/public/mastercardcom/na/global-site/images/logos/mc-logo-52.svg" 
+              alt="Mastercard Logo" 
+              className="h-6"
+            />
+            <img 
+              src="https://brand.visa.com/content/dam/VCOM/Brand/logo/logo-h-sm.png" 
+              alt="Visa Logo" 
+              className="h-6"
+            />
+            <span className="text-xs text-muted-foreground">+ More payment methods</span>
+          </div>
         </CardFooter>
       </Card>
     </div>
