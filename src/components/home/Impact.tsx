@@ -32,12 +32,9 @@ const Impact = () => {
         console.error("Error parsing impact data:", error);
       }
     } else {
-      // Initialize data if not present
       localStorage.setItem('utu-impact', JSON.stringify(defaultImpactData));
     }
   }, []);
-
-  console.log("Impact component rendering with data:", impactData);
 
   return (
     <section id="impact" className="py-12 sm:py-20 bg-gradient-to-b from-white to-utu-light-gray">

@@ -3,13 +3,13 @@ import React from 'react';
 
 const AnnualReport = () => {
   return (
-    <div className="mb-16 bg-white p-8 rounded-lg shadow-md animate-on-scroll opacity-0 translate-y-10 transition-all duration-700">
+    <div className="mb-16 bg-white p-8 rounded-lg shadow-md">
       <div className="md:flex items-center">
         <div className="md:w-1/3 mb-6 md:mb-0 md:pr-8">
           <img 
             src="/lovable-uploads/b07d8f50-577a-4699-87ba-8759e7ace688.png" 
             alt="Impact Report" 
-            className="rounded-lg shadow-md"
+            className="rounded-lg shadow-md w-full"
             onError={(e) => {
               (e.target as HTMLImageElement).src = "/placeholder.svg";
             }}

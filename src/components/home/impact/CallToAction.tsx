@@ -6,7 +6,7 @@ import { CreditCard } from 'lucide-react';
 
 const CallToAction = () => {
   return (
-    <div className="text-center animate-on-scroll opacity-0 translate-y-10 transition-all duration-700">
+    <div className="text-center">
       <h3 className="text-xl sm:text-2xl font-bold mb-4 font-heading text-utu-black">Help Us Make a Difference</h3>
       <p className="text-utu-gray mb-6 max-w-2xl mx-auto">
         Your support can help us expand our impact across Africa, bringing clean water,
