@@ -1,7 +1,15 @@
 
 import React from 'react';
+import { Button } from '@/components/ui/button';
+import { Download } from 'lucide-react';
 
 const AnnualReport = () => {
+  const handleDownloadReport = () => {
+    // This would typically download a PDF file
+    // For now, we'll show an alert since we don't have a real file
+    alert('Annual Report download would be available here. Please contact us for the latest report.');
+  };
+
   return (
     <div className="mb-16 bg-white p-8 rounded-lg shadow-md">
       <div className="md:flex items-center">
@@ -27,9 +35,13 @@ const AnnualReport = () => {
             <li>18 new water projects completed</li>
             <li>200+ new businesses supported through microfinance</li>
           </ul>
-          <button className="bg-utu-red hover:bg-red-700 text-white px-6 py-2 rounded-md transition-colors">
+          <Button 
+            onClick={handleDownloadReport}
+            className="bg-utu-red hover:bg-red-700 text-white flex items-center gap-2"
+          >
+            <Download className="h-4 w-4" />
             Download Full Report
-          </button>
+          </Button>
         </div>
       </div>
     </div>

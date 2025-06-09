@@ -83,6 +83,13 @@ const Navbar = () => {
               Programs
             </Link>
             <Link 
+              to="/events"
+              className={`${isActive('/events') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium`}
+              onClick={() => handleNavLinkClick('/events')}
+            >
+              Events
+            </Link>
+            <Link 
               to="/team"
               className={`${isActive('/team') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium`}
               onClick={() => handleNavLinkClick('/team')}
@@ -148,6 +155,13 @@ const Navbar = () => {
                 onClick={() => handleNavLinkClick('/programs')}
               >
                 Programs
+              </Link>
+              <Link 
+                to="/events"
+                className={`${isActive('/events') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium text-left`}
+                onClick={() => handleNavLinkClick('/events')}
+              >
+                Events
               </Link>
               <Link 
                 to="/team"
