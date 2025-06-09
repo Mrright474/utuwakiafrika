@@ -35,11 +35,12 @@ const TeamMemberCard = ({
         </button>
       )}
       <div className="overflow-hidden">
-        <div className="w-full h-48 overflow-hidden">
+        <div className="w-full h-64 overflow-hidden">
           <img 
             src={image} 
             alt={name} 
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 rounded-t-lg" 
+            className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105 rounded-t-lg" 
+            style={{ objectFit: 'cover' }}
             onError={(e) => {
               (e.target as HTMLImageElement).src = "/placeholder.svg";
             }}

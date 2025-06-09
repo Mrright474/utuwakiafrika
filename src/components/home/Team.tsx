@@ -30,6 +30,27 @@ const Team = () => {
     handleDeleteMember,
   } = useTeamManagement();
 
+  // Filter team members by category
+  const boardMembers: any[] = []; // Empty placeholder
+
+  const executiveLeadership = teamMembers.filter(member => 
+    member.role && (
+      member.role.toLowerCase().includes("executive") ||
+      member.role.toLowerCase().includes("deputy director") ||
+      member.role.toLowerCase().includes("ceo") ||
+      member.role.toLowerCase().includes("founder") ||
+      member.role.toLowerCase().includes("director") ||
+      member.role.toLowerCase().includes("secretary") ||
+      member.role.toLowerCase().includes("advisor") ||
+      member.role.toLowerCase().includes("coordinator") ||
+      member.role.toLowerCase().includes("manager")
+    )
+  );
+
+  const departmentalHeads: any[] = []; // Empty placeholder
+
+  const coordinators: any[] = []; // Empty placeholder
+
   const handleEditMemberWrapper = (id: string) => {
     handleEditMember(id);
     setIsEditDialogOpen(true);
@@ -50,10 +71,37 @@ const Team = () => {
         <TeamIntroduction />
 
         <TeamSection
+          title="Board of Trustees"
+          description="Visionary advisors ensuring ethical and strategic direction for our Pan-African mission."
+          members={boardMembers}
+          gridCols="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+          onEditMember={handleEditMemberWrapper}
+          isAdmin={isAdmin}
+        />
+
+        <TeamSection
           title="Executive Leadership"
           description="Our dedicated leadership team driving the vision and strategic implementation of our mission across the continent."
-          members={teamMembers}
-          gridCols="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+          members={executiveLeadership}
+          gridCols="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+          onEditMember={handleEditMemberWrapper}
+          isAdmin={isAdmin}
+        />
+
+        <TeamSection
+          title="Departmental Heads"
+          description="Leading specialized teams in Programs & Outreach, Education & Youth Development, Health & Sanitation, Gender & Women Empowerment, Communications & Advocacy, Finance & Administration, and Partnerships & Resource Mobilization."
+          members={departmentalHeads}
+          gridCols="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+          onEditMember={handleEditMemberWrapper}
+          isAdmin={isAdmin}
+        />
+
+        <TeamSection
+          title="National, Regional & District Coordinators"
+          description="Leaders overseeing operations across African countries, working directly with communities to implement programs and support volunteers at the grassroots level."
+          members={coordinators}
+          gridCols="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
           onEditMember={handleEditMemberWrapper}
           isAdmin={isAdmin}
         />
