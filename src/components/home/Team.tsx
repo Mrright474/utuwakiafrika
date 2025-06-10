@@ -41,15 +41,13 @@ const Team = () => {
       member.role.toLowerCase().includes("founder") ||
       member.role.toLowerCase().includes("director") ||
       member.role.toLowerCase().includes("secretary") ||
-      member.role.toLowerCase().includes("advisor") ||
-      member.role.toLowerCase().includes("coordinator") ||
       member.role.toLowerCase().includes("manager")
     )
   );
 
-  const departmentalHeads: any[] = []; // Empty placeholder
+  const advisoryCouncil: any[] = []; // Empty placeholder for Advisory Council
 
-  const coordinators: any[] = []; // Empty placeholder
+  const nationalCoordinators: any[] = []; // Empty placeholder for National Coordinators
 
   const handleEditMemberWrapper = (id: string) => {
     handleEditMember(id);
@@ -89,18 +87,18 @@ const Team = () => {
         />
 
         <TeamSection
-          title="Departmental Heads"
-          description="Leading specialized teams in Programs & Outreach, Education & Youth Development, Health & Sanitation, Gender & Women Empowerment, Communications & Advocacy, Finance & Administration, and Partnerships & Resource Mobilization."
-          members={departmentalHeads}
+          title="Advisory Council"
+          description="Expert advisors providing strategic guidance and specialized knowledge to enhance our programs and organizational effectiveness."
+          members={advisoryCouncil}
           gridCols="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
           onEditMember={handleEditMemberWrapper}
           isAdmin={isAdmin}
         />
 
         <TeamSection
-          title="National, Regional & District Coordinators"
+          title="National Coordinators"
           description="Leaders overseeing operations across African countries, working directly with communities to implement programs and support volunteers at the grassroots level."
-          members={coordinators}
+          members={nationalCoordinators}
           gridCols="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
           onEditMember={handleEditMemberWrapper}
           isAdmin={isAdmin}
