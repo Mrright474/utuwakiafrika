@@ -56,13 +56,31 @@ const Footer = () => {
               Empowering communities across Africa through sustainable development programs.
             </p>
             <div className="flex space-x-4">
-              <a href="https://facebook.com/utuwakiafrikacharitynetwork" className="text-gray-400 hover:text-utu-red transition-colors" aria-label="Facebook">
+              <a 
+                href="https://www.facebook.com/profile.php?id=61572472550592&mibextid=ZbWKwL" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-utu-red transition-colors" 
+                aria-label="Facebook"
+              >
                 <Facebook size={20} />
               </a>
-              <a href="https://twitter.com/utuwakiafrikacharitynetwork" className="text-gray-400 hover:text-utu-red transition-colors" aria-label="Twitter">
+              <a 
+                href="https://x.com/utuwakiafrika?t=ZevVoM9c0uTf9eMa54RlkQ&s=09" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-utu-red transition-colors" 
+                aria-label="X (Twitter)"
+              >
                 <Twitter size={20} />
               </a>
-              <a href="https://instagram.com/utuwakiafrikacharitynetwork" className="text-gray-400 hover:text-utu-red transition-colors" aria-label="Instagram">
+              <a 
+                href="https://www.instagram.com/utuwakiafrikacharitynetwork?igsh=MWp3NXR0MmRyczUyOA==" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-utu-red transition-colors" 
+                aria-label="Instagram"
+              >
                 <Instagram size={20} />
               </a>
             </div>
@@ -121,7 +139,6 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Programs */}
           <div>
             <h3 className="text-lg font-bold mb-4 relative">
               <span className="after:content-[''] after:absolute after:w-8 after:h-1 after:bg-utu-red after:left-0 after:bottom-0 after:mt-1 pb-2">
@@ -162,7 +179,6 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Contact Information */}
           <div>
             <h3 className="text-lg font-bold mb-4 relative">
               <span className="after:content-[''] after:absolute after:w-8 after:h-1 after:bg-utu-red after:left-0 after:bottom-0 after:mt-1 pb-2">
