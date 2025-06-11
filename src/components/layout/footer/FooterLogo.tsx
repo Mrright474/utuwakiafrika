@@ -48,7 +48,7 @@ const FooterLogo = () => {
           <Instagram size={20} />
         </a>
         <a 
-          href="#" 
+          href="https://www.tiktok.com/@utuwakiafrika" 
           target="_blank" 
           rel="noopener noreferrer"
           className="text-gray-400 hover:text-utu-red transition-colors" 
@@ -65,7 +65,7 @@ const FooterLogo = () => {
           </svg>
         </a>
         <a 
-          href="#" 
+          href="https://www.youtube.com/@utuwakiafrika" 
           target="_blank" 
           rel="noopener noreferrer"
           className="text-gray-400 hover:text-utu-red transition-colors" 

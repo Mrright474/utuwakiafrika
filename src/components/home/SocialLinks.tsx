@@ -33,7 +33,7 @@ const SocialLinks = () => {
         <Instagram size={18} />
       </a>
       <a 
-        href="#" 
+        href="https://www.tiktok.com/@utuwakiafrika" 
         target="_blank" 
         rel="noopener noreferrer"
         className="text-gray-500 hover:text-utu-red transition-colors"
@@ -50,7 +50,7 @@ const SocialLinks = () => {
         </svg>
       </a>
       <a 
-        href="#" 
+        href="https://www.youtube.com/@utuwakiafrika" 
         target="_blank" 
         rel="noopener noreferrer"
         className="text-gray-500 hover:text-utu-red transition-colors"
