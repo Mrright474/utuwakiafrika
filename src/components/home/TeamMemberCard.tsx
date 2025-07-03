@@ -34,8 +34,8 @@ const TeamMemberCard = ({
         </button>
       )}
       
-      {/* Smaller image container */}
-      <div className="relative w-full h-40 overflow-hidden bg-gray-100">
+      {/* Much smaller image container */}
+      <div className="relative w-full h-32 overflow-hidden bg-gray-100">
         <img 
           src={image} 
           alt={name} 
