@@ -55,15 +55,21 @@ const TeamMemberCard = ({
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
       </div>
       
-      <div className="p-6">
-        <h3 className="text-lg font-bold mb-2 text-utu-black leading-tight">{name}</h3>
-        <p className="text-utu-red font-semibold mb-3 text-base">{position}</p>
-        <p className="text-utu-gray text-sm mb-4 line-clamp-3 leading-relaxed">{bio}</p>
-        <SocialLinks />
+      <div className="p-6 text-center">
+        <h3 className="text-xl font-bold mb-1 text-utu-black leading-tight">{name}</h3>
+        <p className="text-utu-red font-semibold mb-4 text-base uppercase tracking-wide">{position}</p>
+        <p className="text-utu-gray text-sm mb-6 line-clamp-3 leading-relaxed text-justify px-2">{bio}</p>
+        
+        {/* Enhanced social links section */}
+        <div className="border-t border-gray-100 pt-4">
+          <div className="flex justify-center">
+            <SocialLinks />
+          </div>
+        </div>
       </div>
       
       {/* African-inspired accent border */}
-      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-utu-red via-utu-gold to-utu-green"></div>
+      <div className="absolute bottom-0 left-0 right-0 h-2 bg-gradient-to-r from-utu-red via-utu-gold to-utu-green"></div>
     </div>
   );
 };
