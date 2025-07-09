@@ -39,7 +39,7 @@ const TeamSection = ({
         </p>
         <div className="w-16 h-1 bg-utu-red mx-auto mt-4"></div>
       </div>
-      <div className={`grid ${gridCols} gap-6 md:gap-8`}>
+      <div className={`grid ${gridCols} gap-3 md:gap-4`}>
         {members.map((member) => (
           <TeamMemberCard
             key={member.id}

@@ -72,7 +72,7 @@ const Team = () => {
           title="Board of Trustees"
           description="Visionary advisors ensuring ethical and strategic direction for our Pan-African mission."
           members={boardMembers}
-          gridCols="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+          gridCols="grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5"
           onEditMember={handleEditMemberWrapper}
           isAdmin={isAdmin}
         />
@@ -81,7 +81,7 @@ const Team = () => {
           title="Executive Leadership"
           description="Our dedicated leadership team driving the vision and strategic implementation of our mission across the continent."
           members={executiveLeadership}
-          gridCols="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+          gridCols="grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5"
           onEditMember={handleEditMemberWrapper}
           isAdmin={isAdmin}
         />
@@ -90,7 +90,7 @@ const Team = () => {
           title="Advisory Council"
           description="Expert advisors providing strategic guidance and specialized knowledge to enhance our programs and organizational effectiveness."
           members={advisoryCouncil}
-          gridCols="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+          gridCols="grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5"
           onEditMember={handleEditMemberWrapper}
           isAdmin={isAdmin}
         />
@@ -99,7 +99,7 @@ const Team = () => {
           title="National Coordinators"
           description="Leaders overseeing operations across African countries, working directly with communities to implement programs and support volunteers at the grassroots level."
           members={nationalCoordinators}
-          gridCols="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+          gridCols="grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5"
           onEditMember={handleEditMemberWrapper}
           isAdmin={isAdmin}
         />
