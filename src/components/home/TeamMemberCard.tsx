@@ -23,23 +23,23 @@ const TeamMemberCard = ({
   isAdmin = false 
 }: TeamMemberCardProps) => {
   return (
-    <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 relative group">
+    <div className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 relative group transform hover:-translate-y-1">
       {isAdmin && (
         <button 
           onClick={() => onEdit?.(id)}
-          className="absolute top-2 right-2 bg-white p-1.5 rounded-full shadow-md z-10 hover:bg-gray-100 opacity-0 group-hover:opacity-100 transition-opacity"
+          className="absolute top-3 right-3 bg-white p-2 rounded-full shadow-md z-10 hover:bg-gray-100 opacity-0 group-hover:opacity-100 transition-opacity"
           aria-label="Edit team member"
         >
-          <Edit size={14} className="text-utu-red" />
+          <Edit size={16} className="text-utu-red" />
         </button>
       )}
       
-      {/* Better proportioned image container */}
-      <div className="relative w-full h-48 overflow-hidden bg-gray-100">
+      {/* Much larger image container with better aspect ratio */}
+      <div className="relative w-full h-64 overflow-hidden bg-gray-100">
         <img 
           src={image} 
           alt={name} 
-          className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-300 group-hover:scale-105" 
+          className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-110" 
           onError={(e) => {
             (e.target as HTMLImageElement).src = "/placeholder.svg";
           }}
@@ -51,17 +51,19 @@ const TeamMemberCard = ({
             transition: 'opacity 0.3s ease-in-out'
           }}
         />
+        {/* Gradient overlay for better text readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
       </div>
       
-      <div className="p-4">
-        <h3 className="text-base font-bold mb-1 text-utu-black leading-tight">{name}</h3>
-        <p className="text-utu-red font-medium mb-2 text-sm">{position}</p>
-        <p className="text-utu-gray text-sm mb-3 line-clamp-3 leading-relaxed">{bio}</p>
+      <div className="p-6">
+        <h3 className="text-lg font-bold mb-2 text-utu-black leading-tight">{name}</h3>
+        <p className="text-utu-red font-semibold mb-3 text-base">{position}</p>
+        <p className="text-utu-gray text-sm mb-4 line-clamp-3 leading-relaxed">{bio}</p>
         <SocialLinks />
       </div>
       
       {/* African-inspired accent border */}
-      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-utu-red via-utu-gold to-utu-green opacity-60"></div>
+      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-utu-red via-utu-gold to-utu-green"></div>
     </div>
   );
 };
