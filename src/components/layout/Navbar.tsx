@@ -59,11 +59,15 @@ const Navbar = () => {
                     UTU WA KIAFRIKA
                   </span>
                 </h1>
-                <h2 className="text-sm sm:text-base font-semibold text-utu-black hidden sm:block">
-                  CHARITY NETWORK
+                <h2 className="text-sm sm:text-base font-bold text-utu-black hidden sm:block">
+                  <span className="bg-gradient-to-r from-utu-green via-utu-gold to-utu-red bg-clip-text text-transparent">
+                    CHARITY NETWORK
+                  </span>
                 </h2>
-                <p className="text-xs sm:text-sm text-utu-gray font-medium">
-                  A Helping Hand For Every African
+                <p className="text-xs sm:text-sm font-semibold">
+                  <span className="bg-gradient-to-r from-utu-gold via-utu-red to-utu-green bg-clip-text text-transparent">
+                    A Helping Hand For Every African
+                  </span>
                 </p>
               </div>
             </Link>
