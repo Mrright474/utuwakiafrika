@@ -54,13 +54,25 @@ const Index = () => {
 
   return (
     <Layout>
-      <div className="overflow-x-hidden w-full">
-        {/* Home page sections only */}
-        <Hero />
-        <Programs />
-        <VisualGallery />
-        <Testimonials />
-        <GetInvolved />
+      <div className="relative overflow-x-hidden w-full">
+        {/* Background image layer */}
+        <div className="fixed inset-0 z-0">
+          <img 
+            src="/lovable-uploads/b07d8f50-577a-4699-87ba-8759e7ace688.png"
+            alt="Ubuntu spirit and children"
+            className="w-full h-full object-cover opacity-5"
+          />
+          <div className="absolute inset-0 bg-white/95"></div>
+        </div>
+        
+        {/* Content layer */}
+        <div className="relative z-10">
+          <Hero />
+          <Programs />
+          <VisualGallery />
+          <Testimonials />
+          <GetInvolved />
+        </div>
       </div>
     </Layout>
   );
