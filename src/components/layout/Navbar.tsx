@@ -48,7 +48,7 @@ const Navbar = () => {
             <Link to="/" className="flex items-center group" onClick={() => handleNavLinkClick('/')}>
               <div className="relative">
                 <img 
-                  src="/lovable-uploads/8eac0f13-2a6a-46c4-943c-bdcf90d9ee99.png" 
+                  src="/lovable-uploads/8c92f756-dfe1-496d-8f40-b05da33fb433.png" 
                   alt="Utu Wa Kiafrika Charity Network Logo" 
                   className="h-12 sm:h-14 w-auto transition-transform group-hover:scale-105"
                 />
