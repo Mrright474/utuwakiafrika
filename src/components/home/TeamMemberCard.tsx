@@ -65,6 +65,9 @@ const TeamMemberCard = ({
       <p className="text-gray-600 text-base leading-relaxed max-w-sm mx-auto">
         {bio}
       </p>
+      
+      {/* African-inspired accent border */}
+      <div className="absolute bottom-0 left-0 right-0 h-2 bg-gradient-to-r from-utu-red via-utu-gold to-utu-green"></div>
     </div>
   );
 };
