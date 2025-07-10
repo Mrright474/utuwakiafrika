@@ -1,5 +1,6 @@
 
 import React from 'react';
+import helpingHandsImage from '../../../assets/helping-hands-bread.jpg';
 
 const WhoWeAre = () => {
   return (
@@ -25,55 +26,28 @@ const WhoWeAre = () => {
           </p>
         </div>
         <div className="relative">
-          {/* Main featured image */}
-          <div className="mb-6">
-            <div className="relative overflow-hidden rounded-3xl shadow-2xl group">
-              <img 
-                src="/lovable-uploads/b07d8f50-577a-4699-87ba-8759e7ace688.png" 
-                alt="African children embodying Ubuntu spirit" 
-                className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110" 
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <div className="absolute bottom-4 left-4 right-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <h3 className="font-semibold text-lg">Ubuntu Spirit in Action</h3>
-                <p className="text-sm text-white/90">Children embodying our core values</p>
-              </div>
-            </div>
-          </div>
-          
-          {/* Grid of smaller images */}
-          <div className="grid grid-cols-3 gap-4">
-            <div className="relative overflow-hidden rounded-2xl shadow-lg group hover:shadow-xl transition-all duration-300">
-              <img 
-                src="/lovable-uploads/eccb4f96-1438-49ba-947c-c55ac2356fd0.png" 
-                alt="Community leader" 
-                className="w-full h-32 object-cover transition-transform duration-300 group-hover:scale-105" 
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          {/* Single powerful symbolic image */}
+          <div className="relative overflow-hidden rounded-3xl shadow-2xl group">
+            <img 
+              src={helpingHandsImage}
+              alt="Hands sharing bread - symbol of our mission to feed and help vulnerable communities" 
+              className="w-full h-96 object-cover transition-all duration-700 group-hover:scale-105" 
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60 group-hover:opacity-30 transition-opacity duration-500"></div>
+            <div className="absolute bottom-6 left-6 right-6 text-white">
+              <h3 className="font-bold text-2xl mb-2 text-shadow-lg">A Helping Hand For Every African</h3>
+              <p className="text-lg text-white/95 font-medium">Nourishing communities, empowering lives</p>
             </div>
             
-            <div className="relative overflow-hidden rounded-2xl shadow-lg group hover:shadow-xl transition-all duration-300 transform translate-y-2">
-              <img 
-                src="/lovable-uploads/a382b382-f2d2-4832-9343-db9d8abb367d.png" 
-                alt="Empowered women" 
-                className="w-full h-32 object-cover transition-transform duration-300 group-hover:scale-105" 
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-secondary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            </div>
-            
-            <div className="relative overflow-hidden rounded-2xl shadow-lg group hover:shadow-xl transition-all duration-300">
-              <img 
-                src="/lovable-uploads/6cc22289-337a-4964-ab0f-4058feb43e63.png" 
-                alt="Healthcare outreach" 
-                className="w-full h-32 object-cover transition-transform duration-300 group-hover:scale-105" 
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-accent/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            </div>
+            {/* Floating animation elements */}
+            <div className="absolute top-4 right-4 w-3 h-3 bg-white/60 rounded-full animate-pulse"></div>
+            <div className="absolute top-12 right-8 w-2 h-2 bg-white/40 rounded-full animate-pulse delay-300"></div>
+            <div className="absolute top-20 right-6 w-1.5 h-1.5 bg-white/50 rounded-full animate-pulse delay-700"></div>
           </div>
           
-          {/* Decorative elements */}
-          <div className="absolute -top-4 -right-4 w-24 h-24 bg-primary/10 rounded-full blur-xl"></div>
-          <div className="absolute bottom-8 -left-6 w-32 h-32 bg-secondary/10 rounded-full blur-2xl"></div>
+          {/* Decorative elements representing hope and unity */}
+          <div className="absolute -top-6 -right-6 w-32 h-32 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-full blur-2xl animate-pulse"></div>
+          <div className="absolute bottom-4 -left-8 w-24 h-24 bg-gradient-to-tr from-accent/15 to-primary/15 rounded-full blur-xl"></div>
         </div>
       </div>
     </div>
