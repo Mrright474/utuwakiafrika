@@ -40,20 +40,31 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-white shadow-sm sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-3">
+    <nav className="bg-white shadow-lg sticky top-0 z-50 border-b border-gray-100">
+      <div className="container mx-auto px-4 py-4">
         <div className="flex justify-between items-center">
           {/* Logo and brand name */}
           <div className="flex items-center">
-            <Link to="/" className="flex items-center" onClick={() => handleNavLinkClick('/')}>
-              <img 
-                src="/lovable-uploads/7645e834-1078-4707-9732-786fd4d93d8c.png" 
-                alt="Utu Wa Kiafrika Logo" 
-                className="h-10 sm:h-12 w-auto"
-              />
-              <div className="ml-2 sm:ml-3 hidden md:block">
-                <h1 className="text-lg sm:text-xl font-bold text-utu-black">UTU WA KIAFRIKA</h1>
-                <p className="text-xs text-utu-gray">A Helping Hand For Every African</p>
+            <Link to="/" className="flex items-center group" onClick={() => handleNavLinkClick('/')}>
+              <div className="relative">
+                <img 
+                  src="/lovable-uploads/8eac0f13-2a6a-46c4-943c-bdcf90d9ee99.png" 
+                  alt="Utu Wa Kiafrika Charity Network Logo" 
+                  className="h-12 sm:h-14 w-auto transition-transform group-hover:scale-105"
+                />
+              </div>
+              <div className="ml-3 sm:ml-4">
+                <h1 className="text-xl sm:text-2xl font-bold text-utu-black font-heading leading-tight">
+                  <span className="bg-gradient-to-r from-utu-red via-utu-gold to-utu-green bg-clip-text text-transparent">
+                    UTU WA KIAFRIKA
+                  </span>
+                </h1>
+                <h2 className="text-sm sm:text-base font-semibold text-utu-black hidden sm:block">
+                  CHARITY NETWORK
+                </h2>
+                <p className="text-xs sm:text-sm text-utu-gray font-medium">
+                  A Helping Hand For Every African
+                </p>
               </div>
             </Link>
           </div>
