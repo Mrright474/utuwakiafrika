@@ -158,37 +158,120 @@
   }
 
   .ubuntu-card {
-    @apply bg-white/90 backdrop-blur-sm border border-white/20 shadow-lg;
+    @apply bg-gradient-to-br from-white/98 to-gray-50/98 backdrop-blur-md;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
     background-image: 
       radial-gradient(circle at top left, rgba(229, 43, 56, 0.1) 0%, transparent 50%),
       radial-gradient(circle at bottom right, rgba(46, 125, 50, 0.1) 0%, transparent 50%);
   }
+
+  .shadow-ubuntu {
+    box-shadow: 0 20px 60px rgba(220, 38, 38, 0.15);
+  }
+
+  .shadow-africa {
+    box-shadow: 0 20px 60px rgba(245, 158, 11, 0.15);
+  }
+
+  /* Enhanced transitions for better UX */
+  .section-transition {
+    @apply transition-all duration-700 ease-out;
+  }
+
+  /* Improved focus states for accessibility */
+  .focus-enhanced {
+    @apply focus:outline-none focus:ring-4 focus:ring-red-500/20 focus:border-red-500;
+  }
 }
 
+/* Enhanced Animation Definitions */
 @keyframes fadeIn {
-  0% {
+  from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(30px);
   }
-  100% {
+  to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.8s ease-out;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.8s ease-out;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.6s ease-out;
+}
+
 @keyframes pulse-ubuntu {
-  0%, 100% {
+  0%, 100% { 
     transform: scale(1);
     opacity: 1;
   }
-  50% {
+  50% { 
     transform: scale(1.05);
     opacity: 0.8;
   }
 }
 
+.animate-ubuntu-pulse {
+  animation: pulse-ubuntu 2s ease-in-out infinite;
+}
+
 .pulse-ubuntu {
   animation: pulse-ubuntu 3s ease-in-out infinite;
+}
+
+/* Performance optimizations */
+.animate-on-scroll {
+  will-change: transform, opacity;
+}
+
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
 }
 
 /* Responsive utilities */

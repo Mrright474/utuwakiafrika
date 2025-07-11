@@ -55,23 +55,28 @@ const Index = () => {
   return (
     <Layout>
       <div className="relative overflow-x-hidden w-full">
-        {/* Background image layer */}
-        <div className="fixed inset-0 z-0">
-          <img 
-            src="/lovable-uploads/b07d8f50-577a-4699-87ba-8759e7ace688.png"
-            alt="Ubuntu spirit and children"
-            className="w-full h-full object-cover opacity-5"
-          />
-          <div className="absolute inset-0 bg-white/95"></div>
+        {/* Optimized background layer - only behind hero section */}
+        <div className="absolute inset-0 z-0">
+          <div className="h-screen bg-gradient-to-br from-slate-50 to-gray-100"></div>
         </div>
         
-        {/* Content layer */}
+        {/* Content layer with smooth section transitions */}
         <div className="relative z-10">
-          <Hero />
-          <Programs />
-          <VisualGallery />
-          <Testimonials />
-          <GetInvolved />
+          <div className="animate-on-scroll opacity-0 translate-y-10 transition-all duration-700">
+            <Hero />
+          </div>
+          <div className="animate-on-scroll opacity-0 translate-y-10 transition-all duration-700">
+            <Programs />
+          </div>
+          <div className="animate-on-scroll opacity-0 translate-y-10 transition-all duration-700">
+            <VisualGallery />
+          </div>
+          <div className="animate-on-scroll opacity-0 translate-y-10 transition-all duration-700">
+            <Testimonials />
+          </div>
+          <div className="animate-on-scroll opacity-0 translate-y-10 transition-all duration-700">
+            <GetInvolved />
+          </div>
         </div>
       </div>
     </Layout>

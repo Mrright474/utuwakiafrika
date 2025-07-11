@@ -12,12 +12,12 @@ interface TestimonialProps {
 
 const Testimonial = ({ quote, name, role }: TestimonialProps) => {
   return (
-    <div className="bg-white p-6 rounded-md shadow-sm hover:shadow-md transition-all duration-300 h-full flex flex-col">
-      <Quote className="h-8 w-8 text-utu-red/20 mb-4" />
-      <p className="text-utu-gray mb-6 italic flex-grow">"{quote}"</p>
-      <div>
-        <h4 className="font-bold text-utu-black">{name}</h4>
-        <p className="text-sm text-utu-gray">{role}</p>
+    <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-500 h-full flex flex-col border border-gray-100 hover:border-red-200 group">
+      <Quote className="h-10 w-10 text-red-400/30 mb-6 group-hover:text-red-500/40 transition-colors" />
+      <p className="text-slate-700 mb-8 italic flex-grow text-lg leading-relaxed">"{quote}"</p>
+      <div className="border-t border-gray-100 pt-6">
+        <h4 className="font-bold text-slate-900 text-lg">{name}</h4>
+        <p className="text-slate-600 mt-1">{role}</p>
       </div>
     </div>
   );
@@ -79,11 +79,12 @@ const Testimonials = () => {
   );
 
   return (
-    <section id="testimonials" className="py-16 bg-gray-50">
+    <section id="testimonials" className="py-20 bg-gradient-to-br from-slate-50 to-gray-100">
       <div className="container mx-auto px-4">
-        <div className="text-center max-w-2xl mx-auto mb-12">
-          <h2 className="text-3xl font-bold mb-4 text-utu-black">Voices of Impact</h2>
-          <p className="text-utu-gray">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-slate-900">Voices of Impact</h2>
+          <div className="w-24 h-1 bg-gradient-to-r from-red-500 to-orange-500 mx-auto mb-6"></div>
+          <p className="text-xl text-slate-600 leading-relaxed">
             Hear directly from individuals whose lives have been transformed through our initiatives.
           </p>
         </div>
