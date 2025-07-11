@@ -30,34 +30,35 @@ const Hero = () => {
         <div className="max-w-5xl mx-auto">
           {/* Ubuntu Philosophy Highlight */}
           <div className="mb-8 animate-fade-in">
-            <div className="inline-flex items-center bg-gradient-to-r from-red-500/20 to-orange-500/20 backdrop-blur-sm border border-red-500/30 rounded-full px-8 py-3 text-base font-medium shadow-lg">
-              <Users className="mr-3 h-5 w-5 text-orange-400" />
+            <div className="inline-flex items-center bg-utu-red/20 backdrop-blur-sm border border-utu-red/30 rounded-full px-6 py-2 text-sm font-medium">
+              <Users className="mr-2 h-4 w-4 text-utu-gold" />
               Ubuntu Philosophy: "I am because we are"
             </div>
           </div>
 
           {/* Main Headline */}
-          <h1 className="text-5xl sm:text-6xl lg:text-8xl font-bold mb-10 leading-tight animate-fade-in">
-            <span className="text-white block mb-2">Creating</span>
-            <span className="bg-gradient-to-r from-red-400 via-orange-400 to-yellow-400 bg-clip-text text-transparent block mb-2">
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold mb-8 font-heading leading-tight animate-fade-in">
+            <span className="text-white">Creating</span>{' '}
+            <span className="bg-gradient-to-r from-utu-red via-utu-gold to-utu-green bg-clip-text text-transparent">
               Ubuntu-Centered
             </span>
+            <br />
             <span className="text-white">Communities</span>{' '}
-            <span className="text-orange-400">Across Africa</span>
+            <span className="text-utu-gold">Across Africa</span>
           </h1>
 
           {/* Tagline */}
-          <div className="mb-8 animate-fade-in">
-            <p className="text-2xl sm:text-3xl font-semibold text-orange-400 mb-3">
+          <div className="mb-6 animate-fade-in">
+            <p className="text-xl sm:text-2xl font-semibold text-utu-gold mb-2">
               "A Helping Hand For Every African"
             </p>
-            <p className="text-xl text-gray-300 italic font-light">
+            <p className="text-lg text-gray-200 italic">
               Utu wa Kiafrika - African Humanity
             </p>
           </div>
 
           {/* Mission Statement */}
-          <p className="text-xl sm:text-2xl mb-12 text-gray-200 max-w-4xl leading-relaxed animate-fade-in font-light">
+          <p className="text-lg sm:text-xl mb-10 text-gray-200 max-w-3xl leading-relaxed animate-fade-in">
             Rooted in Ubuntu philosophy, we build compassionate and self-sustaining African communities 
             through education, empowerment, health, gender equality, and cultural revival. 
             Together, we create a united, empowered, and dignified Africa where every community thrives.
