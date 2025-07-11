@@ -13,23 +13,22 @@ const Hero = () => {
   };
 
   return (
-    <section id="hero" className="relative bg-gradient-to-br from-slate-900 via-gray-900 to-black text-white overflow-hidden min-h-screen flex items-center">
-      {/* Optimized background with better contrast */}
+    <section id="hero" className="relative bg-gradient-to-br from-utu-black via-utu-black to-gray-900 text-white overflow-hidden min-h-[90vh] flex items-center">
+      {/* Ubuntu-inspired background patterns */}
       <div className="absolute inset-0">
         <img 
           src="/lovable-uploads/b07d8f50-577a-4699-87ba-8759e7ace688.png" 
           alt="African children representing Ubuntu - unity and community" 
-          className="w-full h-full object-cover opacity-15"
-          loading="eager"
+          className="w-full h-full object-cover opacity-20"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-900/95 via-gray-900/90 to-black/85"></div>
-        <div className="absolute inset-0 ubuntu-pattern opacity-20"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-utu-black via-black/90 to-transparent"></div>
+        <div className="absolute inset-0 ubuntu-pattern opacity-30"></div>
       </div>
       
       <div className="container mx-auto px-4 py-20 relative z-10">
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-4xl">
           {/* Ubuntu Philosophy Highlight */}
-          <div className="mb-8 animate-fade-in">
+          <div className="mb-6 animate-fade-in-up">
             <div className="inline-flex items-center bg-utu-red/20 backdrop-blur-sm border border-utu-red/30 rounded-full px-6 py-2 text-sm font-medium">
               <Users className="mr-2 h-4 w-4 text-utu-gold" />
               Ubuntu Philosophy: "I am because we are"
@@ -37,9 +36,9 @@ const Hero = () => {
           </div>
 
           {/* Main Headline */}
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold mb-8 font-heading leading-tight animate-fade-in">
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold mb-8 font-heading leading-tight animate-fade-in-up">
             <span className="text-white">Creating</span>{' '}
-            <span className="bg-gradient-to-r from-utu-red via-utu-gold to-utu-green bg-clip-text text-transparent">
+            <span className="text-gradient bg-gradient-to-r from-utu-red via-utu-gold to-utu-green bg-clip-text text-transparent">
               Ubuntu-Centered
             </span>
             <br />
@@ -48,7 +47,7 @@ const Hero = () => {
           </h1>
 
           {/* Tagline */}
-          <div className="mb-6 animate-fade-in">
+          <div className="mb-6 animate-fade-in-up delay-200">
             <p className="text-xl sm:text-2xl font-semibold text-utu-gold mb-2">
               "A Helping Hand For Every African"
             </p>
@@ -58,7 +57,7 @@ const Hero = () => {
           </div>
 
           {/* Mission Statement */}
-          <p className="text-lg sm:text-xl mb-10 text-gray-200 max-w-3xl leading-relaxed animate-fade-in">
+          <p className="text-lg sm:text-xl mb-10 text-gray-200 max-w-3xl leading-relaxed animate-fade-in-up delay-300">
             Rooted in Ubuntu philosophy, we build compassionate and self-sustaining African communities 
             through education, empowerment, health, gender equality, and cultural revival. 
             Together, we create a united, empowered, and dignified Africa where every community thrives.
