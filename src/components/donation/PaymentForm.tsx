@@ -85,20 +85,39 @@ const PaymentForm = () => {
 
       {paymentMethod === 'mobile' && (
         <div className="space-y-4">
-          <h4 className="font-medium">Mobile Money Details</h4>
+          <h4 className="font-medium">Mobile Money Payment Instructions</h4>
           <div className="space-y-4">
+            <div className="p-4 bg-blue-50 border border-blue-200 rounded-md">
+              <h5 className="font-medium text-blue-900 mb-2">Send payment to:</h5>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between p-2 bg-white rounded border">
+                  <span className="text-sm font-medium">Airtel Money:</span>
+                  <span className="text-sm font-mono text-blue-800">0744552195</span>
+                </div>
+                <div className="flex items-center justify-between p-2 bg-white rounded border">
+                  <span className="text-sm font-medium">MTN Mobile Money:</span>
+                  <span className="text-sm font-mono text-blue-800">0778777976</span>
+                </div>
+              </div>
+            </div>
+            
             <div>
-              <Label htmlFor="mobile-provider">Select Provider</Label>
+              <Label htmlFor="mobile-provider">Select Your Provider</Label>
               <select id="mobile-provider" className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background">
                 <option value="">Choose your mobile money provider</option>
-                <option value="airtel">Airtel Money</option>
-                <option value="mtn">MTN Mobile Money</option>
-                <option value="mpesa">M-Pesa</option>
+                <option value="airtel">Airtel Money - Send to 0744552195</option>
+                <option value="mtn">MTN Mobile Money - Send to 0778777976</option>
               </select>
             </div>
+            
             <div>
-              <Label htmlFor="mobile-number">Phone Number</Label>
-              <Input id="mobile-number" placeholder="+256 123 456 789" required />
+              <Label htmlFor="mobile-number">Your Phone Number</Label>
+              <Input id="mobile-number" placeholder="Enter your phone number" required />
+            </div>
+            
+            <div>
+              <Label htmlFor="transaction-ref">Transaction Reference (after payment)</Label>
+              <Input id="transaction-ref" placeholder="Enter transaction ID after sending payment" />
             </div>
           </div>
         </div>
