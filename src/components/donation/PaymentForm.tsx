@@ -1,18 +1,62 @@
-
 import React, { useState } from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { CreditCard, Smartphone, Building } from 'lucide-react';
 
-const PaymentForm = () => {
-  const [paymentMethod, setPaymentMethod] = useState('card');
+interface PaymentFormProps {
+  onPayment: (paymentMethod: string, paymentData: any) => void;
+  donationAmount: string;
+}
+
+const PaymentForm = ({ onPayment, donationAmount }: PaymentFormProps) => {
+  const [paymentMethod, setPaymentMethod] = useState('mobile');
+  const [formData, setFormData] = useState({
+    // Card data
+    cardName: '',
+    cardNumber: '',
+    expiry: '',
+    cvc: '',
+    // Mobile data
+    provider: '',
+    phoneNumber: '',
+    // Bank data - no additional data needed
+  });
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handlePaymentSubmit = () => {
+    if (!donationAmount || donationAmount === '0') {
+      return;
+    }
+
+    let paymentData = {};
+    
+    if (paymentMethod === 'mobile') {
+      paymentData = {
+        provider: formData.provider,
+        phoneNumber: formData.phoneNumber
+      };
+    } else if (paymentMethod === 'card') {
+      paymentData = {
+        cardName: formData.cardName,
+        cardNumber: formData.cardNumber,
+        expiry: formData.expiry,
+        cvc: formData.cvc
+      };
+    }
+
+    onPayment(paymentMethod, paymentData);
+  };
 
   return (
     <div className="space-y-6">
       <div>
         <h3 className="text-lg font-medium mb-4">Payment Method</h3>
-        <RadioGroup defaultValue="card" onValueChange={setPaymentMethod} className="grid grid-cols-1 gap-4">
+        <RadioGroup defaultValue="mobile" onValueChange={setPaymentMethod} className="grid grid-cols-1 gap-4">
           <div>
             <RadioGroupItem value="card" id="payment-card" className="peer sr-only" />
             <Label
@@ -36,7 +80,7 @@ const PaymentForm = () => {
               <Smartphone className="h-5 w-5 text-utu-red" />
               <div>
                 <div className="font-medium">Mobile Money</div>
-                <div className="text-sm text-muted-foreground">Airtel Money, MTN MoMo, M-Pesa</div>
+                <div className="text-sm text-muted-foreground">Airtel Money, MTN MoMo</div>
               </div>
             </Label>
           </div>
@@ -63,20 +107,44 @@ const PaymentForm = () => {
           <div className="space-y-4">
             <div>
               <Label htmlFor="card-name">Name on Card</Label>
-              <Input id="card-name" placeholder="John Doe" required />
+              <Input 
+                id="card-name" 
+                placeholder="John Doe" 
+                value={formData.cardName}
+                onChange={(e) => handleInputChange('cardName', e.target.value)}
+                required 
+              />
             </div>
             <div>
               <Label htmlFor="card-number">Card Number</Label>
-              <Input id="card-number" placeholder="1234 5678 9012 3456" required />
+              <Input 
+                id="card-number" 
+                placeholder="1234 5678 9012 3456" 
+                value={formData.cardNumber}
+                onChange={(e) => handleInputChange('cardNumber', e.target.value)}
+                required 
+              />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="expiry">Expiry Date</Label>
-                <Input id="expiry" placeholder="MM/YY" required />
+                <Input 
+                  id="expiry" 
+                  placeholder="MM/YY" 
+                  value={formData.expiry}
+                  onChange={(e) => handleInputChange('expiry', e.target.value)}
+                  required 
+                />
               </div>
               <div>
                 <Label htmlFor="cvc">CVC</Label>
-                <Input id="cvc" placeholder="123" required />
+                <Input 
+                  id="cvc" 
+                  placeholder="123" 
+                  value={formData.cvc}
+                  onChange={(e) => handleInputChange('cvc', e.target.value)}
+                  required 
+                />
               </div>
             </div>
           </div>
@@ -89,7 +157,13 @@ const PaymentForm = () => {
           <div className="space-y-4">
             <div>
               <Label htmlFor="mobile-provider">Select Provider</Label>
-              <select id="mobile-provider" className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background">
+              <select 
+                id="mobile-provider" 
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
+                value={formData.provider}
+                onChange={(e) => handleInputChange('provider', e.target.value)}
+                required
+              >
                 <option value="">Choose your mobile money provider</option>
                 <option value="airtel">Airtel Money</option>
                 <option value="mtn">MTN Mobile Money</option>
@@ -97,12 +171,17 @@ const PaymentForm = () => {
             </div>
             <div>
               <Label htmlFor="mobile-number">Your Phone Number</Label>
-              <Input id="mobile-number" placeholder="Enter your phone number" required />
+              <Input 
+                id="mobile-number" 
+                placeholder="Enter your phone number" 
+                value={formData.phoneNumber}
+                onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
+                required 
+              />
             </div>
             <div className="p-4 bg-blue-50 border border-blue-200 rounded-md">
               <p className="text-sm text-blue-800">
-                After clicking "Complete Donation", you'll receive payment instructions for your selected provider. 
-                Follow the prompts to complete your mobile money payment.
+                After clicking "Pay with Mobile Money", you'll receive USSD instructions or be redirected to complete your payment.
               </p>
             </div>
           </div>
@@ -114,7 +193,7 @@ const PaymentForm = () => {
           <h4 className="font-medium">Bank Transfer Details</h4>
           <div className="p-4 bg-blue-50 border border-blue-200 rounded-md">
             <p className="text-sm text-blue-800">
-              After clicking "Complete Donation", you'll receive bank transfer instructions via email. 
+              Click below to get our bank account details for direct transfer. 
               Your donation will be confirmed once the transfer is received.
             </p>
           </div>
@@ -136,6 +215,17 @@ const PaymentForm = () => {
           </div>
         </div>
       </div>
+      
+      <Button 
+        onClick={handlePaymentSubmit}
+        className="w-full bg-utu-red hover:bg-red-700 text-white"
+        disabled={!donationAmount || donationAmount === '0'}
+      >
+        <CreditCard className="mr-2 h-4 w-4" />
+        {paymentMethod === 'mobile' ? 'Pay with Mobile Money' : 
+         paymentMethod === 'card' ? 'Pay with Card' : 
+         'Get Bank Transfer Details'}
+      </Button>
     </div>
   );
 };

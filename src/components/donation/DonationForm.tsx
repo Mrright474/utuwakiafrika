@@ -22,7 +22,7 @@ const DonationForm = () => {
     setAmount('custom');
   };
 
-  const handleDonation = (e: React.FormEvent) => {
+  const handleDonation = (e: React.FormEvent, paymentMethod: string, paymentData: any) => {
     e.preventDefault();
     
     const donationAmount = amount === 'custom' ? customAmount : amount;
@@ -35,10 +35,73 @@ const DonationForm = () => {
       });
       return;
     }
+
+    // Handle different payment methods
+    switch (paymentMethod) {
+      case 'mobile':
+        handleMobilePayment(donationAmount, paymentData);
+        break;
+      case 'card':
+        handleCardPayment(donationAmount, paymentData);
+        break;
+      case 'bank':
+        handleBankTransfer(donationAmount);
+        break;
+      default:
+        toast({
+          title: "Payment Method Required",
+          description: "Please select a payment method.",
+          variant: "destructive"
+        });
+    }
+  };
+
+  const handleMobilePayment = (amount: string, paymentData: any) => {
+    const { provider, phoneNumber } = paymentData;
     
+    if (provider === 'airtel') {
+      // Trigger Airtel Money USSD
+      const ussdCode = `*185*9*${amount}*0744552195#`;
+      toast({
+        title: "Airtel Money Payment",
+        description: `Please dial ${ussdCode} to complete your donation of UGX ${amount}`,
+      });
+      // Try to open USSD dialer on mobile
+      if (navigator.userAgent.match(/Android/i)) {
+        window.location.href = `tel:${encodeURIComponent(ussdCode)}`;
+      }
+    } else if (provider === 'mtn') {
+      // Trigger MTN Mobile Money USSD
+      const ussdCode = `*165*3*${amount}*0778777976#`;
+      toast({
+        title: "MTN Mobile Money Payment", 
+        description: `Please dial ${ussdCode} to complete your donation of UGX ${amount}`,
+      });
+      // Try to open USSD dialer on mobile
+      if (navigator.userAgent.match(/Android/i)) {
+        window.location.href = `tel:${encodeURIComponent(ussdCode)}`;
+      }
+    }
+  };
+
+  const handleCardPayment = (amount: string, paymentData: any) => {
+    // For demo purposes - in production you'd integrate with Stripe/PayPal
     toast({
-      title: "Thank you for your donation!",
-      description: `Your donation of $${donationAmount} is being processed. You will receive a confirmation shortly.`,
+      title: "Redirecting to Payment Processor",
+      description: `Processing your card payment of $${amount}. You'll be redirected to our secure payment partner.`,
+    });
+    
+    // Simulate redirect to payment processor
+    setTimeout(() => {
+      // In production, redirect to actual payment processor
+      window.open('https://checkout.stripe.com', '_blank');
+    }, 2000);
+  };
+
+  const handleBankTransfer = (amount: string) => {
+    toast({
+      title: "Bank Transfer Details",
+      description: `Bank: Stanbic Bank Uganda | Account: 9030123456789 | Amount: UGX ${amount}`,
     });
   };
 
@@ -50,7 +113,7 @@ const DonationForm = () => {
           <CardDescription>Support our mission with a secure donation using any major payment method</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleDonation} className="space-y-6 py-4">
+          <form className="space-y-6 py-4">
             <DonationAmountSelector
               amount={amount}
               customAmount={customAmount}
@@ -58,12 +121,12 @@ const DonationForm = () => {
               onCustomAmount={handleCustomAmount}
             />
             
-            <PaymentForm />
-            
-            <Button type="submit" className="w-full bg-utu-red hover:bg-red-700 text-white">
-              <CreditCard className="mr-2 h-4 w-4" />
-              Complete Secure Donation
-            </Button>
+            <PaymentForm 
+              onPayment={(paymentMethod, paymentData) => 
+                handleDonation(new Event('submit') as any, paymentMethod, paymentData)
+              }
+              donationAmount={amount === 'custom' ? customAmount : amount}
+            />
           </form>
         </CardContent>
         <CardFooter className="flex flex-col">
