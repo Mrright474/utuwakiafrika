@@ -8,7 +8,6 @@ import Testimonials from '@/components/home/Testimonials';
 import Programs from '@/components/home/Programs';
 import VisualGallery from '@/components/home/VisualGallery';
 import { useLocation } from 'react-router-dom';
-import ubuntuSpiritImage from '@/assets/ubuntu-spirit-children.jpg';
 
 const Index = () => {
   const location = useLocation();
@@ -58,8 +57,8 @@ const Index = () => {
     <Layout>
       <div className="relative overflow-x-hidden w-full">
         <BackgroundImage 
-          src={ubuntuSpiritImage}
-          alt="Ubuntu spirit and African children in community"
+          src="/lovable-uploads/688ac280-0ee5-48ac-8a44-82ad202140e7.png"
+          alt="Ubuntu spirit and creating communities across Africa"
           opacity={0.2}
           overlayOpacity={0.85}
         />
