@@ -7,6 +7,7 @@ import Testimonials from '@/components/home/Testimonials';
 import Programs from '@/components/home/Programs';
 import VisualGallery from '@/components/home/VisualGallery';
 import { useLocation } from 'react-router-dom';
+import ubuntuSpiritImage from '@/assets/ubuntu-spirit-children.jpg';
 
 const Index = () => {
   const location = useLocation();
@@ -58,11 +59,11 @@ const Index = () => {
         {/* Background image layer */}
         <div className="fixed inset-0 z-0">
           <img 
-            src="/lovable-uploads/b07d8f50-577a-4699-87ba-8759e7ace688.png"
-            alt="Ubuntu spirit and children"
-            className="w-full h-full object-cover opacity-5"
+            src={ubuntuSpiritImage}
+            alt="Ubuntu spirit and African children in community"
+            className="w-full h-full object-cover opacity-10"
           />
-          <div className="absolute inset-0 bg-white/95"></div>
+          <div className="absolute inset-0 bg-white/90"></div>
         </div>
         
         {/* Content layer */}
