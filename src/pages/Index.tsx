@@ -59,11 +59,11 @@ const Index = () => {
         {/* Background image layer */}
         <div className="fixed inset-0 z-0">
           <img 
-            src={ubuntuSpiritImage}
+            src={`${ubuntuSpiritImage}?t=${Date.now()}`}
             alt="Ubuntu spirit and African children in community"
-            className="w-full h-full object-cover opacity-10"
+            className="w-full h-full object-cover opacity-20"
           />
-          <div className="absolute inset-0 bg-white/90"></div>
+          <div className="absolute inset-0 bg-white/85"></div>
         </div>
         
         {/* Content layer */}
