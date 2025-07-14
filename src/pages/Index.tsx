@@ -1,6 +1,7 @@
 
 import React, { useEffect } from 'react';
 import Layout from '@/components/layout/Layout';
+import BackgroundImage from '@/components/layout/BackgroundImage';
 import Hero from '@/components/home/Hero';
 import GetInvolved from '@/components/home/GetInvolved';
 import Testimonials from '@/components/home/Testimonials';
@@ -56,15 +57,12 @@ const Index = () => {
   return (
     <Layout>
       <div className="relative overflow-x-hidden w-full">
-        {/* Background image layer */}
-        <div className="fixed inset-0 z-0">
-          <img 
-            src={`${ubuntuSpiritImage}?t=${Date.now()}`}
-            alt="Ubuntu spirit and African children in community"
-            className="w-full h-full object-cover opacity-20"
-          />
-          <div className="absolute inset-0 bg-white/85"></div>
-        </div>
+        <BackgroundImage 
+          src={ubuntuSpiritImage}
+          alt="Ubuntu spirit and African children in community"
+          opacity={0.2}
+          overlayOpacity={0.85}
+        />
         
         {/* Content layer */}
         <div className="relative z-10">
