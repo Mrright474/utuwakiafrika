@@ -1,22 +1,23 @@
 
-import React from 'react';
+import React, { memo, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { ChevronRight, Heart, Users, Globe, HandHeart } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import LazyImage from '@/components/ui/lazy-image';
 
-const Hero = () => {
-  const scrollToSection = (sectionId: string) => {
+const Hero = memo(() => {
+  const scrollToSection = useCallback((sectionId: string) => {
     const section = document.getElementById(sectionId);
     if (section) {
       section.scrollIntoView({ behavior: 'smooth' });
     }
-  };
+  }, []);
 
   return (
     <section id="hero" className="relative bg-gradient-to-br from-utu-black via-utu-black to-gray-900 text-white overflow-hidden min-h-[90vh] flex items-center">
       {/* Ubuntu-inspired background patterns */}
       <div className="absolute inset-0">
-        <img 
+        <LazyImage 
           src="/lovable-uploads/b07d8f50-577a-4699-87ba-8759e7ace688.png" 
           alt="African children representing Ubuntu - unity and community" 
           className="w-full h-full object-cover opacity-20"
@@ -132,6 +133,8 @@ const Hero = () => {
       </div>
     </section>
   );
-};
+});
+
+Hero.displayName = 'Hero';
 
 export default Hero;

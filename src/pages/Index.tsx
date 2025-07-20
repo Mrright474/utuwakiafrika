@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, memo } from 'react';
 import Layout from '@/components/layout/Layout';
 import BackgroundImage from '@/components/layout/BackgroundImage';
 import Hero from '@/components/home/Hero';
@@ -8,9 +8,13 @@ import Testimonials from '@/components/home/Testimonials';
 import Programs from '@/components/home/Programs';
 import VisualGallery from '@/components/home/VisualGallery';
 import { useLocation } from 'react-router-dom';
+import usePerformance from '@/hooks/usePerformance';
 
-const Index = () => {
+const Index = memo(() => {
   const location = useLocation();
+  
+  // Track performance metrics
+  usePerformance(true);
 
   // Enhanced animation for better scroll-triggered effects
   useEffect(() => {
@@ -74,6 +78,8 @@ const Index = () => {
       </div>
     </Layout>
   );
-};
+});
+
+Index.displayName = 'Index';
 
 export default Index;

@@ -4,18 +4,31 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
-import AboutPage from "./pages/About";
-import ProgramsPage from "./pages/Programs";
-import Events from "./pages/Events";
-import TeamPage from "./pages/TeamPage";
-import ImpactPage from "./pages/ImpactPage";
-import ContactPage from "./pages/ContactPage";
-import Donate from "./pages/Donate";
-import Admin from "./pages/Admin";
-import NotFound from "./pages/NotFound";
+import { lazy, Suspense } from "react";
 import ChatBot from "./components/home/ChatBot";
 import ScrollToTop from "./components/layout/ScrollToTop";
+
+// Lazy load all page components for better performance
+const Index = lazy(() => import("./pages/Index"));
+const AboutPage = lazy(() => import("./pages/About"));
+const ProgramsPage = lazy(() => import("./pages/Programs"));
+const Events = lazy(() => import("./pages/Events"));
+const TeamPage = lazy(() => import("./pages/TeamPage"));
+const ImpactPage = lazy(() => import("./pages/ImpactPage"));
+const ContactPage = lazy(() => import("./pages/ContactPage"));
+const Donate = lazy(() => import("./pages/Donate"));
+const Admin = lazy(() => import("./pages/Admin"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+
+// Loading component for Suspense fallback
+const PageLoader = () => (
+  <div className="min-h-screen bg-gradient-to-br from-utu-cream via-white to-utu-cream flex items-center justify-center">
+    <div className="text-center">
+      <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-utu-red mb-4"></div>
+      <p className="text-utu-gray font-medium">Loading...</p>
+    </div>
+  </div>
+);
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -33,20 +46,22 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <ScrollToTop />
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/programs" element={<ProgramsPage />} />
-          <Route path="/events" element={<Events />} />
-          <Route path="/team" element={<TeamPage />} />
-          <Route path="/impact" element={<ImpactPage />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/donate" element={<Donate />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/admin/*" element={<Admin />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/programs" element={<ProgramsPage />} />
+            <Route path="/events" element={<Events />} />
+            <Route path="/team" element={<TeamPage />} />
+            <Route path="/impact" element={<ImpactPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/donate" element={<Donate />} />
+            <Route path="/admin" element={<Admin />} />
+            <Route path="/admin/*" element={<Admin />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
         <ChatBot />
       </BrowserRouter>
     </TooltipProvider>

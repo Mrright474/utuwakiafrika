@@ -1,36 +1,36 @@
 
-import React, { useState } from 'react';
+import React, { useState, memo, useCallback } from 'react';
 import { Dialog } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import GalleryGrid from '@/components/home/gallery/GalleryGrid';
 import ImageViewer from '@/components/home/gallery/ImageViewer';
 import { galleryImages } from '@/components/home/gallery/galleryData';
 
-const VisualGallery = () => {
+const VisualGallery = memo(() => {
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [visibleImages] = useState(galleryImages);
 
-  const handleImageClick = (index: number) => {
+  const handleImageClick = useCallback((index: number) => {
     setSelectedImageIndex(index);
     setIsDialogOpen(true);
-  };
+  }, []);
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     if (selectedImageIndex !== null) {
       setSelectedImageIndex((selectedImageIndex + 1) % galleryImages.length);
     }
-  };
+  }, [selectedImageIndex]);
 
-  const handlePrevious = () => {
+  const handlePrevious = useCallback(() => {
     if (selectedImageIndex !== null) {
       setSelectedImageIndex((selectedImageIndex - 1 + galleryImages.length) % galleryImages.length);
     }
-  };
+  }, [selectedImageIndex]);
 
-  const handleCloseDialog = () => {
+  const handleCloseDialog = useCallback(() => {
     setIsDialogOpen(false);
-  };
+  }, []);
 
   return (
     <section className="py-16 bg-white overflow-hidden">
@@ -70,6 +70,8 @@ const VisualGallery = () => {
       </div>
     </section>
   );
-};
+});
+
+VisualGallery.displayName = 'VisualGallery';
 
 export default VisualGallery;
