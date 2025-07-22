@@ -19,7 +19,7 @@ const BackgroundImage: React.FC<BackgroundImageProps> = memo(({
   return (
     <div className={`fixed inset-0 z-0 ${className}`}>
       <LazyImage 
-        src={`${src}?t=${Date.now()}`}
+        src={src}
         alt={alt}
         className="w-full h-full object-cover"
         style={{ opacity }}
