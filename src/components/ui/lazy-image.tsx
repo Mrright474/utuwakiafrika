@@ -7,6 +7,7 @@ interface LazyImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   placeholder?: string;
   className?: string;
   fallback?: React.ReactNode;
+  eager?: boolean;
 }
 
 const LazyImage: React.FC<LazyImageProps> = ({
@@ -15,14 +16,19 @@ const LazyImage: React.FC<LazyImageProps> = ({
   placeholder = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9IiNGNUY1RjUiLz4KPHN2ZyB4PSIzNSIgeT0iMzUiIHdpZHRoPSIzMCIgaGVpZ2h0PSIzMCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNEMUQ1REIiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj4KPHJlY3QgeD0iMyIgeT0iMyIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiByeD0iMiIgcnk9IjIiLz4KPGNpcmNsZSBjeD0iOC41IiBjeT0iOC41IiByPSIxLjUiLz4KPHBhdGggZD0ibTIxIDE1LTMuMDg2LTMuMDg2YTIgMiAwIDAgMC0yLjgyOCAwTDYgMjEiLz4KPC9zdmc+Cjwvc3ZnPgo=",
   className = "",
   fallback,
+  eager = false,
   ...props
 }) => {
   const [isLoaded, setIsLoaded] = useState(false);
-  const [isInView, setIsInView] = useState(false);
+  const [isInView, setIsInView] = useState(eager);
   const [hasError, setHasError] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
+    if (eager) {
+      setIsInView(true);
+      return;
+    }
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -38,7 +44,7 @@ const LazyImage: React.FC<LazyImageProps> = ({
     }
 
     return () => observer.disconnect();
-  }, []);
+  }, [eager]);
 
   const handleLoad = () => {
     setIsLoaded(true);
@@ -73,12 +79,13 @@ const LazyImage: React.FC<LazyImageProps> = ({
           alt={alt}
           onLoad={handleLoad}
           onError={handleError}
+          {...props}
+          loading={eager ? "eager" : "lazy"}
+          decoding={props.decoding ?? "async"}
           className={cn(
             "w-full h-full object-cover transition-opacity duration-300",
             isLoaded ? "opacity-100" : "opacity-0"
           )}
-          loading="lazy"
-          {...props}
         />
       )}
       

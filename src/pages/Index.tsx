@@ -8,6 +8,7 @@ import Testimonials from '@/components/home/Testimonials';
 import Programs from '@/components/home/Programs';
 import VisualGallery from '@/components/home/VisualGallery';
 import { useLocation } from 'react-router-dom';
+import LazySection from '@/components/utils/LazySection';
 import usePerformance from '@/hooks/usePerformance';
 
 const Index = memo(() => {
@@ -72,9 +73,15 @@ const Index = memo(() => {
         <div className="relative z-10">
           <Hero />
           <Programs />
-          <VisualGallery />
-          <Testimonials />
-          <GetInvolved />
+          <LazySection>
+            <VisualGallery />
+          </LazySection>
+          <LazySection>
+            <Testimonials />
+          </LazySection>
+          <LazySection rootMargin="600px">
+            <GetInvolved />
+          </LazySection>
         </div>
       </div>
     </Layout>

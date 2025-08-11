@@ -23,6 +23,7 @@ const GalleryGrid = memo(({ images, onImageClick }: GalleryGridProps) => {
               src={image.src}
               alt={image.alt}
               className="w-full h-full object-cover"
+              decoding="async"
               fallback={
                 <div className="w-full h-full bg-utu-cream/50 flex items-center justify-center">
                   <span className="text-utu-gray text-sm">Image unavailable</span>
