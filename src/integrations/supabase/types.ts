@@ -7,14 +7,147 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "13.0.4"
   }
   public: {
     Tables: {
-      [_ in never]: never
+      volunteer_activities: {
+        Row: {
+          activity_date: string
+          activity_type: string
+          created_at: string
+          description: string | null
+          hours_contributed: number | null
+          id: string
+          location: string | null
+          notes: string | null
+          project_name: string | null
+          status: string | null
+          updated_at: string
+          volunteer_id: string
+        }
+        Insert: {
+          activity_date: string
+          activity_type: string
+          created_at?: string
+          description?: string | null
+          hours_contributed?: number | null
+          id?: string
+          location?: string | null
+          notes?: string | null
+          project_name?: string | null
+          status?: string | null
+          updated_at?: string
+          volunteer_id: string
+        }
+        Update: {
+          activity_date?: string
+          activity_type?: string
+          created_at?: string
+          description?: string | null
+          hours_contributed?: number | null
+          id?: string
+          location?: string | null
+          notes?: string | null
+          project_name?: string | null
+          status?: string | null
+          updated_at?: string
+          volunteer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "volunteer_activities_volunteer_id_fkey"
+            columns: ["volunteer_id"]
+            isOneToOne: false
+            referencedRelation: "volunteer_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      volunteer_profiles: {
+        Row: {
+          age: number | null
+          availability: string | null
+          city: string | null
+          country: string | null
+          created_at: string
+          education: string | null
+          email: string
+          emergency_contact: string | null
+          emergency_phone: string | null
+          experience: string | null
+          first_name: string
+          id: string
+          join_date: string | null
+          languages: string | null
+          last_name: string
+          motivation: string | null
+          occupation: string | null
+          phone: string | null
+          skills: string | null
+          status: string | null
+          updated_at: string
+          user_id: string
+          volunteer_area: string | null
+          volunteer_id: string | null
+        }
+        Insert: {
+          age?: number | null
+          availability?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          education?: string | null
+          email: string
+          emergency_contact?: string | null
+          emergency_phone?: string | null
+          experience?: string | null
+          first_name: string
+          id?: string
+          join_date?: string | null
+          languages?: string | null
+          last_name: string
+          motivation?: string | null
+          occupation?: string | null
+          phone?: string | null
+          skills?: string | null
+          status?: string | null
+          updated_at?: string
+          user_id: string
+          volunteer_area?: string | null
+          volunteer_id?: string | null
+        }
+        Update: {
+          age?: number | null
+          availability?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          education?: string | null
+          email?: string
+          emergency_contact?: string | null
+          emergency_phone?: string | null
+          experience?: string | null
+          first_name?: string
+          id?: string
+          join_date?: string | null
+          languages?: string | null
+          last_name?: string
+          motivation?: string | null
+          occupation?: string | null
+          phone?: string | null
+          skills?: string | null
+          status?: string | null
+          updated_at?: string
+          user_id?: string
+          volunteer_area?: string | null
+          volunteer_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
