@@ -108,7 +108,7 @@ const GetInvolved = () => {
               </div>
             </CardContent>
             <CardFooter className="relative z-10">
-              <Link to="/contact" className="w-full">
+              <Link to="/volunteers/auth" className="w-full">
                 <Button className="w-full bg-gradient-to-r from-utu-gold to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white font-semibold rounded-full transition-all duration-300 hover:scale-105">
                   <HandHelping className="mr-2 h-4 w-4" />
                   Join Our Ubuntu Network

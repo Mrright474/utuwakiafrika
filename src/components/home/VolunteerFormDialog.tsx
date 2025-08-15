@@ -50,15 +50,9 @@ Emergency Contact:
 Application submitted on: ${new Date().toLocaleString()}
       `.trim();
 
-      // Create mailto link (this will open the user's email client)
-      const mailtoLink = `mailto:info@utuwakiafrika.org?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
-      
-      // Open email client
-      window.location.href = mailtoLink;
-      
       toast({
-        title: "Application Submitted!",
-        description: "Your volunteer application has been prepared for submission. Please send the email that just opened in your email client.",
+        title: "Ready to Join?",
+        description: "Complete your volunteer registration through our secure portal for a better experience.",
       });
       
       onOpenChange(false);

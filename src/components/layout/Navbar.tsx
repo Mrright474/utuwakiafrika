@@ -125,6 +125,13 @@ const Navbar = () => {
             >
               Contact
             </Link>
+            <Link 
+              to="/volunteers/auth"
+              className={`${isActive('/volunteers/auth') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium`}
+              onClick={() => handleNavLinkClick('/volunteers/auth')}
+            >
+              Volunteer Portal
+            </Link>
             <Button 
               onClick={handleDonateClick} 
               className="bg-utu-red hover:bg-red-700 text-white"
@@ -198,6 +205,13 @@ const Navbar = () => {
                 onClick={() => handleNavLinkClick('/contact')}
               >
                 Contact
+              </Link>
+              <Link 
+                to="/volunteers/auth"
+                className={`${isActive('/volunteers/auth') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium text-left`}
+                onClick={() => handleNavLinkClick('/volunteers/auth')}
+              >
+                Volunteer Portal
               </Link>
               <Button 
                 onClick={handleDonateClick}
