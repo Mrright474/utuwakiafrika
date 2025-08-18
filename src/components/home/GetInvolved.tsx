@@ -4,6 +4,7 @@ import { Heart, HandHelping, DollarSign, BookOpen, Globe, Users, Lightbulb } fro
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Link } from 'react-router-dom';
+import NewsletterSubscription from './NewsletterSubscription';
 
 const GetInvolved = () => {
   return (
@@ -158,37 +159,7 @@ const GetInvolved = () => {
         </div>
         
         {/* Ubuntu Community Newsletter */}
-        <div className="ubuntu-card rounded-3xl p-10 shadow-xl border border-white/20 bg-gradient-to-br from-white/95 to-gray-50/95 backdrop-blur-sm">
-          <div className="text-center max-w-3xl mx-auto">
-            <div className="mb-6">
-              <div className="w-16 h-16 bg-gradient-to-br from-utu-red via-utu-gold to-utu-green rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-                <BookOpen className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-3xl font-bold mb-4 text-utu-black">Stay Connected to Our Ubuntu Journey</h3>
-              <p className="text-utu-gray mb-8 text-lg leading-relaxed">
-                Subscribe to receive inspiring stories of Ubuntu in action, project updates, 
-                and opportunities to deepen your involvement in building compassionate African communities.
-              </p>
-            </div>
-            
-            <div className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto">
-              <input 
-                type="email" 
-                placeholder="Your email address" 
-                className="flex-grow px-6 py-4 border-2 border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-utu-red focus:border-transparent text-lg bg-white/80 backdrop-blur-sm"
-              />
-              <Button className="donate-button whitespace-nowrap">
-                <Heart className="mr-2 h-4 w-4" />
-                Join Ubuntu Updates
-              </Button>
-            </div>
-            
-            <p className="text-sm text-utu-gray mt-4 flex items-center justify-center">
-              <Users className="mr-2 h-4 w-4" />
-              We honor your privacy and will never share your information. Ubuntu values trust.
-            </p>
-          </div>
-        </div>
+        <NewsletterSubscription />
       </div>
     </section>
   );

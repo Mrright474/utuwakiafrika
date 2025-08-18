@@ -1,12 +1,65 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { MapPin, Mail, Phone, Clock, Facebook, Twitter, Instagram, Linkedin, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
+import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 const Contact = () => {
+  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    subject: '',
+    message: ''
+  });
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      const { data, error } = await supabase.functions.invoke('contact-submit', {
+        body: formData
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Message Sent!",
+        description: "Thank you for contacting us. We'll get back to you soon.",
+      });
+
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        subject: '',
+        message: ''
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to send message. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <section id="contact" className="py-16 md:py-24 bg-utu-light-gray">
       <div className="container mx-auto px-4">
@@ -100,7 +153,7 @@ const Contact = () => {
           <div className="bg-white p-8 rounded-lg shadow-md">
             <h3 className="text-2xl font-bold mb-6 text-utu-black">Send Us a Message</h3>
             
-            <form className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-utu-gray mb-1">
@@ -111,6 +164,8 @@ const Contact = () => {
                     type="text" 
                     placeholder="John Doe" 
                     className="w-full"
+                    value={formData.name}
+                    onChange={(e) => handleInputChange('name', e.target.value)}
                     required
                   />
                 </div>
@@ -123,6 +178,8 @@ const Contact = () => {
                     type="email" 
                     placeholder="john@example.com" 
                     className="w-full"
+                    value={formData.email}
+                    onChange={(e) => handleInputChange('email', e.target.value)}
                     required
                   />
                 </div>
@@ -137,6 +194,8 @@ const Contact = () => {
                   type="tel" 
                   placeholder="+1 (123) 456-7890" 
                   className="w-full"
+                  value={formData.phone}
+                  onChange={(e) => handleInputChange('phone', e.target.value)}
                 />
               </div>
               
@@ -149,6 +208,8 @@ const Contact = () => {
                   type="text" 
                   placeholder="How can we help you?" 
                   className="w-full"
+                  value={formData.subject}
+                  onChange={(e) => handleInputChange('subject', e.target.value)}
                   required
                 />
               </div>
@@ -161,12 +222,18 @@ const Contact = () => {
                   id="message" 
                   placeholder="Write your message here..." 
                   className="w-full min-h-[150px]"
+                  value={formData.message}
+                  onChange={(e) => handleInputChange('message', e.target.value)}
                   required
                 />
               </div>
               
-              <Button type="submit" className="w-full bg-utu-red hover:bg-red-700 text-white">
-                Send Message
+              <Button 
+                type="submit" 
+                className="w-full bg-utu-red hover:bg-red-700 text-white"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Sending...' : 'Send Message'}
               </Button>
             </form>
           </div>
