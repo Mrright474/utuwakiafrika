@@ -17,7 +17,8 @@ const TeamPage = lazy(() => import("./pages/TeamPage"));
 const ImpactPage = lazy(() => import("./pages/ImpactPage"));
 const ContactPage = lazy(() => import("./pages/ContactPage"));
 const Donate = lazy(() => import("./pages/Donate"));
-const Admin = lazy(() => import("./pages/Admin"));
+const Admin = lazy(() => import("./pages/NewAdmin"));
+const AdminAuth = lazy(() => import("./pages/AdminAuth"));
 const VolunteerAuth = lazy(() => import("./pages/VolunteerAuth"));
 const VolunteerDashboard = lazy(() => import("./pages/VolunteerDashboard"));
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -61,6 +62,7 @@ const App = () => (
             <Route path="/volunteers/auth" element={<VolunteerAuth />} />
             <Route path="/volunteers/dashboard" element={<VolunteerDashboard />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/admin/auth" element={<AdminAuth />} />
             <Route path="/admin/*" element={<Admin />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
