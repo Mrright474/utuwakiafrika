@@ -59,6 +59,12 @@ export const useAdminAuth = () => {
 
   const checkAdminStatus = async (userId: string) => {
     try {
+      // First, try to promote self to admin if eligible
+      const { error: promoteError } = await supabase.rpc('promote_self_to_admin');
+      if (promoteError) {
+        console.error('Error promoting to admin:', promoteError);
+      }
+
       // Check if user has admin role
       const { data: roleData, error: roleError } = await supabase
         .from('user_roles')
