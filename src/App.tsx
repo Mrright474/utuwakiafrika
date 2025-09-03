@@ -45,41 +45,44 @@ const queryClient = new QueryClient({
 
 const App = () => {
   useEffect(() => {
-    try {
-      const bootstrapped = localStorage.getItem('adminBootstrapped');
-      if (bootstrapped !== 'true') {
-        supabase.functions
-          .invoke('create-admin', { body: {} })
-          .catch((e) => console.error('create-admin invoke error', e))
-          .finally(() => {
-            localStorage.setItem('adminBootstrapped', 'true');
-          });
+    const run = async () => {
+      try {
+        const bootstrapped = localStorage.getItem('adminBootstrappedV2');
+        if (bootstrapped === 'true') return;
+        const { data, error } = await supabase.functions.invoke('create-admin', { body: {} });
+        if (error) {
+          console.error('create-admin invoke error', error);
+        } else {
+          localStorage.setItem('adminBootstrappedV2', 'true');
+          console.info('Admin bootstrap complete', data);
+        }
+      } catch (e) {
+        console.error('admin bootstrap error', e);
       }
-    } catch (e) {
-      console.error('admin bootstrap flag error', e);
-    }
+    };
+    run();
   }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <ScrollToTop />
-          <Suspense fallback={<PageLoader />}>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/about" element={<AboutPage />} />
-              <Route path="/programs" element={<ProgramsPage />} />
-              <Route path="/events" element={<Events />} />
-              <Route path="/team" element={<TeamPage />} />
-              <Route path="/impact" element={<ImpactPage />} />
-              <Route path="/contact" element={<ContactPage />} />
-              <Route path="/donate" element={<Donate />} />
-              <Route path="/volunteers/auth" element={<VolunteerAuth />} />
-              <Route path="/volunteers/dashboard" element={<VolunteerDashboard />} />
-              <Route path="/admin" element={<Admin />} />
+    <TooltipProvider>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        <ScrollToTop />
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/programs" element={<ProgramsPage />} />
+            <Route path="/events" element={<Events />} />
+            <Route path="/team" element={<TeamPage />} />
+            <Route path="/impact" element={<ImpactPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/donate" element={<Donate />} />
+            <Route path="/volunteers/auth" element={<VolunteerAuth />} />
+            <Route path="/volunteers/dashboard" element={<VolunteerDashboard />} />
+            <Route path="/admin" element={<Admin />} />
               <Route path="/admin/auth" element={<AdminAuth />} />
               <Route path="/admin/*" element={<Admin />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
