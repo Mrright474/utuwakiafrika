@@ -7,7 +7,7 @@
 // Request: POST { email?: string, password?: string }
 // Defaults: email = 'admin@utuafrika.org', password = 'Utu!Admin#2025'
 
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.54.0";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -30,86 +30,130 @@ Deno.serve(async (req) => {
     const email = (body.email as string) || DEFAULT_EMAIL;
     const password = (body.password as string) || DEFAULT_PASSWORD;
 
+    console.log('create-admin function called for:', email);
+
     if (!SUPABASE_URL || !SERVICE_ROLE_KEY) {
+      console.error('Missing environment variables:', { 
+        hasUrl: !!SUPABASE_URL, 
+        hasServiceKey: !!SERVICE_ROLE_KEY 
+      });
       return new Response(JSON.stringify({ error: "Missing Supabase configuration" }), {
         status: 500,
         headers: { "Content-Type": "application/json", ...corsHeaders },
       });
     }
 
-    const adminClient = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
+    // Create admin client with service role key
+    const adminClient = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    });
 
-    // Check if user exists
     let userId: string | null = null;
-    const { data: existingUser, error: getErr } = await adminClient.auth.admin.getUserByEmail(email);
-    if (getErr && getErr.message !== 'User not found') {
-      console.error('getUserByEmail error', getErr);
+
+    try {
+      // Try to get existing user first
+      const { data: listData } = await adminClient.auth.admin.listUsers();
+      const existingUser = listData?.users?.find(u => u.email === email);
+      
+      if (existingUser) {
+        console.log('User already exists, updating password');
+        userId = existingUser.id;
+        
+        // Update password for existing user
+        const { error: updateError } = await adminClient.auth.admin.updateUserById(userId, {
+          password: password,
+          email_confirm: true
+        });
+        
+        if (updateError) {
+          console.error('Error updating user:', updateError);
+          return new Response(JSON.stringify({ error: updateError.message }), {
+            status: 500,
+            headers: { "Content-Type": "application/json", ...corsHeaders },
+          });
+        }
+      } else {
+        console.log('Creating new user');
+        
+        // Create new user
+        const { data: createData, error: createError } = await adminClient.auth.admin.createUser({
+          email: email,
+          password: password,
+          email_confirm: true,
+          user_metadata: { 
+            display_name: 'Administrator',
+            role: 'admin' 
+          }
+        });
+        
+        if (createError || !createData.user) {
+          console.error('Error creating user:', createError);
+          return new Response(JSON.stringify({ error: createError?.message || 'Failed to create user' }), {
+            status: 500,
+            headers: { "Content-Type": "application/json", ...corsHeaders },
+          });
+        }
+        
+        userId = createData.user.id;
+        console.log('User created with ID:', userId);
+      }
+    } catch (authError) {
+      console.error('Auth operation error:', authError);
+      return new Response(JSON.stringify({ error: `Auth error: ${authError.message}` }), {
+        status: 500,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
     }
 
-    if (existingUser?.user) {
-      userId = existingUser.user.id;
-      // Update password to ensure access
-      const { error: updErr } = await adminClient.auth.admin.updateUserById(userId, {
-        password,
-        email_confirm: true,
-      });
-      if (updErr) {
-        console.error('updateUserById error', updErr);
-        return new Response(JSON.stringify({ error: updErr.message }), {
-          status: 500,
-          headers: { "Content-Type": "application/json", ...corsHeaders },
-        });
-      }
-    } else {
-      // Create confirmed user
-      const { data: created, error: createErr } = await adminClient.auth.admin.createUser({
-        email,
-        password,
-        email_confirm: true,
-        user_metadata: { display_name: 'Administrator' },
-      });
-      if (createErr || !created.user) {
-        console.error('createUser error', createErr);
-        return new Response(JSON.stringify({ error: createErr?.message || 'Failed to create user' }), {
-          status: 500,
-          headers: { "Content-Type": "application/json", ...corsHeaders },
-        });
-      }
-      userId = created.user.id;
-    }
-
-    // Ensure role 'admin' exists for this user
     if (!userId) {
-      return new Response(JSON.stringify({ error: 'No user id' }), {
+      return new Response(JSON.stringify({ error: 'No user ID obtained' }), {
         status: 500,
         headers: { "Content-Type": "application/json", ...corsHeaders },
       });
     }
 
-    // Upsert admin role
-    const { error: roleErr } = await adminClient
+    // Ensure admin role exists
+    console.log('Adding admin role for user:', userId);
+    const { error: roleError } = await adminClient
       .from('user_roles')
-      .upsert({ user_id: userId, role: 'admin' as any }, { onConflict: 'user_id,role' });
+      .upsert({ 
+        user_id: userId, 
+        role: 'admin'
+      }, { 
+        onConflict: 'user_id,role' 
+      });
 
-    if (roleErr) {
-      console.error('user_roles upsert error', roleErr);
-      return new Response(JSON.stringify({ error: roleErr.message }), {
+    if (roleError) {
+      console.error('Error adding admin role:', roleError);
+      return new Response(JSON.stringify({ error: `Role error: ${roleError.message}` }), {
         status: 500,
         headers: { "Content-Type": "application/json", ...corsHeaders },
       });
     }
 
+    console.log('Admin user setup complete');
     return new Response(
       JSON.stringify({
-        ok: true,
-        email,
-        note: 'User is confirmed and has admin role',
+        success: true,
+        message: 'Admin user created/updated successfully',
+        email: email,
+        userId: userId
       }),
-      { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      { 
+        status: 200, 
+        headers: { "Content-Type": "application/json", ...corsHeaders } 
+      }
     );
-  } catch (e) {
-    console.error('Unhandled error', e);
-    return new Response(JSON.stringify({ error: 'Unexpected error' }), {
+
+  } catch (error) {
+    console.error('Unexpected error in create-admin:', error);
+    return new Response(JSON.stringify({ 
+      error: 'Unexpected error', 
+      details: error.message 
+    }), {
       status: 500,
       headers: { "Content-Type": "application/json", ...corsHeaders },
     });

@@ -47,17 +47,26 @@ const App = () => {
   useEffect(() => {
     const run = async () => {
       try {
-        const bootstrapped = localStorage.getItem('adminBootstrappedV2');
-        if (bootstrapped === 'true') return;
+        const bootstrapped = localStorage.getItem('adminBootstrappedV3');
+        if (bootstrapped === 'true') {
+          console.log('Admin bootstrap already completed');
+          return;
+        }
+        
+        console.log('Starting admin bootstrap...');
         const { data, error } = await supabase.functions.invoke('create-admin', { body: {} });
+        
         if (error) {
-          console.error('create-admin invoke error', error);
+          console.error('create-admin invoke error:', error);
+          // Don't block the app if admin creation fails
+          return;
         } else {
-          localStorage.setItem('adminBootstrappedV2', 'true');
-          console.info('Admin bootstrap complete', data);
+          localStorage.setItem('adminBootstrappedV3', 'true');
+          console.info('Admin bootstrap complete:', data);
         }
       } catch (e) {
-        console.error('admin bootstrap error', e);
+        console.error('admin bootstrap error:', e);
+        // Don't block the app if bootstrap fails
       }
     };
     run();
