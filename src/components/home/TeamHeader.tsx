@@ -26,9 +26,6 @@ const TeamHeader = ({ isAdmin, onAddMember }: TeamHeaderProps) => {
             <Plus className="mr-2" size={16} />
             Add Team Member
           </Button>
-          <p className="text-sm text-gray-500 mt-4">
-            Admin mode is active. Press Ctrl+Shift+A to toggle admin mode.
-          </p>
         </>
       )}
     </div>

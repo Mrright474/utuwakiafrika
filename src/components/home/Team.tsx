@@ -12,13 +12,13 @@ import WorkWithUsSection from './team/WorkWithUsSection';
 import YouthVolunteersSection from './team/YouthVolunteersSection';
 import UbuntuMessage from './team/UbuntuMessage';
 import { useTeamManagement } from '@/hooks/useTeamManagement';
-import { useAdminMode } from '@/hooks/useAdminMode';
+import { useAdminAuth } from '@/hooks/useAdminAuth';
 
 const Team = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isVolunteerFormOpen, setIsVolunteerFormOpen] = useState(false);
-  const { isAdmin } = useAdminMode();
+  const { isAdmin } = useAdminAuth();
   const {
     teamMembers,
     currentTeamMember,
