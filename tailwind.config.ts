@@ -99,50 +99,79 @@ export default {
 				'african-pattern': "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e52b38' fill-opacity='0.05' fill-rule='nonzero'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
 				'unity-pattern': 'radial-gradient(circle at 20% 80%, rgba(229, 43, 56, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255, 193, 7, 0.1) 0%, transparent 50%), radial-gradient(circle at 40% 40%, rgba(46, 125, 50, 0.1) 0%, transparent 50%)'
 			},
-			keyframes: {
-				'accordion-down': {
-					from: {
-						height: '0'
-					},
-					to: {
-						height: 'var(--radix-accordion-content-height)'
-					}
-				},
-				'accordion-up': {
-					from: {
-						height: 'var(--radix-accordion-content-height)'
-					},
-					to: {
-						height: '0'
-					}
-				},
-				'ubuntu-pulse': {
-					'0%, 100%': {
-						transform: 'scale(1)',
-						opacity: '1'
-					},
-					'50%': {
-						transform: 'scale(1.05)',
-						opacity: '0.8'
-					}
-				},
-				'fade-in-up': {
-					'0%': {
-						opacity: '0',
-						transform: 'translateY(20px)'
-					},
-					'100%': {
-						opacity: '1',
-						transform: 'translateY(0)'
-					}
-				}
-			},
-			animation: {
-				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out',
-				'ubuntu-pulse': 'ubuntu-pulse 3s ease-in-out infinite',
-				'fade-in-up': 'fade-in-up 0.6s ease-out'
-			},
+      keyframes: {
+        'accordion-down': {
+          from: {
+            height: '0'
+          },
+          to: {
+            height: 'var(--radix-accordion-content-height)'
+          }
+        },
+        'accordion-up': {
+          from: {
+            height: 'var(--radix-accordion-content-height)'
+          },
+          to: {
+            height: '0'
+          }
+        },
+        'ubuntu-pulse': {
+          '0%, 100%': {
+            transform: 'scale(1)',
+            opacity: '1'
+          },
+          '50%': {
+            transform: 'scale(1.05)',
+            opacity: '0.8'
+          }
+        },
+        'fade-in-up': {
+          '0%': {
+            opacity: '0',
+            transform: 'translateY(20px)'
+          },
+          '100%': {
+            opacity: '1',
+            transform: 'translateY(0)'
+          }
+        },
+        'slide-up': {
+          '0%': {
+            opacity: '0',
+            transform: 'translateY(100%)'
+          },
+          '100%': {
+            opacity: '1',
+            transform: 'translateY(0)'
+          }
+        },
+        'bounce-in': {
+          '0%': {
+            opacity: '0',
+            transform: 'scale(0.3)'
+          },
+          '50%': {
+            opacity: '1',
+            transform: 'scale(1.05)'
+          },
+          '70%': {
+            transform: 'scale(0.9)'
+          },
+          '100%': {
+            opacity: '1',
+            transform: 'scale(1)'
+          }
+        }
+      },
+      animation: {
+        'accordion-down': 'accordion-down 0.2s ease-out',
+        'accordion-up': 'accordion-up 0.2s ease-out',
+        'ubuntu-pulse': 'ubuntu-pulse 3s ease-in-out infinite',
+        'fade-in-up': 'fade-in-up 0.6s ease-out',
+        'slide-up': 'slide-up 0.3s ease-out',
+        'bounce-in': 'bounce-in 0.5s ease-out'
+      },
 			boxShadow: {
 				'ubuntu': '0 10px 30px rgba(229, 43, 56, 0.2)',
 				'africa': '0 8px 25px rgba(46, 125, 50, 0.15)'

@@ -2,14 +2,18 @@
 import React, { useState, memo, useCallback } from 'react';
 import { Dialog } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { TouchButton } from '@/components/ui/touch-button';
 import GalleryGrid from '@/components/home/gallery/GalleryGrid';
+import SwipeGallery from '@/components/ui/swipe-gallery';
 import ImageViewer from '@/components/home/gallery/ImageViewer';
 import { galleryImages } from '@/components/home/gallery/galleryData';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const VisualGallery = memo(() => {
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [visibleImages] = useState(galleryImages);
+  const isMobile = useIsMobile();
 
   const handleImageClick = useCallback((index: number) => {
     setSelectedImageIndex(index);
@@ -49,23 +53,40 @@ const VisualGallery = memo(() => {
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           {selectedImageIndex !== null && (
-            <ImageViewer
-              images={galleryImages}
-              currentIndex={selectedImageIndex}
-              onClose={handleCloseDialog}
-              onNext={handleNext}
-              onPrevious={handlePrevious}
-            />
+            <>
+              {isMobile ? (
+                <SwipeGallery
+                  images={galleryImages.map(img => ({
+                    src: img.src,
+                    alt: img.alt,
+                    caption: img.alt
+                  }))}
+                  currentIndex={selectedImageIndex}
+                  onClose={handleCloseDialog}
+                  onNext={handleNext}
+                  onPrevious={handlePrevious}
+                />
+              ) : (
+                <ImageViewer
+                  images={galleryImages}
+                  currentIndex={selectedImageIndex}
+                  onClose={handleCloseDialog}
+                  onNext={handleNext}
+                  onPrevious={handlePrevious}
+                />
+              )}
+            </>
           )}
         </Dialog>
 
         <div className="mt-12 text-center">
-          <Button 
+          <TouchButton 
             asChild
+            size={isMobile ? "touch-lg" : "default"}
             className="bg-utu-red hover:bg-red-700 text-white px-6 py-2 rounded-md"
           >
             <a href="/impact">View Our Full Impact Report</a>
-          </Button>
+          </TouchButton>
         </div>
       </div>
     </section>
