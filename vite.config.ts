@@ -33,7 +33,7 @@ export default defineConfig(({ mode }) => ({
         manualChunks: {
           // Separate vendor chunks for better caching
           vendor: ['react', 'react-dom', 'react-router-dom'],
-          ui: ['@radix-ui/react-dialog', '@radix-ui/react-button', 'lucide-react'],
+          ui: ['@radix-ui/react-dialog', 'lucide-react'],
           utils: ['date-fns', 'clsx', 'tailwind-merge'],
         },
       },
