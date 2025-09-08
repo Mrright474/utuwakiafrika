@@ -2,6 +2,7 @@
 import React, { memo } from 'react';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import LazyImage from '@/components/ui/lazy-image';
+import OptimizedImage from '@/components/ui/optimized-image';
 import { Image } from '@/components/home/gallery/types';
 
 interface GalleryGridProps {
@@ -19,11 +20,12 @@ const GalleryGrid = memo(({ images, onImageClick }: GalleryGridProps) => {
           onClick={() => onImageClick(index)}
         >
           <AspectRatio ratio={4/3} className="bg-utu-cream/20">
-            <LazyImage
+            <OptimizedImage
               src={image.src}
               alt={image.alt}
               className="w-full h-full object-cover"
-              decoding="async"
+              quality="medium"
+              sizes="(max-width: 768px) 100vw, 50vw"
               fallback={
                 <div className="w-full h-full bg-utu-cream/50 flex items-center justify-center">
                   <span className="text-utu-gray text-sm">Image unavailable</span>

@@ -1,5 +1,5 @@
 
-import React, { useState, memo, useCallback } from 'react';
+import React, { useState, memo, useCallback, useEffect } from 'react';
 import { Dialog } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { TouchButton } from '@/components/ui/touch-button';
@@ -8,12 +8,20 @@ import SwipeGallery from '@/components/ui/swipe-gallery';
 import ImageViewer from '@/components/home/gallery/ImageViewer';
 import { galleryImages } from '@/components/home/gallery/galleryData';
 import { useIsMobile } from '@/hooks/use-mobile';
+import SkeletonLoader from '@/components/ui/skeleton-loader';
 
 const VisualGallery = memo(() => {
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [visibleImages] = useState(galleryImages);
+  const [isLoading, setIsLoading] = useState(true);
   const isMobile = useIsMobile();
+
+  // Simulate loading state for better UX
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleImageClick = useCallback((index: number) => {
     setSelectedImageIndex(index);
@@ -46,10 +54,14 @@ const VisualGallery = memo(() => {
           </p>
         </div>
 
-        <GalleryGrid 
-          images={visibleImages} 
-          onImageClick={handleImageClick} 
-        />
+        {isLoading ? (
+          <SkeletonLoader variant="gallery" count={6} />
+        ) : (
+          <GalleryGrid 
+            images={visibleImages} 
+            onImageClick={handleImageClick} 
+          />
+        )}
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           {selectedImageIndex !== null && (

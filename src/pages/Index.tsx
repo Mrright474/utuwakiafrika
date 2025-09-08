@@ -10,12 +10,23 @@ import VisualGallery from '@/components/home/VisualGallery';
 import { useLocation } from 'react-router-dom';
 import LazySection from '@/components/utils/LazySection';
 import usePerformance from '@/hooks/usePerformance';
+import { usePerformanceOptimizations } from '@/hooks/usePerformanceOptimizations';
 
 const Index = memo(() => {
   const location = useLocation();
   
   // Track performance metrics
   usePerformance(true);
+  
+  // Initialize performance optimizations
+  usePerformanceOptimizations({
+    enableMetrics: true,
+    enablePreloading: true,
+    criticalResources: [
+      '/src/assets/helping-hands-bread.jpg',
+      '/src/assets/ubuntu-spirit-children.jpg'
+    ]
+  });
 
   // Enhanced animation for better scroll-triggered effects
   useEffect(() => {
