@@ -5,6 +5,8 @@ import { TouchButton } from '@/components/ui/touch-button';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useIsMobile, useTouchDevice } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
+import { useFocusManagement } from '@/hooks/useFocusManagement';
+import VisuallyHidden from '@/components/accessibility/VisuallyHidden';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -14,6 +16,11 @@ const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const menuRef = useRef<HTMLDivElement>(null);
+  const mobileMenuRef = useFocusManagement(isMenuOpen, {
+    trapFocus: true,
+    restoreFocus: true,
+    autoFocus: false
+  });
 
   useEffect(() => {
     const handleScroll = () => {
@@ -71,17 +78,27 @@ const Navbar = () => {
   };
 
   return (
-    <nav className={cn(
-      "sticky top-0 z-50 border-b transition-all duration-300",
-      isScrolled 
-        ? "bg-white/95 backdrop-blur-md shadow-lg border-gray-200" 
-        : "bg-white shadow-lg border-gray-100"
-    )}>
+    <nav 
+      id="navigation"
+      role="navigation"
+      aria-label="Main navigation"
+      className={cn(
+        "sticky top-0 z-50 border-b transition-all duration-300",
+        isScrolled 
+          ? "bg-white/95 backdrop-blur-md shadow-lg border-gray-200" 
+          : "bg-white shadow-lg border-gray-100"
+      )}
+    >
       <div className="container mx-auto px-4 py-4">
         <div className="flex justify-between items-center">
           {/* Logo and brand name */}
           <div className="flex items-center">
-            <Link to="/" className="flex items-center group" onClick={() => handleNavLinkClick('/')}>
+            <Link 
+              to="/" 
+              className="flex items-center group focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-md" 
+              onClick={() => handleNavLinkClick('/')}
+              aria-label="Utu Wa Kiafrika Charity Network - Home"
+            >
               <div className="relative">
                 <img 
                   src="/lovable-uploads/8c92f756-dfe1-496d-8f40-b05da33fb433.png" 
@@ -110,13 +127,19 @@ const Navbar = () => {
           </div>
 
           {/* Desktop navigation */}
-          <div className="hidden md:flex items-center space-x-4 lg:space-x-6">
+          <div className="hidden md:flex items-center space-x-4 lg:space-x-6" role="menubar">
             <Link 
               to="/"
-              className={`flex items-center gap-1 ${isActive('/') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium`}
+              role="menuitem"
+              className={cn(
+                "flex items-center gap-1 transition-colors font-medium rounded-md px-2 py-1",
+                "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
+                isActive('/') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'
+              )}
               onClick={() => handleNavLinkClick('/')}
+              aria-current={isActive('/') ? 'page' : undefined}
             >
-              <Home size={18} />
+              <Home size={18} aria-hidden="true" />
               Home
             </Link>
             <Link 
@@ -182,8 +205,10 @@ const Navbar = () => {
               variant="ghost"
               size="touch"
               onClick={toggleMenu}
-              className="text-utu-black hover:text-utu-red focus:outline-none"
-              aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+              className="text-utu-black hover:text-utu-red focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-md"
+              aria-label={isMenuOpen ? "Close main menu" : "Open main menu"}
+              aria-expanded={isMenuOpen}
+              aria-controls="mobile-menu"
             >
               <div className="relative w-6 h-6">
                 <Menu 
@@ -207,7 +232,10 @@ const Navbar = () => {
 
         {/* Mobile navigation */}
         <div 
-          ref={menuRef}
+          ref={mobileMenuRef as any}
+          id="mobile-menu"
+          role="menu"
+          aria-labelledby="mobile-menu-button"
           className={cn(
             "md:hidden overflow-hidden transition-all duration-300 ease-in-out",
             isMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
@@ -225,9 +253,15 @@ const Navbar = () => {
                   : 'text-utu-black hover:text-utu-red hover:bg-utu-red/5'
               )}
             >
-              <Link to="/" onClick={() => handleNavLinkClick('/')}>
-                <Home size={20} />
+              <Link 
+                to="/" 
+                role="menuitem"
+                onClick={() => handleNavLinkClick('/')}
+                aria-current={isActive('/') ? 'page' : undefined}
+              >
+                <Home size={20} aria-hidden="true" />
                 Home
+                <VisuallyHidden>{isActive('/') ? ' (current page)' : ''}</VisuallyHidden>
               </Link>
             </TouchButton>
             

@@ -2,6 +2,7 @@
 import React from 'react';
 import Navbar from './Navbar';
 import Footer from './Footer';
+import SkipLinks from '@/components/accessibility/SkipLinks';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -145,8 +146,9 @@ const Layout = ({ children }: LayoutProps) => {
 
   return (
     <div className="flex flex-col min-h-screen">
+      <SkipLinks />
       <Navbar />
-      <main className="flex-grow overflow-x-hidden">
+      <main id="main-content" className="flex-grow overflow-x-hidden" tabIndex={-1}>
         {children}
       </main>
       <Footer />

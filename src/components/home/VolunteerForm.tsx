@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { Send, Loader2 } from 'lucide-react';
 import MobileFormLayout from '@/components/forms/MobileFormLayout';
+import LiveRegion from '@/components/accessibility/LiveRegion';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface VolunteerFormProps {
@@ -18,6 +19,7 @@ interface VolunteerFormProps {
 const VolunteerForm = ({ onSubmit, isLoading = false }: VolunteerFormProps) => {
   const { toast } = useToast();
   const isMobile = useIsMobile();
+  const [liveMessage, setLiveMessage] = useState('');
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -46,10 +48,12 @@ const VolunteerForm = ({ onSubmit, isLoading = false }: VolunteerFormProps) => {
     e.preventDefault();
     
     if (!formData.firstName || !formData.lastName || !formData.email || !formData.volunteerArea) {
+      const errorMessage = "Please fill in all required fields marked with *";
+      setLiveMessage(errorMessage);
       toast({
         variant: "destructive",
         title: "Missing required fields",
-        description: "Please fill in all required fields marked with *",
+        description: errorMessage,
       });
       return;
     }
@@ -75,6 +79,8 @@ const VolunteerForm = ({ onSubmit, isLoading = false }: VolunteerFormProps) => {
                 onChange={(e) => handleInputChange('firstName', e.target.value)}
                 placeholder="Enter your first name"
                 required
+                aria-required="true"
+                aria-describedby="firstName-error"
               />
             </div>
             <div>
@@ -293,13 +299,16 @@ const VolunteerForm = ({ onSubmit, isLoading = false }: VolunteerFormProps) => {
   ];
 
   return (
-    <MobileFormLayout
-      sections={formSections}
-      onSubmit={handleFormSubmit}
-      submitText={isLoading ? "Submitting..." : "Submit Application"}
-      isSubmitting={isLoading}
-      className="max-h-[70vh] overflow-y-auto"
-    />
+    <>
+      <LiveRegion message={liveMessage} level="assertive" />
+      <MobileFormLayout
+        sections={formSections}
+        onSubmit={handleFormSubmit}
+        submitText={isLoading ? "Submitting..." : "Submit Application"}
+        isSubmitting={isLoading}
+        className="max-h-[70vh] overflow-y-auto"
+      />
+    </>
   );
 };
 

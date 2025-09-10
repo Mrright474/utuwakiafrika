@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { useFocusManagement } from '@/hooks/useFocusManagement';
 import ImageUpload from './ImageUpload';
 
 interface TeamMemberDialogProps {
@@ -37,11 +38,20 @@ const TeamMemberDialog = ({
   onChange 
 }: TeamMemberDialogProps) => {
   const title = mode === 'add' ? 'Add New Team Member' : 'Edit Team Member';
+  const dialogRef = useFocusManagement(true, {
+    trapFocus: true,
+    restoreFocus: true,
+    autoFocus: true
+  });
 
   return (
-    <DialogContent>
+    <DialogContent 
+      ref={dialogRef as any} 
+      aria-labelledby="team-member-dialog-title"
+      aria-describedby="team-member-dialog-description"
+    >
       <DialogHeader>
-        <DialogTitle>{title}</DialogTitle>
+        <DialogTitle id="team-member-dialog-title">{title}</DialogTitle>
       </DialogHeader>
       <div className="space-y-4 py-4">
         <div className="space-y-2">
@@ -51,6 +61,8 @@ const TeamMemberDialog = ({
             value={member.name}
             onChange={(e) => onChange('name', e.target.value)}
             placeholder="Full Name"
+            required
+            aria-required="true"
           />
         </div>
         <div className="space-y-2">
