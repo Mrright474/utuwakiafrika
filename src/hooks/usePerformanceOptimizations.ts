@@ -1,5 +1,6 @@
 import { useEffect, useCallback, useRef } from 'react';
 import { performanceMonitor, preloadResource, monitorMemoryUsage } from '@/utils/performance';
+import { preloadCriticalImages } from '@/utils/imageOptimization';
 
 interface UsePerformanceOptimizationsOptions {
   enableMetrics?: boolean;
@@ -17,16 +18,27 @@ export const usePerformanceOptimizations = ({
   const metricsReported = useRef(false);
   const memoryInterval = useRef<NodeJS.Timeout>();
 
-  // Preload critical resources
+  // Preload critical resources including optimized images
   useEffect(() => {
     if (enablePreloading && criticalResources.length > 0) {
-      criticalResources.forEach(resource => {
+      const images = criticalResources.filter(resource => 
+        resource.match(/\.(jpg|jpeg|png|webp|svg)$/)
+      );
+      const otherResources = criticalResources.filter(resource => 
+        !resource.match(/\.(jpg|jpeg|png|webp|svg)$/)
+      );
+
+      // Preload images with optimized loading
+      if (images.length > 0) {
+        preloadCriticalImages(images).catch(console.warn);
+      }
+
+      // Preload other resources (CSS, JS)
+      otherResources.forEach(resource => {
         if (resource.endsWith('.css')) {
           preloadResource(resource, 'style');
         } else if (resource.match(/\.(js|ts)$/)) {
           preloadResource(resource, 'script');
-        } else if (resource.match(/\.(jpg|jpeg|png|webp|svg)$/)) {
-          preloadResource(resource, 'image');
         }
       });
     }
@@ -73,7 +85,7 @@ export const usePerformanceOptimizations = ({
     }
   }, [reportMetrics]);
 
-  // Image optimization utilities
+  // Enhanced image optimization utilities
   const optimizeImage = useCallback((src: string, options: {
     quality?: number;
     format?: 'webp' | 'avif' | 'auto';
@@ -83,14 +95,14 @@ export const usePerformanceOptimizations = ({
     const { quality = 80, format = 'auto', width, height } = options;
     
     // For external images or if no optimization service is available
-    if (src.startsWith('http') || !src.includes('/assets/')) {
+    if (src.startsWith('http') || !src.includes('/lovable-uploads/')) {
       return src;
     }
 
-    // Simple format optimization
+    // Generate WebP version for better performance
     if (format === 'webp' || format === 'auto') {
-      const webpSrc = src.replace(/\.(jpg|jpeg|png)$/i, '.webp');
-      return webpSrc;
+      const baseName = src.replace(/\.[^/.]+$/, '');
+      return `${baseName}.webp`;
     }
 
     return src;
@@ -127,6 +139,7 @@ export const usePerformanceOptimizations = ({
     createPerformanceObserver,
     reportMetrics: () => performanceMonitor.reportMetrics(),
     getMetrics: () => performanceMonitor.getMetrics(),
-    getMemoryUsage: () => monitorMemoryUsage()
+    getMemoryUsage: () => monitorMemoryUsage(),
+    preloadImages: (images: string[]) => preloadCriticalImages(images)
   };
 };

@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import LazyImage from '@/components/ui/lazy-image';
+import OptimizedImage from '@/components/ui/optimized-image';
 
 interface BackgroundImageProps {
   src: string;
@@ -18,14 +18,15 @@ const BackgroundImage: React.FC<BackgroundImageProps> = memo(({
 }) => {
   return (
     <div className={`fixed inset-0 z-0 ${className}`}>
-      <LazyImage 
+      <OptimizedImage 
         src={src}
         alt={alt}
         className="w-full h-full object-cover"
         style={{ opacity }}
         placeholder="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgZmlsbD0ibm9uZSI+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9IiNGNEY0RjUiLz48L3N2Zz4="
-        eager
-        decoding="async"
+        eager={true}
+        quality="medium"
+        sizes="100vw"
       />
       <div 
         className="absolute inset-0 bg-white"

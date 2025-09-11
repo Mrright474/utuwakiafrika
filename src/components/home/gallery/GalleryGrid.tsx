@@ -1,7 +1,7 @@
 
 import React, { memo } from 'react';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
-import LazyImage from '@/components/ui/lazy-image';
+
 import OptimizedImage from '@/components/ui/optimized-image';
 import { Image } from '@/components/home/gallery/types';
 

@@ -34,9 +34,9 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
     const isExternal = originalSrc.startsWith('http');
     if (isExternal) return { webp: originalSrc, fallback: originalSrc };
     
-    const extension = originalSrc.split('.').pop()?.toLowerCase();
     const baseName = originalSrc.replace(/\.[^/.]+$/, '');
     
+    // Check if WebP version exists, otherwise use original
     return {
       webp: `${baseName}.webp`,
       fallback: originalSrc
@@ -79,7 +79,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
       const sources = generateSources(src);
       const preferredSrc = supportsWebP() ? sources.webp : sources.fallback;
       
-      // Preload the image
+      // Preload the image with improved error handling
       const img = new Image();
       img.onload = () => {
         setCurrentSrc(preferredSrc);
@@ -87,8 +87,8 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
         setHasError(false);
       };
       img.onerror = () => {
-        if (preferredSrc !== sources.fallback) {
-          // Try fallback if WebP fails
+        // If WebP fails and we haven't tried the fallback yet
+        if (preferredSrc !== sources.fallback && preferredSrc.endsWith('.webp')) {
           const fallbackImg = new Image();
           fallbackImg.onload = () => {
             setCurrentSrc(sources.fallback);
