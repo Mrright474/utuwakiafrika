@@ -19,8 +19,8 @@ if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
 const preloadCriticalResources = () => {
   // Preload hero images and critical assets
   const criticalImages = [
-    '/src/assets/helping-hands-bread.jpg',
-    '/src/assets/ubuntu-spirit-children.jpg'
+    '/lovable-uploads/688ac280-0ee5-48ac-8a44-82ad202140e7.png',
+    '/lovable-uploads/b07d8f50-577a-4699-87ba-8759e7ace688.png'
   ];
   
   criticalImages.forEach(src => {

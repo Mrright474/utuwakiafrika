@@ -75,6 +75,7 @@ const Index = memo(() => {
     <Layout>
       <div className="relative overflow-x-hidden w-full">
         <link rel="preload" as="image" href="/lovable-uploads/688ac280-0ee5-48ac-8a44-82ad202140e7.png" />
+        <link rel="preload" as="image" href="/lovable-uploads/b07d8f50-577a-4699-87ba-8759e7ace688.png" />
         <BackgroundImage 
           src="/lovable-uploads/688ac280-0ee5-48ac-8a44-82ad202140e7.png"
           alt="Ubuntu spirit and creating communities across Africa"
