@@ -91,7 +91,7 @@ class PerformanceMonitor {
   reportMetrics(endpoint?: string) {
     const metrics = this.getMetrics();
     
-    if (process.env.NODE_ENV === 'development') {
+    if (import.meta.env.MODE === 'development') {
       console.group('🚀 Core Web Vitals');
       console.log('FCP (First Contentful Paint):', `${metrics.FCP?.toFixed(2)}ms`);
       console.log('LCP (Largest Contentful Paint):', `${metrics.LCP?.toFixed(2)}ms`);
@@ -139,7 +139,7 @@ export const preloadImage = (src: string) => {
 
 // Bundle size analysis
 export const analyzeBundleSize = () => {
-  if (process.env.NODE_ENV === 'development') {
+  if (import.meta.env.MODE === 'development') {
     const scripts = Array.from(document.querySelectorAll('script[src]'));
     const styles = Array.from(document.querySelectorAll('link[rel="stylesheet"]'));
     

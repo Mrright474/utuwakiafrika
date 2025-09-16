@@ -59,7 +59,7 @@ export const usePerformanceOptimizations = ({
 
   // Monitor memory usage
   useEffect(() => {
-    if (enableMemoryMonitoring && process.env.NODE_ENV === 'development') {
+    if (enableMemoryMonitoring && import.meta.env.MODE === 'development') {
       memoryInterval.current = setInterval(() => {
         const memory = monitorMemoryUsage();
         if (memory && memory.used > memory.limit * 0.8) {

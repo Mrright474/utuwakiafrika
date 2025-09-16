@@ -23,7 +23,7 @@ export const usePerformance = (enabled: boolean = true) => {
       };
 
       // Log metrics in development
-      if (process.env.NODE_ENV === 'development') {
+      if (import.meta.env.MODE === 'development') {
         console.group('🚀 Performance Metrics');
         console.log('Load Time:', `${metrics.loadTime.toFixed(2)}ms`);
         console.log('DOM Content Loaded:', `${metrics.domContentLoaded.toFixed(2)}ms`);
