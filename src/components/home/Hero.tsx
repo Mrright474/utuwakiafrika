@@ -3,7 +3,7 @@ import React, { memo, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { ChevronRight, Heart, Users, Globe, HandHeart } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import OptimizedImage from '@/components/ui/optimized-image';
+
 
 const Hero = memo(() => {
   const scrollToSection = useCallback((sectionId: string) => {
@@ -17,13 +17,11 @@ const Hero = memo(() => {
     <section id="hero" className="relative bg-gradient-to-br from-utu-black via-utu-black to-gray-900 text-white overflow-hidden min-h-[90vh] flex items-center">
       {/* Ubuntu-inspired background patterns */}
       <div className="absolute inset-0">
-        <OptimizedImage 
-          src="/lovable-uploads/b07d8f50-577a-4699-87ba-8759e7ace688.png" 
-          alt="African children representing Ubuntu - unity and community" 
+        <img 
+          src="/lovable-uploads/b07d8f50-577a-4699-87ba-8759e7ace688.png"
+          alt="African children representing Ubuntu - unity and community"
           className="w-full h-full object-cover opacity-20"
-          eager={true}
-          quality="high"
-          sizes="100vw"
+          loading="eager"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-utu-black via-black/90 to-transparent"></div>
         <div className="absolute inset-0 ubuntu-pattern opacity-30"></div>

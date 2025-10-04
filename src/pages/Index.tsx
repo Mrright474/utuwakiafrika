@@ -16,18 +16,13 @@ const Index = memo(() => {
   const location = useLocation();
   
   // Track performance metrics
-  usePerformance(true);
+  usePerformance(false);
   
   // Initialize performance optimizations
   usePerformanceOptimizations({
-    enableMetrics: true,
-    enablePreloading: true,
-    criticalResources: [
-      '/lovable-uploads/b07d8f50-577a-4699-87ba-8759e7ace688.png', // Hero image
-      '/lovable-uploads/6cd3fe56-1a5f-44a7-9c67-f1e38eff4112.png', // Gallery image 1
-      '/lovable-uploads/6e4d1df8-d37f-467d-8f9d-092e8406b823.png', // Gallery image 2
-      '/lovable-uploads/688ac280-0ee5-48ac-8a44-82ad202140e7.png', // Background image
-    ]
+    enableMetrics: false,
+    enablePreloading: false,
+    criticalResources: []
   });
 
   // Enhanced animation for better scroll-triggered effects
@@ -74,8 +69,6 @@ const Index = memo(() => {
   return (
     <Layout>
       <div className="relative overflow-x-hidden w-full">
-        <link rel="preload" as="image" href="/lovable-uploads/688ac280-0ee5-48ac-8a44-82ad202140e7.png" />
-        <link rel="preload" as="image" href="/lovable-uploads/b07d8f50-577a-4699-87ba-8759e7ace688.png" />
         <BackgroundImage 
           src="/lovable-uploads/688ac280-0ee5-48ac-8a44-82ad202140e7.png"
           alt="Ubuntu spirit and creating communities across Africa"
