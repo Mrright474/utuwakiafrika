@@ -2,17 +2,17 @@ import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 
-// Temporarily disable service worker and actively unregister any existing registrations
-if ('serviceWorker' in navigator) {
+// Register service worker in production only
+if ('serviceWorker' in navigator && import.meta.env.PROD) {
   window.addEventListener('load', async () => {
     try {
-      const registrations = await navigator.serviceWorker.getRegistrations();
-      await Promise.all(registrations.map((reg) => reg.unregister()));
-      const cacheNames = await caches.keys();
-      await Promise.all(cacheNames.map((name) => caches.delete(name)));
-      console.log('Service workers unregistered and caches cleared');
-    } catch (err) {
-      console.warn('Failed to unregister SW or clear caches', err);
+      const registration = await navigator.serviceWorker.register('/sw.js');
+      console.log('Service Worker registered:', registration.scope);
+      
+      // Check for updates
+      registration.update();
+    } catch (error) {
+      console.warn('Service Worker registration failed:', error);
     }
   });
 }
@@ -20,8 +20,6 @@ if ('serviceWorker' in navigator) {
 
 // Preload critical resources
 const preloadCriticalResources = () => {
-  // Temporarily disabled to troubleshoot caching/412 issues
-  return;
   // Preload hero images and critical assets
   const criticalImages = [
     '/lovable-uploads/688ac280-0ee5-48ac-8a44-82ad202140e7.png',
@@ -33,6 +31,8 @@ const preloadCriticalResources = () => {
     link.rel = 'preload';
     link.href = src;
     link.as = 'image';
+    // Add error handling
+    link.onerror = () => console.warn(`Failed to preload: ${src}`);
     document.head.appendChild(link);
   });
 };

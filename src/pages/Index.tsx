@@ -15,14 +15,16 @@ import { usePerformanceOptimizations } from '@/hooks/usePerformanceOptimizations
 const Index = memo(() => {
   const location = useLocation();
   
-  // Track performance metrics
-  usePerformance(false);
+  // Track performance metrics in development only
+  usePerformance(import.meta.env.DEV);
   
   // Initialize performance optimizations
   usePerformanceOptimizations({
-    enableMetrics: false,
-    enablePreloading: false,
-    criticalResources: []
+    enableMetrics: import.meta.env.DEV,
+    enablePreloading: true,
+    criticalResources: [
+      '/lovable-uploads/688ac280-0ee5-48ac-8a44-82ad202140e7.png'
+    ]
   });
 
   // Enhanced animation for better scroll-triggered effects
