@@ -80,116 +80,12 @@ const initialTeamMembers: TeamMember[] = [
 
 export const useTeamManagement = () => {
   const { toast } = useToast();
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>(initialTeamMembers);
-  const [currentTeamMember, setCurrentTeamMember] = useState<TeamMember | null>(null);
-  const [imagePreview, setImagePreview] = useState<string>("");
-
-  const handleEditMember = (id: string) => {
-    const member = teamMembers.find(member => member.id === id);
-    if (member) {
-      setCurrentTeamMember(member);
-      setImagePreview(member.image);
-    }
-  };
-
-  const handleAddMember = () => {
-    setCurrentTeamMember({
-      id: String(Date.now()),
-      image: "/placeholder.svg",
-      name: "",
-      position: "",
-      bio: "",
-      role: "" // Added the missing role property with an empty string default
-    });
-    setImagePreview("/placeholder.svg");
-  };
-
-  const handleInputChange = (field: string, value: string) => {
-    if (!currentTeamMember) return;
-    setCurrentTeamMember({
-      ...currentTeamMember,
-      [field]: value
-    });
-  };
-
-  const handleSaveMember = () => {
-    if (!currentTeamMember) return;
-
-    const updatedMember = {
-      ...currentTeamMember,
-      image: imagePreview || currentTeamMember.image,
-    };
-
-    const updatedMembers = teamMembers.map(member => 
-      member.id === updatedMember.id ? updatedMember : member
-    );
-    
-    setTeamMembers(updatedMembers);
-    
-    toast({
-      title: "Team member updated",
-      description: `${updatedMember.name}'s profile has been updated successfully.`,
-    });
-
-    resetForm();
-  };
-
-  const handleAddNewMember = () => {
-    if (!currentTeamMember) return;
-
-    if (!currentTeamMember.name || !currentTeamMember.position) {
-      toast({
-        variant: "destructive",
-        title: "Missing information",
-        description: "Please provide at least a name and position.",
-      });
-      return;
-    }
-
-    const newMember = {
-      ...currentTeamMember,
-      image: imagePreview || "/placeholder.svg",
-    };
-
-    setTeamMembers([...teamMembers, newMember]);
-    
-    toast({
-      title: "Team member added",
-      description: `${newMember.name} has been added to the team successfully.`,
-    });
-
-    resetForm();
-  };
-
-  const handleDeleteMember = () => {
-    if (!currentTeamMember) return;
-    
-    const updatedMembers = teamMembers.filter(member => member.id !== currentTeamMember.id);
-    setTeamMembers(updatedMembers);
-    
-    toast({
-      title: "Team member removed",
-      description: `${currentTeamMember.name} has been removed from the team.`,
-    });
-
-    resetForm();
-  };
-
-  const resetForm = () => {
-    setCurrentTeamMember(null);
-    setImagePreview("");
-  };
-
   return {
     teamMembers,
-    currentTeamMember,
-    imagePreview,
-    handleEditMember,
-    handleAddMember,
-    handleInputChange,
-    handleSaveMember,
-    handleAddNewMember,
-    handleDeleteMember,
-    resetForm,
+    loading,
+    addTeamMember,
+    updateTeamMember,
+    deleteTeamMember,
+    refetch: fetchTeamMembers
   };
 };
