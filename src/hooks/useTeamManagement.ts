@@ -1,6 +1,8 @@
 
 import { useState } from 'react';
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 export interface TeamMember {
   id: string;
@@ -11,81 +13,124 @@ export interface TeamMember {
   role: string;
 }
 
-const initialTeamMembers: TeamMember[] = [
-  {
-    id: "1",
-    image: "/lovable-uploads/6e61272d-7786-4ccc-950e-4ae86bc5f39d.png",
-    name: "Ben Kazigo Luweru",
-    position: "Executive Director",
-    bio: "With over 10 years of experience in NGO management, Ben leads our strategic initiatives and operations across Africa.",
-    role: "Executive"
-  },
-  {
-    id: "2",
-    image: "/lovable-uploads/6f761c26-afdc-468f-8580-4cbc8c3cab83.png",
-    name: "Lwasa Abdulbast",
-    position: "Deputy Director",
-    bio: "Lwasa oversees the implementation of our organizational strategies and ensures effective coordination between departments.",
-    role: "Director"
-  },
-  {
-    id: "3",
-    image: "/lovable-uploads/6cc22289-337a-4964-ab0f-4058feb43e63.png",
-    name: "Laura Muwanguzi",
-    position: "Director of Programs",
-    bio: "Laura leads our program development and implementation, ensuring our initiatives create meaningful impact across communities.",
-    role: "Director"
-  },
-  {
-    id: "4",
-    image: "/lovable-uploads/da74094e-d355-4e7f-bda9-811435437ab1.png",
-    name: "Ellah Philp",
-    position: "Secretary",
-    bio: "Ellah manages administrative operations and ensures smooth coordination between different departments and stakeholders.",
-    role: "Secretary"
-  },
-  {
-    id: "5",
-    image: "/lovable-uploads/c520e25e-9088-4335-9397-90370407dd62.png",
-    name: "Bule Paul",
-    position: "Legal Advisor",
-    bio: "Bule provides expert legal counsel and ensures compliance with regulatory requirements across our operations.",
-    role: "Advisor"
-  },
-  {
-    id: "6",
-    image: "/lovable-uploads/f18d343d-5225-4a78-9319-ab494bfd2de3.png",
-    name: "Dr. Amina Kenyatta",
-    position: "Health Programs Coordinator",
-    bio: "Dr. Amina leads our healthcare initiatives and mobile clinics, bringing vital care to remote communities.",
-    role: "Coordinator"
-  },
-  {
-    id: "7",
-    image: "/lovable-uploads/eccb4f96-1438-49ba-947c-c55ac2356fd0.png",
-    name: "Joseph Mwangi",
-    position: "Education Director",
-    bio: "Joseph oversees our educational programs, working to improve access to quality education across East Africa.",
-    role: "Director"
-  },
-  {
-    id: "8",
-    image: "/lovable-uploads/a382b382-f2d2-4832-9343-db9d8abb367d.png",
-    name: "Bakasumba Arnest",
-    position: "Community Outreach Manager",
-    bio: "Bakasumba works directly with local communities to identify needs and implement sustainable solutions.",
-    role: "Manager"
-  }
-];
-
 export const useTeamManagement = () => {
   const { toast } = useToast();
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>(initialTeamMembers);
+  const queryClient = useQueryClient();
   const [currentTeamMember, setCurrentTeamMember] = useState<TeamMember | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
+  const { data: teamMembers = [], isLoading } = useQuery({
+    queryKey: ['team-members'],
+    queryFn: async () => {
+      const { data, error } = await (supabase as any)
+        .from('team_members')
+        .select('*')
+        .eq('active', true)
+        .order('display_order');
+      
+      if (error) throw error;
+      return (data as any[]).map((member: any) => ({
+        id: member.id,
+        image: member.image_url || '',
+        name: member.name,
+        position: member.position,
+        bio: member.bio,
+        role: member.role
+      }));
+    }
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: async (member: TeamMember) => {
+      const { error } = await (supabase as any)
+        .from('team_members')
+        .update({
+          name: member.name,
+          position: member.position,
+          bio: member.bio,
+          role: member.role,
+          image_url: member.image
+        })
+        .eq('id', member.id);
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['team-members'] });
+      toast({
+        title: "Success",
+        description: "Team member updated successfully.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to update team member.",
+        variant: "destructive",
+      });
+      console.error(error);
+    }
+  });
+
+  const addMutation = useMutation({
+    mutationFn: async (member: Omit<TeamMember, 'id'>) => {
+      const { error } = await (supabase as any)
+        .from('team_members')
+        .insert({
+          name: member.name,
+          position: member.position,
+          bio: member.bio,
+          role: member.role,
+          image_url: member.image
+        });
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['team-members'] });
+      toast({
+        title: "Success",
+        description: "Team member added successfully.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to add team member.",
+        variant: "destructive",
+      });
+      console.error(error);
+    }
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await (supabase as any)
+        .from('team_members')
+        .update({ active: false })
+        .eq('id', id);
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['team-members'] });
+      toast({
+        title: "Success",
+        description: "Team member deleted successfully.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to delete team member.",
+        variant: "destructive",
+      });
+      console.error(error);
+    }
+  });
+
   const handleEditMember = (id: string) => {
-    const member = teamMembers.find(m => m.id === id);
+    const member = teamMembers.find((m: any) => m.id === id);
     if (member) {
       setCurrentTeamMember(member);
       setImagePreview(member.image);
@@ -117,41 +162,24 @@ export const useTeamManagement = () => {
     }
   };
 
-  const handleSaveMember = () => {
-    if (currentTeamMember) {
-      setTeamMembers(prev => 
-        prev.map(m => m.id === currentTeamMember.id ? currentTeamMember : m)
-      );
-      toast({
-        title: "Success",
-        description: "Team member updated successfully.",
-      });
+  const handleSaveMember = async () => {
+    if (currentTeamMember && currentTeamMember.id) {
+      await updateMutation.mutateAsync(currentTeamMember);
       resetForm();
     }
   };
 
-  const handleAddNewMember = () => {
+  const handleAddNewMember = async () => {
     if (currentTeamMember) {
-      const newMember = {
-        ...currentTeamMember,
-        id: Date.now().toString()
-      };
-      setTeamMembers(prev => [...prev, newMember]);
-      toast({
-        title: "Success",
-        description: "Team member added successfully.",
-      });
+      const { id, ...memberData } = currentTeamMember;
+      await addMutation.mutateAsync(memberData);
       resetForm();
     }
   };
 
-  const handleDeleteMember = () => {
-    if (currentTeamMember) {
-      setTeamMembers(prev => prev.filter(m => m.id !== currentTeamMember.id));
-      toast({
-        title: "Success",
-        description: "Team member deleted successfully.",
-      });
+  const handleDeleteMember = async () => {
+    if (currentTeamMember && currentTeamMember.id) {
+      await deleteMutation.mutateAsync(currentTeamMember.id);
       resetForm();
     }
   };
@@ -163,6 +191,7 @@ export const useTeamManagement = () => {
 
   return {
     teamMembers,
+    loading: isLoading,
     currentTeamMember,
     imagePreview,
     handleEditMember,
