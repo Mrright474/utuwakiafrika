@@ -274,7 +274,7 @@ export type Database = {
     }
     Functions: {
       get_current_user_role: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: Database["public"]["Enums"]["app_role"]
       }
       has_role: {
@@ -284,10 +284,7 @@ export type Database = {
         }
         Returns: boolean
       }
-      promote_self_to_admin: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      promote_self_to_admin: { Args: never; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "volunteer" | "user"
