@@ -8,7 +8,7 @@ export interface TeamMember {
   name: string;
   position: string;
   bio: string;
-  role: string; // This is required according to the interface
+  role: string;
 }
 
 const initialTeamMembers: TeamMember[] = [
@@ -18,7 +18,7 @@ const initialTeamMembers: TeamMember[] = [
     name: "Ben Kazigo Luweru",
     position: "Executive Director",
     bio: "With over 10 years of experience in NGO management, Ben leads our strategic initiatives and operations across Africa.",
-    role: "Executive" // Added role property to match the filters in Team.tsx
+    role: "Executive"
   },
   {
     id: "2",
@@ -26,7 +26,7 @@ const initialTeamMembers: TeamMember[] = [
     name: "Lwasa Abdulbast",
     position: "Deputy Director",
     bio: "Lwasa oversees the implementation of our organizational strategies and ensures effective coordination between departments.",
-    role: "Director" // Added role property
+    role: "Director"
   },
   {
     id: "3",
@@ -34,7 +34,7 @@ const initialTeamMembers: TeamMember[] = [
     name: "Laura Muwanguzi",
     position: "Director of Programs",
     bio: "Laura leads our program development and implementation, ensuring our initiatives create meaningful impact across communities.",
-    role: "Director" // Added role property
+    role: "Director"
   },
   {
     id: "4",
@@ -42,7 +42,7 @@ const initialTeamMembers: TeamMember[] = [
     name: "Ellah Philp",
     position: "Secretary",
     bio: "Ellah manages administrative operations and ensures smooth coordination between different departments and stakeholders.",
-    role: "Secretary" // Added role property
+    role: "Secretary"
   },
   {
     id: "5",
@@ -50,7 +50,7 @@ const initialTeamMembers: TeamMember[] = [
     name: "Bule Paul",
     position: "Legal Advisor",
     bio: "Bule provides expert legal counsel and ensures compliance with regulatory requirements across our operations.",
-    role: "Advisor" // Added role property
+    role: "Advisor"
   },
   {
     id: "6",
@@ -58,7 +58,7 @@ const initialTeamMembers: TeamMember[] = [
     name: "Dr. Amina Kenyatta",
     position: "Health Programs Coordinator",
     bio: "Dr. Amina leads our healthcare initiatives and mobile clinics, bringing vital care to remote communities.",
-    role: "Coordinator" // Added role property
+    role: "Coordinator"
   },
   {
     id: "7",
@@ -66,7 +66,7 @@ const initialTeamMembers: TeamMember[] = [
     name: "Joseph Mwangi",
     position: "Education Director",
     bio: "Joseph oversees our educational programs, working to improve access to quality education across East Africa.",
-    role: "Director" // Added role property
+    role: "Director"
   },
   {
     id: "8",
@@ -74,18 +74,103 @@ const initialTeamMembers: TeamMember[] = [
     name: "Bakasumba Arnest",
     position: "Community Outreach Manager",
     bio: "Bakasumba works directly with local communities to identify needs and implement sustainable solutions.",
-    role: "Manager" // Added role property
+    role: "Manager"
   }
 ];
 
 export const useTeamManagement = () => {
   const { toast } = useToast();
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>(initialTeamMembers);
+  const [currentTeamMember, setCurrentTeamMember] = useState<TeamMember | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+  const handleEditMember = (id: string) => {
+    const member = teamMembers.find(m => m.id === id);
+    if (member) {
+      setCurrentTeamMember(member);
+      setImagePreview(member.image);
+    }
+  };
+
+  const handleAddMember = () => {
+    setCurrentTeamMember({
+      id: '',
+      image: '',
+      name: '',
+      position: '',
+      bio: '',
+      role: ''
+    });
+    setImagePreview(null);
+  };
+
+  const handleInputChange = (field: string, value: string) => {
+    if (currentTeamMember) {
+      setCurrentTeamMember({
+        ...currentTeamMember,
+        [field]: value
+      });
+      
+      if (field === 'image') {
+        setImagePreview(value);
+      }
+    }
+  };
+
+  const handleSaveMember = () => {
+    if (currentTeamMember) {
+      setTeamMembers(prev => 
+        prev.map(m => m.id === currentTeamMember.id ? currentTeamMember : m)
+      );
+      toast({
+        title: "Success",
+        description: "Team member updated successfully.",
+      });
+      resetForm();
+    }
+  };
+
+  const handleAddNewMember = () => {
+    if (currentTeamMember) {
+      const newMember = {
+        ...currentTeamMember,
+        id: Date.now().toString()
+      };
+      setTeamMembers(prev => [...prev, newMember]);
+      toast({
+        title: "Success",
+        description: "Team member added successfully.",
+      });
+      resetForm();
+    }
+  };
+
+  const handleDeleteMember = () => {
+    if (currentTeamMember) {
+      setTeamMembers(prev => prev.filter(m => m.id !== currentTeamMember.id));
+      toast({
+        title: "Success",
+        description: "Team member deleted successfully.",
+      });
+      resetForm();
+    }
+  };
+
+  const resetForm = () => {
+    setCurrentTeamMember(null);
+    setImagePreview(null);
+  };
+
   return {
     teamMembers,
-    loading,
-    addTeamMember,
-    updateTeamMember,
-    deleteTeamMember,
-    refetch: fetchTeamMembers
+    currentTeamMember,
+    imagePreview,
+    handleEditMember,
+    handleAddMember,
+    handleInputChange,
+    handleSaveMember,
+    handleAddNewMember,
+    handleDeleteMember,
+    resetForm,
   };
 };
