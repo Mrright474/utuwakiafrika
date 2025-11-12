@@ -19,6 +19,7 @@ const ImpactPage = lazy(() => import("./pages/ImpactPage"));
 const ContactPage = lazy(() => import("./pages/ContactPage"));
 const Donate = lazy(() => import("./pages/Donate"));
 const Admin = lazy(() => import("./pages/NewAdmin"));
+const ContentManagement = lazy(() => import("./pages/Admin/ContentManagement"));
 const AdminAuth = lazy(() => import("./pages/AdminAuth"));
 const VolunteerAuth = lazy(() => import("./pages/VolunteerAuth"));
 const VolunteerDashboard = lazy(() => import("./pages/VolunteerDashboard"));
@@ -92,10 +93,11 @@ const App = () => {
             <Route path="/volunteers/auth" element={<VolunteerAuth />} />
             <Route path="/volunteers/dashboard" element={<VolunteerDashboard />} />
             <Route path="/admin" element={<Admin />} />
-              <Route path="/admin/auth" element={<AdminAuth />} />
-              <Route path="/admin/*" element={<Admin />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
+            <Route path="/admin/content" element={<ContentManagement />} />
+            <Route path="/admin/auth" element={<AdminAuth />} />
+            <Route path="/admin/*" element={<Admin />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
           <ChatBot />
