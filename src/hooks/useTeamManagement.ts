@@ -261,5 +261,15 @@ export const useTeamManagement = () => {
     handleDeleteMember,
     handleImageSelect,
     handleImageRemove,
+    // Export mutation functions for direct use
+    addTeamMember: async (member: Omit<TeamMember, 'id'>, file?: File) => {
+      return addMutation.mutateAsync({ member, file });
+    },
+    updateTeamMember: async (member: TeamMember, file?: File) => {
+      return updateMutation.mutateAsync({ member, file });
+    },
+    deleteTeamMember: async (id: string) => {
+      return deleteMutation.mutateAsync(id);
+    }
   };
 };
