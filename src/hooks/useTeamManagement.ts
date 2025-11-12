@@ -34,7 +34,9 @@ export const useTeamManagement = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [currentTeamMember, setCurrentTeamMember] = useState<TeamMember | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>('');
+  const [isUploading, setIsUploading] = useState(false);
 
   const { data: teamMembers = [], isLoading } = useQuery({
     queryKey: ['team-members'],
@@ -163,6 +165,7 @@ export const useTeamManagement = () => {
     if (member) {
       setCurrentTeamMember(member);
       setImagePreview(member.image);
+      setSelectedFile(null);
     }
   };
 
@@ -175,7 +178,8 @@ export const useTeamManagement = () => {
       bio: '',
       role: ''
     });
-    setImagePreview(null);
+    setImagePreview('');
+    setSelectedFile(null);
   };
 
   const handleInputChange = (field: string, value: string) => {
@@ -184,25 +188,49 @@ export const useTeamManagement = () => {
         ...currentTeamMember,
         [field]: value
       });
-      
-      if (field === 'image') {
-        setImagePreview(value);
-      }
     }
   };
 
+  const handleImageSelect = (file: File) => {
+    setSelectedFile(file);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleImageRemove = () => {
+    setSelectedFile(null);
+    setImagePreview('');
+  };
+
   const handleSaveMember = async () => {
-    if (currentTeamMember && currentTeamMember.id) {
-      await updateMutation.mutateAsync(currentTeamMember);
+    if (!currentTeamMember) return;
+    setIsUploading(true);
+    try {
+      await updateMutation.mutateAsync({ 
+        member: currentTeamMember, 
+        file: selectedFile || undefined 
+      });
       resetForm();
+    } finally {
+      setIsUploading(false);
     }
   };
 
   const handleAddNewMember = async () => {
-    if (currentTeamMember) {
+    if (!currentTeamMember) return;
+    setIsUploading(true);
+    try {
       const { id, ...memberData } = currentTeamMember;
-      await addMutation.mutateAsync(memberData);
+      await addMutation.mutateAsync({ 
+        member: memberData, 
+        file: selectedFile || undefined 
+      });
       resetForm();
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -215,7 +243,8 @@ export const useTeamManagement = () => {
 
   const resetForm = () => {
     setCurrentTeamMember(null);
-    setImagePreview(null);
+    setSelectedFile(null);
+    setImagePreview('');
   };
 
   return {
@@ -223,12 +252,14 @@ export const useTeamManagement = () => {
     loading: isLoading,
     currentTeamMember,
     imagePreview,
+    isUploading,
     handleEditMember,
     handleAddMember,
     handleInputChange,
     handleSaveMember,
     handleAddNewMember,
     handleDeleteMember,
-    resetForm,
+    handleImageSelect,
+    handleImageRemove,
   };
 };
