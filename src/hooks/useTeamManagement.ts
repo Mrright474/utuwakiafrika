@@ -13,11 +13,30 @@ export interface TeamMember {
   role: string;
 }
 
+const uploadImage = async (file: File, folder: string = 'team'): Promise<string> => {
+  const fileExt = file.name.split('.').pop();
+  const fileName = `${folder}/${Math.random().toString(36).substring(2)}.${fileExt}`;
+  
+  const { error: uploadError } = await supabase.storage
+    .from('uploads')
+    .upload(fileName, file);
+
+  if (uploadError) throw uploadError;
+
+  const { data } = supabase.storage
+    .from('uploads')
+    .getPublicUrl(fileName);
+
+  return data.publicUrl;
+};
+
 export const useTeamManagement = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [currentTeamMember, setCurrentTeamMember] = useState<TeamMember | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>('');
+  const [isUploading, setIsUploading] = useState(false);
 
   const { data: teamMembers = [], isLoading } = useQuery({
     queryKey: ['team-members'],
@@ -41,7 +60,13 @@ export const useTeamManagement = () => {
   });
 
   const updateMutation = useMutation({
-    mutationFn: async (member: TeamMember) => {
+    mutationFn: async ({ member, file }: { member: TeamMember; file?: File }) => {
+      let imageUrl = member.image;
+      
+      if (file) {
+        imageUrl = await uploadImage(file, 'team');
+      }
+
       const { error } = await (supabase as any)
         .from('team_members')
         .update({
@@ -49,7 +74,7 @@ export const useTeamManagement = () => {
           position: member.position,
           bio: member.bio,
           role: member.role,
-          image_url: member.image
+          image_url: imageUrl
         })
         .eq('id', member.id);
       
@@ -73,7 +98,13 @@ export const useTeamManagement = () => {
   });
 
   const addMutation = useMutation({
-    mutationFn: async (member: Omit<TeamMember, 'id'>) => {
+    mutationFn: async ({ member, file }: { member: Omit<TeamMember, 'id'>; file?: File }) => {
+      let imageUrl = member.image;
+      
+      if (file) {
+        imageUrl = await uploadImage(file, 'team');
+      }
+
       const { error } = await (supabase as any)
         .from('team_members')
         .insert({
@@ -81,7 +112,7 @@ export const useTeamManagement = () => {
           position: member.position,
           bio: member.bio,
           role: member.role,
-          image_url: member.image
+          image_url: imageUrl
         });
       
       if (error) throw error;
@@ -134,6 +165,7 @@ export const useTeamManagement = () => {
     if (member) {
       setCurrentTeamMember(member);
       setImagePreview(member.image);
+      setSelectedFile(null);
     }
   };
 
@@ -146,7 +178,8 @@ export const useTeamManagement = () => {
       bio: '',
       role: ''
     });
-    setImagePreview(null);
+    setImagePreview('');
+    setSelectedFile(null);
   };
 
   const handleInputChange = (field: string, value: string) => {
@@ -155,25 +188,49 @@ export const useTeamManagement = () => {
         ...currentTeamMember,
         [field]: value
       });
-      
-      if (field === 'image') {
-        setImagePreview(value);
-      }
     }
   };
 
+  const handleImageSelect = (file: File) => {
+    setSelectedFile(file);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleImageRemove = () => {
+    setSelectedFile(null);
+    setImagePreview('');
+  };
+
   const handleSaveMember = async () => {
-    if (currentTeamMember && currentTeamMember.id) {
-      await updateMutation.mutateAsync(currentTeamMember);
+    if (!currentTeamMember) return;
+    setIsUploading(true);
+    try {
+      await updateMutation.mutateAsync({ 
+        member: currentTeamMember, 
+        file: selectedFile || undefined 
+      });
       resetForm();
+    } finally {
+      setIsUploading(false);
     }
   };
 
   const handleAddNewMember = async () => {
-    if (currentTeamMember) {
+    if (!currentTeamMember) return;
+    setIsUploading(true);
+    try {
       const { id, ...memberData } = currentTeamMember;
-      await addMutation.mutateAsync(memberData);
+      await addMutation.mutateAsync({ 
+        member: memberData, 
+        file: selectedFile || undefined 
+      });
       resetForm();
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -186,7 +243,8 @@ export const useTeamManagement = () => {
 
   const resetForm = () => {
     setCurrentTeamMember(null);
-    setImagePreview(null);
+    setSelectedFile(null);
+    setImagePreview('');
   };
 
   return {
@@ -194,12 +252,14 @@ export const useTeamManagement = () => {
     loading: isLoading,
     currentTeamMember,
     imagePreview,
+    isUploading,
     handleEditMember,
     handleAddMember,
     handleInputChange,
     handleSaveMember,
     handleAddNewMember,
     handleDeleteMember,
-    resetForm,
+    handleImageSelect,
+    handleImageRemove,
   };
 };

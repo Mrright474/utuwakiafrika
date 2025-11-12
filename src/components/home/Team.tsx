@@ -22,12 +22,16 @@ const Team = () => {
   const {
     teamMembers,
     currentTeamMember,
+    imagePreview,
+    isUploading,
     handleEditMember,
     handleAddMember,
     handleInputChange,
     handleSaveMember,
     handleAddNewMember,
     handleDeleteMember,
+    handleImageSelect,
+    handleImageRemove,
   } = useTeamManagement();
 
   // Filter team members by category
@@ -125,10 +129,14 @@ const Team = () => {
           <TeamMemberDialog
             mode="edit"
             member={currentTeamMember}
+            imagePreview={imagePreview}
+            isUploading={isUploading}
             onClose={() => setIsEditDialogOpen(false)}
             onSave={handleSaveMember}
             onDelete={handleDeleteMember}
             onChange={handleInputChange}
+            onImageSelect={handleImageSelect}
+            onImageRemove={handleImageRemove}
           />
         )}
       </Dialog>
@@ -138,9 +146,13 @@ const Team = () => {
           <TeamMemberDialog
             mode="add"
             member={currentTeamMember}
+            imagePreview={imagePreview}
+            isUploading={isUploading}
             onClose={() => setIsAddDialogOpen(false)}
             onSave={handleAddNewMember}
             onChange={handleInputChange}
+            onImageSelect={handleImageSelect}
+            onImageRemove={handleImageRemove}
           />
         )}
       </Dialog>

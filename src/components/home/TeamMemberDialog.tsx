@@ -21,21 +21,29 @@ interface TeamMemberDialogProps {
     position: string;
     bio: string;
     image: string;
-    role?: string; // Added role as optional to match existing structure
+    role?: string;
   };
+  imagePreview?: string;
+  isUploading?: boolean;
   onClose: () => void;
   onSave: () => void;
   onDelete?: () => void;
   onChange: (field: string, value: string) => void;
+  onImageSelect: (file: File) => void;
+  onImageRemove?: () => void;
 }
 
 const TeamMemberDialog = ({ 
   mode, 
-  member, 
+  member,
+  imagePreview,
+  isUploading,
   onClose, 
   onSave, 
   onDelete, 
-  onChange 
+  onChange,
+  onImageSelect,
+  onImageRemove
 }: TeamMemberDialogProps) => {
   const title = mode === 'add' ? 'Add New Team Member' : 'Edit Team Member';
   const dialogRef = useFocusManagement(true, {
@@ -93,7 +101,13 @@ const TeamMemberDialog = ({
             className="min-h-[100px]"
           />
         </div>
-        <ImageUpload mode={mode} />
+        <ImageUpload 
+          mode={mode}
+          currentImage={imagePreview || member.image}
+          onImageSelect={onImageSelect}
+          onImageRemove={onImageRemove}
+          isUploading={isUploading}
+        />
       </div>
       <DialogFooter className="flex justify-between">
         {mode === 'edit' && onDelete && (
@@ -108,8 +122,12 @@ const TeamMemberDialog = ({
           <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
-          <Button onClick={onSave} className="bg-utu-red hover:bg-red-700">
-            {mode === 'add' ? 'Add Member' : 'Save Changes'}
+          <Button 
+            onClick={onSave} 
+            className="bg-utu-red hover:bg-red-700"
+            disabled={isUploading}
+          >
+            {isUploading ? 'Uploading...' : (mode === 'add' ? 'Add Member' : 'Save Changes')}
           </Button>
         </div>
       </DialogFooter>

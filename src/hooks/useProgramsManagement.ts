@@ -13,6 +13,23 @@ export interface Program {
   image: string;
 }
 
+const uploadImage = async (file: File, folder: string = 'programs'): Promise<string> => {
+  const fileExt = file.name.split('.').pop();
+  const fileName = `${folder}/${Math.random().toString(36).substring(2)}.${fileExt}`;
+  
+  const { error: uploadError } = await supabase.storage
+    .from('uploads')
+    .upload(fileName, file);
+
+  if (uploadError) throw uploadError;
+
+  const { data } = supabase.storage
+    .from('uploads')
+    .getPublicUrl(fileName);
+
+  return data.publicUrl;
+};
+
 export const useProgramsManagement = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -40,7 +57,13 @@ export const useProgramsManagement = () => {
   });
 
   const updateMutation = useMutation({
-    mutationFn: async (program: Program) => {
+    mutationFn: async ({ program, file }: { program: Program; file?: File }) => {
+      let imageUrl = program.image;
+      
+      if (file) {
+        imageUrl = await uploadImage(file, 'programs');
+      }
+
       const { error } = await (supabase as any)
         .from('programs')
         .update({
@@ -49,7 +72,7 @@ export const useProgramsManagement = () => {
           category: program.category,
           icon: program.icon,
           color: program.color,
-          image_url: program.image
+          image_url: imageUrl
         })
         .eq('id', program.id);
       
@@ -73,7 +96,13 @@ export const useProgramsManagement = () => {
   });
 
   const addMutation = useMutation({
-    mutationFn: async (program: Omit<Program, 'id'>) => {
+    mutationFn: async ({ program, file }: { program: Omit<Program, 'id'>; file?: File }) => {
+      let imageUrl = program.image;
+      
+      if (file) {
+        imageUrl = await uploadImage(file, 'programs');
+      }
+
       const { error } = await (supabase as any)
         .from('programs')
         .insert({
@@ -82,7 +111,7 @@ export const useProgramsManagement = () => {
           category: program.category,
           icon: program.icon,
           color: program.color,
-          image_url: program.image
+          image_url: imageUrl
         });
       
       if (error) throw error;
@@ -133,8 +162,10 @@ export const useProgramsManagement = () => {
   return {
     programs,
     loading: isLoading,
-    addProgram: addMutation.mutateAsync,
-    updateProgram: updateMutation.mutateAsync,
+    addProgram: (program: Omit<Program, 'id'>, file?: File) => 
+      addMutation.mutateAsync({ program, file }),
+    updateProgram: (program: Program, file?: File) => 
+      updateMutation.mutateAsync({ program, file }),
     deleteProgram: deleteMutation.mutateAsync,
     refetch: () => queryClient.invalidateQueries({ queryKey: ['programs'] })
   };
