@@ -1,11 +1,11 @@
 import React from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, Link } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Users, MessageSquare, Mail, LogOut, Calendar, ExternalLink, User, Phone, MapPin } from 'lucide-react';
+import { Loader2, Users, MessageSquare, Mail, LogOut, Calendar, ExternalLink, User, Phone, MapPin, Settings } from 'lucide-react';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { useAdminData } from '@/hooks/useAdminData';
 
@@ -78,14 +78,22 @@ const NewAdmin = () => {
               <h1 className="text-3xl font-bold text-utu-black">Admin Dashboard</h1>
               <p className="text-utu-gray">Manage website content and user data</p>
             </div>
-            <Button 
-              onClick={handleSignOut}
-              variant="outline" 
-              className="flex items-center"
-            >
-              <LogOut className="mr-2 h-4 w-4" />
-              Sign Out
-            </Button>
+            <div className="flex gap-2">
+              <Link to="/admin/content">
+                <Button variant="outline" className="flex items-center">
+                  <Settings className="mr-2 h-4 w-4" />
+                  Content Management
+                </Button>
+              </Link>
+              <Button 
+                onClick={handleSignOut}
+                variant="outline" 
+                className="flex items-center"
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                Sign Out
+              </Button>
+            </div>
           </div>
 
           {dataLoading ? (

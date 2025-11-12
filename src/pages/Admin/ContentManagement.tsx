@@ -1,901 +1,531 @@
-
-import React, { useState, useEffect } from 'react';
-import { 
-  Tabs, 
-  TabsContent, 
-  TabsList, 
-  TabsTrigger 
-} from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { toast } from "sonner";
-
-// Team Management Component
-const TeamManagement = () => {
-  const [teamMembers, setTeamMembers] = useState([]);
-  const [currentMember, setCurrentMember] = useState({
-    name: "",
-    role: "",
-    bio: "",
-    image: ""
-  });
-  const [editIndex, setEditIndex] = useState(-1);
-
-  useEffect(() => {
-    const savedTeam = localStorage.getItem('utu-team');
-    if (savedTeam) {
-      try {
-        setTeamMembers(JSON.parse(savedTeam));
-      } catch (error) {
-        console.error("Error parsing team data:", error);
-      }
-    }
-  }, []);
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setCurrentMember(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    if (!currentMember.name || !currentMember.role) {
-      toast.error("Name and role are required");
-      return;
-    }
-    
-    let updatedTeam;
-    
-    if (editIndex >= 0) {
-      // Edit existing member
-      updatedTeam = [...teamMembers];
-      updatedTeam[editIndex] = currentMember;
-    } else {
-      // Add new member
-      updatedTeam = [...teamMembers, currentMember];
-    }
-    
-    setTeamMembers(updatedTeam);
-    localStorage.setItem('utu-team', JSON.stringify(updatedTeam));
-    
-    // Reset form
-    setCurrentMember({ name: "", role: "", bio: "", image: "" });
-    setEditIndex(-1);
-    
-    toast.success(editIndex >= 0 ? "Team member updated" : "Team member added");
-  };
-
-  const handleEdit = (index) => {
-    setCurrentMember(teamMembers[index]);
-    setEditIndex(index);
-  };
-
-  const handleDelete = (index) => {
-    const updatedTeam = [...teamMembers];
-    updatedTeam.splice(index, 1);
-    setTeamMembers(updatedTeam);
-    localStorage.setItem('utu-team', JSON.stringify(updatedTeam));
-    toast.success("Team member removed");
-  };
-
-  return (
-    <div className="space-y-6">
-      <h3 className="text-xl font-semibold">Team Members Management</h3>
-      
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium mb-1">Name</label>
-            <Input 
-              id="name" 
-              name="name" 
-              value={currentMember.name}
-              onChange={handleInputChange}
-              placeholder="Member name"
-            />
-          </div>
-          
-          <div>
-            <label htmlFor="role" className="block text-sm font-medium mb-1">Role</label>
-            <Input 
-              id="role" 
-              name="role" 
-              value={currentMember.role}
-              onChange={handleInputChange}
-              placeholder="Member role"
-            />
-          </div>
-        </div>
-        
-        <div>
-          <label htmlFor="bio" className="block text-sm font-medium mb-1">Bio</label>
-          <Textarea 
-            id="bio" 
-            name="bio" 
-            value={currentMember.bio}
-            onChange={handleInputChange}
-            placeholder="Short biography"
-            rows={3}
-          />
-        </div>
-        
-        <div>
-          <label htmlFor="image" className="block text-sm font-medium mb-1">Image URL</label>
-          <Input 
-            id="image" 
-            name="image" 
-            value={currentMember.image}
-            onChange={handleInputChange}
-            placeholder="Image URL (use uploaded images path)"
-          />
-        </div>
-        
-        <div className="flex justify-end space-x-2">
-          {editIndex >= 0 && (
-            <Button 
-              type="button" 
-              variant="outline"
-              onClick={() => {
-                setCurrentMember({ name: "", role: "", bio: "", image: "" });
-                setEditIndex(-1);
-              }}
-            >
-              Cancel
-            </Button>
-          )}
-          <Button type="submit">
-            {editIndex >= 0 ? "Update Member" : "Add Member"}
-          </Button>
-        </div>
-      </form>
-      
-      <div className="mt-8">
-        <h4 className="font-medium text-lg mb-4">Current Team Members</h4>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {teamMembers.map((member, index) => (
-            <Card key={index}>
-              <CardContent className="p-4">
-                <div className="flex items-center space-x-3 mb-3">
-                  {member.image && (
-                    <img 
-                      src={member.image} 
-                      alt={member.name} 
-                      className="w-12 h-12 rounded-full object-cover"
-                    />
-                  )}
-                  <div>
-                    <h5 className="font-bold">{member.name}</h5>
-                    <p className="text-sm text-gray-600">{member.role}</p>
-                  </div>
-                </div>
-                {member.bio && <p className="text-sm mb-3">{member.bio}</p>}
-                <div className="flex justify-end space-x-2">
-                  <Button 
-                    size="sm" 
-                    variant="outline"
-                    onClick={() => handleEdit(index)}
-                  >
-                    Edit
-                  </Button>
-                  <Button 
-                    size="sm" 
-                    variant="destructive"
-                    onClick={() => handleDelete(index)}
-                  >
-                    Delete
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// Testimonials Management Component
-const TestimonialsManagement = () => {
-  const [testimonials, setTestimonials] = useState([]);
-  const [currentTestimonial, setCurrentTestimonial] = useState({
-    quote: "",
-    name: "",
-    role: "",
-    image: ""
-  });
-  const [editIndex, setEditIndex] = useState(-1);
-
-  useEffect(() => {
-    const savedTestimonials = localStorage.getItem('utu-testimonials');
-    if (savedTestimonials) {
-      try {
-        setTestimonials(JSON.parse(savedTestimonials));
-      } catch (error) {
-        console.error("Error parsing testimonials data:", error);
-      }
-    }
-  }, []);
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setCurrentTestimonial(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    if (!currentTestimonial.quote || !currentTestimonial.name) {
-      toast.error("Quote and name are required");
-      return;
-    }
-    
-    let updatedTestimonials;
-    
-    if (editIndex >= 0) {
-      // Edit existing testimonial
-      updatedTestimonials = [...testimonials];
-      updatedTestimonials[editIndex] = currentTestimonial;
-    } else {
-      // Add new testimonial
-      updatedTestimonials = [...testimonials, currentTestimonial];
-    }
-    
-    setTestimonials(updatedTestimonials);
-    localStorage.setItem('utu-testimonials', JSON.stringify(updatedTestimonials));
-    
-    // Reset form
-    setCurrentTestimonial({ quote: "", name: "", role: "", image: "" });
-    setEditIndex(-1);
-    
-    toast.success(editIndex >= 0 ? "Testimonial updated" : "Testimonial added");
-  };
-
-  const handleEdit = (index) => {
-    setCurrentTestimonial(testimonials[index]);
-    setEditIndex(index);
-  };
-
-  const handleDelete = (index) => {
-    const updatedTestimonials = [...testimonials];
-    updatedTestimonials.splice(index, 1);
-    setTestimonials(updatedTestimonials);
-    localStorage.setItem('utu-testimonials', JSON.stringify(updatedTestimonials));
-    toast.success("Testimonial removed");
-  };
-
-  return (
-    <div className="space-y-6">
-      <h3 className="text-xl font-semibold">Testimonials Management</h3>
-      
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="quote" className="block text-sm font-medium mb-1">Quote</label>
-          <Textarea 
-            id="quote" 
-            name="quote" 
-            value={currentTestimonial.quote}
-            onChange={handleInputChange}
-            placeholder="Testimonial quote"
-            rows={3}
-          />
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium mb-1">Name</label>
-            <Input 
-              id="name" 
-              name="name" 
-              value={currentTestimonial.name}
-              onChange={handleInputChange}
-              placeholder="Person's name"
-            />
-          </div>
-          
-          <div>
-            <label htmlFor="role" className="block text-sm font-medium mb-1">Role/Location</label>
-            <Input 
-              id="role" 
-              name="role" 
-              value={currentTestimonial.role}
-              onChange={handleInputChange}
-              placeholder="Role or location"
-            />
-          </div>
-        </div>
-        
-        <div>
-          <label htmlFor="image" className="block text-sm font-medium mb-1">Image URL</label>
-          <Input 
-            id="image" 
-            name="image" 
-            value={currentTestimonial.image}
-            onChange={handleInputChange}
-            placeholder="Image URL (use uploaded images path)"
-          />
-        </div>
-        
-        <div className="flex justify-end space-x-2">
-          {editIndex >= 0 && (
-            <Button 
-              type="button" 
-              variant="outline"
-              onClick={() => {
-                setCurrentTestimonial({ quote: "", name: "", role: "", image: "" });
-                setEditIndex(-1);
-              }}
-            >
-              Cancel
-            </Button>
-          )}
-          <Button type="submit">
-            {editIndex >= 0 ? "Update Testimonial" : "Add Testimonial"}
-          </Button>
-        </div>
-      </form>
-      
-      <div className="mt-8">
-        <h4 className="font-medium text-lg mb-4">Current Testimonials</h4>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {testimonials.map((testimonial, index) => (
-            <Card key={index}>
-              <CardContent className="p-4">
-                <p className="italic mb-3">"{testimonial.quote}"</p>
-                <div className="flex items-center space-x-3 mb-3">
-                  {testimonial.image && (
-                    <img 
-                      src={testimonial.image} 
-                      alt={testimonial.name} 
-                      className="w-10 h-10 rounded-full object-cover"
-                    />
-                  )}
-                  <div>
-                    <h5 className="font-medium">{testimonial.name}</h5>
-                    <p className="text-sm text-gray-600">{testimonial.role}</p>
-                  </div>
-                </div>
-                <div className="flex justify-end space-x-2">
-                  <Button 
-                    size="sm" 
-                    variant="outline"
-                    onClick={() => handleEdit(index)}
-                  >
-                    Edit
-                  </Button>
-                  <Button 
-                    size="sm" 
-                    variant="destructive"
-                    onClick={() => handleDelete(index)}
-                  >
-                    Delete
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// Programs Management Component
-const ProgramsManagement = () => {
-  const [programs, setPrograms] = useState([]);
-  const [currentProgram, setCurrentProgram] = useState({
-    title: "",
-    description: "",
-    image: ""
-  });
-  const [editIndex, setEditIndex] = useState(-1);
-
-  useEffect(() => {
-    const savedPrograms = localStorage.getItem('utu-programs');
-    if (savedPrograms) {
-      try {
-        setPrograms(JSON.parse(savedPrograms));
-      } catch (error) {
-        console.error("Error parsing programs data:", error);
-      }
-    }
-  }, []);
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setCurrentProgram(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    if (!currentProgram.title || !currentProgram.description) {
-      toast.error("Title and description are required");
-      return;
-    }
-    
-    let updatedPrograms;
-    
-    if (editIndex >= 0) {
-      // Edit existing program
-      updatedPrograms = [...programs];
-      updatedPrograms[editIndex] = currentProgram;
-    } else {
-      // Add new program
-      updatedPrograms = [...programs, currentProgram];
-    }
-    
-    setPrograms(updatedPrograms);
-    localStorage.setItem('utu-programs', JSON.stringify(updatedPrograms));
-    
-    // Reset form
-    setCurrentProgram({ title: "", description: "", image: "" });
-    setEditIndex(-1);
-    
-    toast.success(editIndex >= 0 ? "Program updated" : "Program added");
-  };
-
-  const handleEdit = (index) => {
-    setCurrentProgram(programs[index]);
-    setEditIndex(index);
-  };
-
-  const handleDelete = (index) => {
-    const updatedPrograms = [...programs];
-    updatedPrograms.splice(index, 1);
-    setPrograms(updatedPrograms);
-    localStorage.setItem('utu-programs', JSON.stringify(updatedPrograms));
-    toast.success("Program removed");
-  };
-
-  return (
-    <div className="space-y-6">
-      <h3 className="text-xl font-semibold">Programs Management</h3>
-      
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="title" className="block text-sm font-medium mb-1">Title</label>
-          <Input 
-            id="title" 
-            name="title" 
-            value={currentProgram.title}
-            onChange={handleInputChange}
-            placeholder="Program title"
-          />
-        </div>
-        
-        <div>
-          <label htmlFor="description" className="block text-sm font-medium mb-1">Description</label>
-          <Textarea 
-            id="description" 
-            name="description" 
-            value={currentProgram.description}
-            onChange={handleInputChange}
-            placeholder="Program description"
-            rows={3}
-          />
-        </div>
-        
-        <div>
-          <label htmlFor="image" className="block text-sm font-medium mb-1">Image URL</label>
-          <Input 
-            id="image" 
-            name="image" 
-            value={currentProgram.image}
-            onChange={handleInputChange}
-            placeholder="Image URL (use uploaded images path)"
-          />
-        </div>
-        
-        <div className="flex justify-end space-x-2">
-          {editIndex >= 0 && (
-            <Button 
-              type="button" 
-              variant="outline"
-              onClick={() => {
-                setCurrentProgram({ title: "", description: "", image: "" });
-                setEditIndex(-1);
-              }}
-            >
-              Cancel
-            </Button>
-          )}
-          <Button type="submit">
-            {editIndex >= 0 ? "Update Program" : "Add Program"}
-          </Button>
-        </div>
-      </form>
-      
-      <div className="mt-8">
-        <h4 className="font-medium text-lg mb-4">Current Programs</h4>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {programs.map((program, index) => (
-            <Card key={index}>
-              <CardContent className="p-4">
-                <div className="flex items-center space-x-3 mb-3">
-                  {program.image && (
-                    <img 
-                      src={program.image} 
-                      alt={program.title} 
-                      className="w-16 h-16 object-cover rounded"
-                    />
-                  )}
-                  <h5 className="font-bold">{program.title}</h5>
-                </div>
-                <p className="text-sm mb-3">{program.description}</p>
-                <div className="flex justify-end space-x-2">
-                  <Button 
-                    size="sm" 
-                    variant="outline"
-                    onClick={() => handleEdit(index)}
-                  >
-                    Edit
-                  </Button>
-                  <Button 
-                    size="sm" 
-                    variant="destructive"
-                    onClick={() => handleDelete(index)}
-                  >
-                    Delete
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// Impact Management Component
-const ImpactManagement = () => {
-  const [impact, setImpact] = useState({
-    stats: [],
-    successStories: []
-  });
-  
-  const [currentStat, setCurrentStat] = useState({
-    value: "",
-    label: ""
-  });
-  
-  const [currentStory, setCurrentStory] = useState({
-    title: "",
-    description: "",
-    image: ""
-  });
-  
-  const [editStatIndex, setEditStatIndex] = useState(-1);
-  const [editStoryIndex, setEditStoryIndex] = useState(-1);
-
-  useEffect(() => {
-    const savedImpact = localStorage.getItem('utu-impact');
-    if (savedImpact) {
-      try {
-        setImpact(JSON.parse(savedImpact));
-      } catch (error) {
-        console.error("Error parsing impact data:", error);
-      }
-    }
-  }, []);
-
-  const handleStatInputChange = (e) => {
-    const { name, value } = e.target;
-    setCurrentStat(prev => ({ 
-      ...prev, 
-      [name]: name === 'value' ? (value === '' ? '' : parseInt(value, 10) || 0) : value 
-    }));
-  };
-
-  const handleStoryInputChange = (e) => {
-    const { name, value } = e.target;
-    setCurrentStory(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleStatSubmit = (e) => {
-    e.preventDefault();
-    
-    if (currentStat.label === "" || currentStat.value === "") {
-      toast.error("Value and label are required");
-      return;
-    }
-    
-    let updatedStats;
-    
-    if (editStatIndex >= 0) {
-      // Edit existing stat
-      updatedStats = [...impact.stats];
-      updatedStats[editStatIndex] = currentStat;
-    } else {
-      // Add new stat
-      updatedStats = [...impact.stats, currentStat];
-    }
-    
-    const updatedImpact = { ...impact, stats: updatedStats };
-    setImpact(updatedImpact);
-    localStorage.setItem('utu-impact', JSON.stringify(updatedImpact));
-    
-    // Reset form
-    setCurrentStat({ value: "", label: "" });
-    setEditStatIndex(-1);
-    
-    toast.success(editStatIndex >= 0 ? "Impact stat updated" : "Impact stat added");
-  };
-
-  const handleStorySubmit = (e) => {
-    e.preventDefault();
-    
-    if (!currentStory.title || !currentStory.description) {
-      toast.error("Title and description are required");
-      return;
-    }
-    
-    let updatedStories;
-    
-    if (editStoryIndex >= 0) {
-      // Edit existing story
-      updatedStories = [...impact.successStories];
-      updatedStories[editStoryIndex] = currentStory;
-    } else {
-      // Add new story
-      updatedStories = [...impact.successStories, currentStory];
-    }
-    
-    const updatedImpact = { ...impact, successStories: updatedStories };
-    setImpact(updatedImpact);
-    localStorage.setItem('utu-impact', JSON.stringify(updatedImpact));
-    
-    // Reset form
-    setCurrentStory({ title: "", description: "", image: "" });
-    setEditStoryIndex(-1);
-    
-    toast.success(editStoryIndex >= 0 ? "Success story updated" : "Success story added");
-  };
-
-  const handleEditStat = (index) => {
-    setCurrentStat(impact.stats[index]);
-    setEditStatIndex(index);
-  };
-
-  const handleDeleteStat = (index) => {
-    const updatedStats = [...impact.stats];
-    updatedStats.splice(index, 1);
-    const updatedImpact = { ...impact, stats: updatedStats };
-    setImpact(updatedImpact);
-    localStorage.setItem('utu-impact', JSON.stringify(updatedImpact));
-    toast.success("Impact stat removed");
-  };
-
-  const handleEditStory = (index) => {
-    setCurrentStory(impact.successStories[index]);
-    setEditStoryIndex(index);
-  };
-
-  const handleDeleteStory = (index) => {
-    const updatedStories = [...impact.successStories];
-    updatedStories.splice(index, 1);
-    const updatedImpact = { ...impact, successStories: updatedStories };
-    setImpact(updatedImpact);
-    localStorage.setItem('utu-impact', JSON.stringify(updatedImpact));
-    toast.success("Success story removed");
-  };
-
-  return (
-    <div className="space-y-10">
-      {/* Stats Management */}
-      <div className="space-y-6">
-        <h3 className="text-xl font-semibold">Impact Statistics</h3>
-        
-        <form onSubmit={handleStatSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="value" className="block text-sm font-medium mb-1">Value</label>
-              <Input 
-                id="value" 
-                name="value" 
-                type="number"
-                value={currentStat.value}
-                onChange={handleStatInputChange}
-                placeholder="Numeric value"
-              />
-            </div>
-            
-            <div>
-              <label htmlFor="label" className="block text-sm font-medium mb-1">Label</label>
-              <Input 
-                id="label" 
-                name="label" 
-                value={currentStat.label}
-                onChange={handleStatInputChange}
-                placeholder="Label description"
-              />
-            </div>
-          </div>
-          
-          <div className="flex justify-end space-x-2">
-            {editStatIndex >= 0 && (
-              <Button 
-                type="button" 
-                variant="outline"
-                onClick={() => {
-                  setCurrentStat({ value: "", label: "" });
-                  setEditStatIndex(-1);
-                }}
-              >
-                Cancel
-              </Button>
-            )}
-            <Button type="submit">
-              {editStatIndex >= 0 ? "Update Stat" : "Add Stat"}
-            </Button>
-          </div>
-        </form>
-        
-        <div className="mt-4">
-          <h4 className="font-medium text-lg mb-4">Current Impact Stats</h4>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {impact.stats.map((stat, index) => (
-              <Card key={index}>
-                <CardContent className="p-4 text-center">
-                  <p className="text-3xl font-bold">{stat.value}</p>
-                  <p className="text-gray-600">{stat.label}</p>
-                  <div className="flex justify-center space-x-2 mt-2">
-                    <Button 
-                      size="sm" 
-                      variant="outline"
-                      onClick={() => handleEditStat(index)}
-                    >
-                      Edit
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      variant="destructive"
-                      onClick={() => handleDeleteStat(index)}
-                    >
-                      Delete
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </div>
-      
-      {/* Success Stories Management */}
-      <div className="space-y-6">
-        <h3 className="text-xl font-semibold">Success Stories</h3>
-        
-        <form onSubmit={handleStorySubmit} className="space-y-4">
-          <div>
-            <label htmlFor="title" className="block text-sm font-medium mb-1">Title</label>
-            <Input 
-              id="title" 
-              name="title" 
-              value={currentStory.title}
-              onChange={handleStoryInputChange}
-              placeholder="Story title"
-            />
-          </div>
-          
-          <div>
-            <label htmlFor="description" className="block text-sm font-medium mb-1">Description</label>
-            <Textarea 
-              id="description" 
-              name="description" 
-              value={currentStory.description}
-              onChange={handleStoryInputChange}
-              placeholder="Story description"
-              rows={3}
-            />
-          </div>
-          
-          <div>
-            <label htmlFor="image" className="block text-sm font-medium mb-1">Image URL</label>
-            <Input 
-              id="image" 
-              name="image" 
-              value={currentStory.image}
-              onChange={handleStoryInputChange}
-              placeholder="Image URL (use uploaded images path)"
-            />
-          </div>
-          
-          <div className="flex justify-end space-x-2">
-            {editStoryIndex >= 0 && (
-              <Button 
-                type="button" 
-                variant="outline"
-                onClick={() => {
-                  setCurrentStory({ title: "", description: "", image: "" });
-                  setEditStoryIndex(-1);
-                }}
-              >
-                Cancel
-              </Button>
-            )}
-            <Button type="submit">
-              {editStoryIndex >= 0 ? "Update Story" : "Add Story"}
-            </Button>
-          </div>
-        </form>
-        
-        <div className="mt-4">
-          <h4 className="font-medium text-lg mb-4">Current Success Stories</h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {impact.successStories.map((story, index) => (
-              <Card key={index}>
-                <CardContent className="p-4">
-                  <div className="flex items-center space-x-3 mb-3">
-                    {story.image && (
-                      <img 
-                        src={story.image} 
-                        alt={story.title} 
-                        className="w-16 h-16 object-cover rounded"
-                      />
-                    )}
-                    <h5 className="font-bold">{story.title}</h5>
-                  </div>
-                  <p className="text-sm mb-3">{story.description}</p>
-                  <div className="flex justify-end space-x-2">
-                    <Button 
-                      size="sm" 
-                      variant="outline"
-                      onClick={() => handleEditStory(index)}
-                    >
-                      Edit
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      variant="destructive"
-                      onClick={() => handleDeleteStory(index)}
-                    >
-                      Delete
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+import React, { useState } from 'react';
+import { Navigate, Link } from 'react-router-dom';
+import Layout from '@/components/layout/Layout';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Loader2, Users, FileText, MessageSquare, BarChart, Plus, Edit, Trash2, LogOut, ArrowLeft } from 'lucide-react';
+import { useAdminAuth } from '@/hooks/useAdminAuth';
+import { useTeamManagement } from '@/hooks/useTeamManagement';
+import { useProgramsManagement } from '@/hooks/useProgramsManagement';
+import { useTestimonialsManagement } from '@/hooks/useTestimonialsManagement';
+import { useMetricsManagement } from '@/hooks/useMetricsManagement';
+import ImageUpload from '@/components/home/ImageUpload';
 
 const ContentManagement = () => {
+  const { user, isAdmin, loading: authLoading, signOut } = useAdminAuth();
+  const [activeTab, setActiveTab] = useState('team');
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogMode, setDialogMode] = useState<'add' | 'edit'>('add');
+  const [editingItem, setEditingItem] = useState<any>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>('');
+
+  // Management hooks
+  const { teamMembers, loading: teamLoading, addTeamMember, updateTeamMember, deleteTeamMember } = useTeamManagement();
+  const { programs, loading: programsLoading, addProgram, updateProgram, deleteProgram } = useProgramsManagement();
+  const { testimonials, loading: testimonialsLoading, addTestimonial, updateTestimonial, deleteTestimonial } = useTestimonialsManagement();
+  const { metrics, loading: metricsLoading, addMetric, updateMetric, deleteMetric } = useMetricsManagement();
+
+  if (!authLoading && (!user || !isAdmin)) {
+    return <Navigate to="/admin/auth" replace />;
+  }
+
+  if (authLoading) {
+    return (
+      <Layout>
+        <div className="min-h-screen flex items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-utu-red" />
+        </div>
+      </Layout>
+    );
+  }
+
+  const handleAdd = (type: string) => {
+    setDialogMode('add');
+    setActiveTab(type);
+    
+    // Initialize empty object based on type
+    if (type === 'team') {
+      setEditingItem({ name: '', position: '', role: '', bio: '', image: '' });
+    } else if (type === 'programs') {
+      setEditingItem({ title: '', description: '', category: '', icon: '', image: '' });
+    } else if (type === 'testimonials') {
+      setEditingItem({ name: '', role: '', quote: '', image_url: '' });
+    } else if (type === 'metrics') {
+      setEditingItem({ metric_name: '', metric_value: '', category: '', icon: '' });
+    }
+    
+    setSelectedFile(null);
+    setImagePreview('');
+    setDialogOpen(true);
+  };
+
+  const handleEdit = (item: any, type: string) => {
+    setDialogMode('edit');
+    setEditingItem(item);
+    setSelectedFile(null);
+    setImagePreview(item.image || item.image_url || '');
+    setActiveTab(type);
+    setDialogOpen(true);
+  };
+
+  const handleImageSelect = (file: File) => {
+    setSelectedFile(file);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSave = async () => {
+    try {
+      if (activeTab === 'team') {
+        if (dialogMode === 'add') {
+          const { id, ...data } = editingItem;
+          await addTeamMember(data, selectedFile || undefined);
+        } else {
+          await updateTeamMember(editingItem, selectedFile || undefined);
+        }
+      } else if (activeTab === 'programs') {
+        if (dialogMode === 'add') {
+          const { id, ...data } = editingItem;
+          await addProgram(data, selectedFile || undefined);
+        } else {
+          await updateProgram(editingItem, selectedFile || undefined);
+        }
+      } else if (activeTab === 'testimonials') {
+        if (dialogMode === 'add') {
+          const { id, ...data } = editingItem;
+          await addTestimonial(data, selectedFile || undefined);
+        } else {
+          await updateTestimonial(editingItem, selectedFile || undefined);
+        }
+      } else if (activeTab === 'metrics') {
+        if (dialogMode === 'add') {
+          const { id, ...data } = editingItem;
+          await addMetric(data);
+        } else {
+          await updateMetric(editingItem);
+        }
+      }
+      setDialogOpen(false);
+      setEditingItem(null);
+      setSelectedFile(null);
+      setImagePreview('');
+    } catch (error) {
+      console.error('Error saving:', error);
+    }
+  };
+
+  const handleDelete = async (id: string, type: string) => {
+    if (!confirm('Are you sure you want to delete this item?')) return;
+    
+    try {
+      if (type === 'team') await deleteTeamMember(id);
+      else if (type === 'programs') await deleteProgram(id);
+      else if (type === 'testimonials') await deleteTestimonial(id);
+      else if (type === 'metrics') await deleteMetric(id);
+    } catch (error) {
+      console.error('Error deleting:', error);
+    }
+  };
+
+  const handleInputChange = (field: string, value: string) => {
+    setEditingItem((prev: any) => ({ ...prev, [field]: value }));
+  };
+
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-6">Content Management</h2>
-      
-      <Tabs defaultValue="team">
-        <TabsList className="mb-6 flex flex-wrap">
-          <TabsTrigger value="team">Team</TabsTrigger>
-          <TabsTrigger value="testimonials">Testimonials</TabsTrigger>
-          <TabsTrigger value="programs">Programs</TabsTrigger>
-          <TabsTrigger value="impact">Impact & Success</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="team" className="space-y-6">
-          <TeamManagement />
-        </TabsContent>
-        
-        <TabsContent value="testimonials" className="space-y-6">
-          <TestimonialsManagement />
-        </TabsContent>
-        
-        <TabsContent value="programs" className="space-y-6">
-          <ProgramsManagement />
-        </TabsContent>
-        
-        <TabsContent value="impact" className="space-y-6">
-          <ImpactManagement />
-        </TabsContent>
-      </Tabs>
-    </div>
+    <Layout>
+      <div className="bg-utu-light-gray py-8 min-h-screen">
+        <div className="container mx-auto px-4">
+          <div className="mb-8 flex justify-between items-center">
+            <div className="flex items-center gap-4">
+              <Link to="/admin">
+                <Button variant="ghost" size="sm">
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Back to Dashboard
+                </Button>
+              </Link>
+              <div>
+                <h1 className="text-3xl font-bold text-utu-black">Content Management</h1>
+                <p className="text-utu-gray">Manage website content and data</p>
+              </div>
+            </div>
+            <Button 
+              onClick={() => signOut()}
+              variant="outline" 
+              className="flex items-center"
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              Sign Out
+            </Button>
+          </div>
+
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-4 mb-8">
+              <TabsTrigger value="team">
+                <Users className="mr-2 h-4 w-4" />
+                Team ({teamMembers.length})
+              </TabsTrigger>
+              <TabsTrigger value="programs">
+                <FileText className="mr-2 h-4 w-4" />
+                Programs ({programs.length})
+              </TabsTrigger>
+              <TabsTrigger value="testimonials">
+                <MessageSquare className="mr-2 h-4 w-4" />
+                Testimonials ({testimonials.length})
+              </TabsTrigger>
+              <TabsTrigger value="metrics">
+                <BarChart className="mr-2 h-4 w-4" />
+                Metrics ({metrics.length})
+              </TabsTrigger>
+            </TabsList>
+
+            {/* Team Members Tab */}
+            <TabsContent value="team">
+              <Card>
+                <CardHeader>
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <CardTitle>Team Members</CardTitle>
+                      <CardDescription>Manage your organization's team members</CardDescription>
+                    </div>
+                    <Button onClick={() => handleAdd('team')}>
+                      <Plus className="mr-2 h-4 w-4" />
+                      Add Member
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {teamLoading ? (
+                    <div className="flex justify-center py-8">
+                      <Loader2 className="h-8 w-8 animate-spin" />
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {teamMembers.map((member: any) => (
+                        <div key={member.id} className="border rounded-lg p-4 flex justify-between items-center">
+                          <div className="flex items-center gap-4">
+                            {member.image && (
+                              <img src={member.image} alt={member.name} className="w-12 h-12 rounded-full object-cover" />
+                            )}
+                            <div>
+                              <h3 className="font-semibold">{member.name}</h3>
+                              <p className="text-sm text-gray-600">{member.position}</p>
+                              <p className="text-xs text-gray-500">{member.role}</p>
+                            </div>
+                          </div>
+                          <div className="flex gap-2">
+                            <Button size="sm" variant="outline" onClick={() => handleEdit(member, 'team')}>
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button size="sm" variant="destructive" onClick={() => handleDelete(member.id, 'team')}>
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                      {teamMembers.length === 0 && (
+                        <div className="text-center py-8 text-gray-500">
+                          No team members yet. Click "Add Member" to get started.
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Programs Tab */}
+            <TabsContent value="programs">
+              <Card>
+                <CardHeader>
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <CardTitle>Programs</CardTitle>
+                      <CardDescription>Manage your organization's programs</CardDescription>
+                    </div>
+                    <Button onClick={() => handleAdd('programs')}>
+                      <Plus className="mr-2 h-4 w-4" />
+                      Add Program
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {programsLoading ? (
+                    <div className="flex justify-center py-8">
+                      <Loader2 className="h-8 w-8 animate-spin" />
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {programs.map((program: any) => (
+                        <div key={program.id} className="border rounded-lg p-4 flex justify-between items-start">
+                          <div className="flex gap-4 flex-1">
+                            {program.image && (
+                              <img src={program.image} alt={program.title} className="w-20 h-20 rounded object-cover" />
+                            )}
+                            <div>
+                              <h3 className="font-semibold">{program.title}</h3>
+                              <p className="text-sm text-gray-600 mt-1">{program.description}</p>
+                              <p className="text-xs text-gray-500 mt-1">Category: {program.category || 'None'}</p>
+                            </div>
+                          </div>
+                          <div className="flex gap-2">
+                            <Button size="sm" variant="outline" onClick={() => handleEdit(program, 'programs')}>
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button size="sm" variant="destructive" onClick={() => handleDelete(program.id, 'programs')}>
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                      {programs.length === 0 && (
+                        <div className="text-center py-8 text-gray-500">
+                          No programs yet. Click "Add Program" to get started.
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Testimonials Tab */}
+            <TabsContent value="testimonials">
+              <Card>
+                <CardHeader>
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <CardTitle>Testimonials</CardTitle>
+                      <CardDescription>Manage testimonials from beneficiaries</CardDescription>
+                    </div>
+                    <Button onClick={() => handleAdd('testimonials')}>
+                      <Plus className="mr-2 h-4 w-4" />
+                      Add Testimonial
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {testimonialsLoading ? (
+                    <div className="flex justify-center py-8">
+                      <Loader2 className="h-8 w-8 animate-spin" />
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {testimonials.map((testimonial: any) => (
+                        <div key={testimonial.id} className="border rounded-lg p-4 flex justify-between items-start">
+                          <div>
+                            <h3 className="font-semibold">{testimonial.name}</h3>
+                            <p className="text-sm text-gray-600">{testimonial.role}</p>
+                            <p className="text-sm mt-2 italic">"{testimonial.quote}"</p>
+                          </div>
+                          <div className="flex gap-2">
+                            <Button size="sm" variant="outline" onClick={() => handleEdit(testimonial, 'testimonials')}>
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button size="sm" variant="destructive" onClick={() => handleDelete(testimonial.id, 'testimonials')}>
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                      {testimonials.length === 0 && (
+                        <div className="text-center py-8 text-gray-500">
+                          No testimonials yet. Click "Add Testimonial" to get started.
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Metrics Tab */}
+            <TabsContent value="metrics">
+              <Card>
+                <CardHeader>
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <CardTitle>Success Metrics</CardTitle>
+                      <CardDescription>Manage impact statistics and metrics</CardDescription>
+                    </div>
+                    <Button onClick={() => handleAdd('metrics')}>
+                      <Plus className="mr-2 h-4 w-4" />
+                      Add Metric
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {metricsLoading ? (
+                    <div className="flex justify-center py-8">
+                      <Loader2 className="h-8 w-8 animate-spin" />
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {metrics.map((metric: any) => (
+                        <div key={metric.id} className="border rounded-lg p-4 flex justify-between items-center">
+                          <div>
+                            <h3 className="font-semibold text-2xl">{metric.metric_value}</h3>
+                            <p className="text-sm text-gray-600">{metric.metric_name}</p>
+                            <p className="text-xs text-gray-500">Category: {metric.category || 'None'}</p>
+                          </div>
+                          <div className="flex gap-2">
+                            <Button size="sm" variant="outline" onClick={() => handleEdit(metric, 'metrics')}>
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button size="sm" variant="destructive" onClick={() => handleDelete(metric.id, 'metrics')}>
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                      {metrics.length === 0 && (
+                        <div className="text-center py-8 text-gray-500">
+                          No metrics yet. Click "Add Metric" to get started.
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
+
+          {/* Universal Edit/Add Dialog */}
+          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>
+                  {dialogMode === 'add' ? 'Add' : 'Edit'}{' '}
+                  {activeTab === 'team' ? 'Team Member' : activeTab === 'programs' ? 'Program' : activeTab === 'testimonials' ? 'Testimonial' : 'Metric'}
+                </DialogTitle>
+              </DialogHeader>
+              
+              <div className="space-y-4 py-4">
+                {activeTab === 'team' && (
+                  <>
+                    <div>
+                      <Label>Name</Label>
+                      <Input value={editingItem?.name || ''} onChange={(e) => handleInputChange('name', e.target.value)} />
+                    </div>
+                    <div>
+                      <Label>Position</Label>
+                      <Input value={editingItem?.position || ''} onChange={(e) => handleInputChange('position', e.target.value)} />
+                    </div>
+                    <div>
+                      <Label>Role</Label>
+                      <Input value={editingItem?.role || ''} onChange={(e) => handleInputChange('role', e.target.value)} />
+                    </div>
+                    <div>
+                      <Label>Bio</Label>
+                      <Textarea value={editingItem?.bio || ''} onChange={(e) => handleInputChange('bio', e.target.value)} rows={4} />
+                    </div>
+                    <ImageUpload
+                      mode={dialogMode}
+                      currentImage={imagePreview || editingItem?.image}
+                      onImageSelect={handleImageSelect}
+                      onImageRemove={() => {
+                        setSelectedFile(null);
+                        setImagePreview('');
+                      }}
+                    />
+                  </>
+                )}
+
+                {activeTab === 'programs' && (
+                  <>
+                    <div>
+                      <Label>Title</Label>
+                      <Input value={editingItem?.title || ''} onChange={(e) => handleInputChange('title', e.target.value)} />
+                    </div>
+                    <div>
+                      <Label>Description</Label>
+                      <Textarea value={editingItem?.description || ''} onChange={(e) => handleInputChange('description', e.target.value)} rows={4} />
+                    </div>
+                    <div>
+                      <Label>Category</Label>
+                      <Input value={editingItem?.category || ''} onChange={(e) => handleInputChange('category', e.target.value)} placeholder="e.g., core, special-events" />
+                    </div>
+                    <div>
+                      <Label>Icon (Lucide icon name)</Label>
+                      <Input value={editingItem?.icon || ''} onChange={(e) => handleInputChange('icon', e.target.value)} placeholder="e.g., BookOpen, Heart" />
+                    </div>
+                    <ImageUpload
+                      mode={dialogMode}
+                      currentImage={imagePreview || editingItem?.image}
+                      onImageSelect={handleImageSelect}
+                      onImageRemove={() => {
+                        setSelectedFile(null);
+                        setImagePreview('');
+                      }}
+                    />
+                  </>
+                )}
+
+                {activeTab === 'testimonials' && (
+                  <>
+                    <div>
+                      <Label>Name</Label>
+                      <Input value={editingItem?.name || ''} onChange={(e) => handleInputChange('name', e.target.value)} />
+                    </div>
+                    <div>
+                      <Label>Role</Label>
+                      <Input value={editingItem?.role || ''} onChange={(e) => handleInputChange('role', e.target.value)} />
+                    </div>
+                    <div>
+                      <Label>Quote</Label>
+                      <Textarea value={editingItem?.quote || ''} onChange={(e) => handleInputChange('quote', e.target.value)} rows={4} />
+                    </div>
+                    <ImageUpload
+                      mode={dialogMode}
+                      currentImage={imagePreview || editingItem?.image_url}
+                      onImageSelect={handleImageSelect}
+                      onImageRemove={() => {
+                        setSelectedFile(null);
+                        setImagePreview('');
+                      }}
+                    />
+                  </>
+                )}
+
+                {activeTab === 'metrics' && (
+                  <>
+                    <div>
+                      <Label>Metric Value</Label>
+                      <Input value={editingItem?.metric_value || ''} onChange={(e) => handleInputChange('metric_value', e.target.value)} placeholder="e.g., 10,000+" />
+                    </div>
+                    <div>
+                      <Label>Metric Name</Label>
+                      <Input value={editingItem?.metric_name || ''} onChange={(e) => handleInputChange('metric_name', e.target.value)} placeholder="e.g., Lives Impacted" />
+                    </div>
+                    <div>
+                      <Label>Category</Label>
+                      <Input value={editingItem?.category || ''} onChange={(e) => handleInputChange('category', e.target.value)} />
+                    </div>
+                    <div>
+                      <Label>Icon (Lucide icon name)</Label>
+                      <Input value={editingItem?.icon || ''} onChange={(e) => handleInputChange('icon', e.target.value)} placeholder="e.g., Users, Heart" />
+                    </div>
+                  </>
+                )}
+              </div>
+
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
+                <Button onClick={handleSave}>Save</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
+      </div>
+    </Layout>
   );
 };
 
