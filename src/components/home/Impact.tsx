@@ -47,11 +47,7 @@ const Impact = () => {
     <section id="impact" className="py-12 sm:py-20 bg-gradient-to-b from-white to-utu-light-gray">
       <div className="container mx-auto px-4">
         <ImpactHeader />
-        {metricsLoading ? (
-          <div className="text-center py-8">Loading metrics...</div>
-        ) : (
-          <StatsSection stats={stats} iconComponents={iconComponents} />
-        )}
+        <StatsSection stats={stats} iconComponents={iconComponents} loading={metricsLoading} />
         <ImpactAreas />
         <UgandaMap />
         <SuccessStories stories={impactData.successStories} />

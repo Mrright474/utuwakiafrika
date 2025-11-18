@@ -8,12 +8,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Loader2, Users, FileText, MessageSquare, BarChart, Plus, Edit, Trash2, LogOut, ArrowLeft } from 'lucide-react';
+import { Loader2, Users, FileText, MessageSquare, BarChart, Plus, Edit, Trash2, LogOut, ArrowLeft, Star, Image as ImageIcon } from 'lucide-react';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { useTeamManagement } from '@/hooks/useTeamManagement';
 import { useProgramsManagement } from '@/hooks/useProgramsManagement';
 import { useTestimonialsManagement } from '@/hooks/useTestimonialsManagement';
 import { useMetricsManagement } from '@/hooks/useMetricsManagement';
+import { useSuccessStoriesManagement } from '@/hooks/useSuccessStoriesManagement';
+import { useGalleryManagement } from '@/hooks/useGalleryManagement';
 import ImageUpload from '@/components/home/ImageUpload';
 
 const ContentManagement = () => {
@@ -30,6 +32,8 @@ const ContentManagement = () => {
   const { programs, loading: programsLoading, addProgram, updateProgram, deleteProgram } = useProgramsManagement();
   const { testimonials, loading: testimonialsLoading, addTestimonial, updateTestimonial, deleteTestimonial } = useTestimonialsManagement();
   const { metrics, loading: metricsLoading, addMetric, updateMetric, deleteMetric } = useMetricsManagement();
+  const { stories, loading: storiesLoading, addStory, updateStory, deleteStory } = useSuccessStoriesManagement();
+  const { images, loading: galleryLoading, addImage, updateImage, deleteImage } = useGalleryManagement();
 
   if (!authLoading && (!user || !isAdmin)) {
     return <Navigate to="/admin/auth" replace />;
@@ -58,6 +62,10 @@ const ContentManagement = () => {
       setEditingItem({ name: '', role: '', quote: '', image_url: '' });
     } else if (type === 'metrics') {
       setEditingItem({ metric_name: '', metric_value: '', category: '', icon: '' });
+    } else if (type === 'stories') {
+      setEditingItem({ title: '', description: '', category: '', image_url: '' });
+    } else if (type === 'gallery') {
+      setEditingItem({ title: '', description: '', category: '', image_url: '' });
     }
     
     setSelectedFile(null);
@@ -113,6 +121,23 @@ const ContentManagement = () => {
         } else {
           await updateMetric(editingItem);
         }
+      } else if (activeTab === 'stories') {
+        if (dialogMode === 'add') {
+          const { id, image_url, ...data } = editingItem;
+          await addStory({ story: { ...data, image_url: '', display_order: 0, active: true }, imageFile: selectedFile });
+        } else {
+          await updateStory({ story: editingItem, imageFile: selectedFile });
+        }
+      } else if (activeTab === 'gallery') {
+        if (dialogMode === 'add') {
+          const { id, image_url, ...data } = editingItem;
+          if (!selectedFile) {
+            throw new Error('Image is required for gallery items');
+          }
+          await addImage({ image: { ...data, display_order: 0, active: true }, imageFile: selectedFile });
+        } else {
+          await updateImage({ image: editingItem, imageFile: selectedFile });
+        }
       }
       setDialogOpen(false);
       setEditingItem(null);
@@ -131,6 +156,13 @@ const ContentManagement = () => {
       else if (type === 'programs') await deleteProgram(id);
       else if (type === 'testimonials') await deleteTestimonial(id);
       else if (type === 'metrics') await deleteMetric(id);
+      else if (type === 'stories') {
+        const story = stories.find((s: any) => s.id === id);
+        if (story) await deleteStory(story);
+      } else if (type === 'gallery') {
+        const image = images.find((i: any) => i.id === id);
+        if (image) await deleteImage(image);
+      }
     } catch (error) {
       console.error('Error deleting:', error);
     }
@@ -396,6 +428,114 @@ const ContentManagement = () => {
                 </CardContent>
               </Card>
             </TabsContent>
+
+            {/* Success Stories Tab */}
+            <TabsContent value="stories">
+              <Card>
+                <CardHeader>
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <CardTitle>Success Stories</CardTitle>
+                      <CardDescription>Manage inspiring success stories</CardDescription>
+                    </div>
+                    <Button onClick={() => handleAdd('stories')}>
+                      <Plus className="mr-2 h-4 w-4" />
+                      Add Story
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {storiesLoading ? (
+                    <div className="flex justify-center py-8">
+                      <Loader2 className="h-8 w-8 animate-spin" />
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {stories.map((story: any) => (
+                        <div key={story.id} className="border rounded-lg p-4 flex justify-between items-start">
+                          <div className="flex gap-4 flex-1">
+                            {story.image_url && (
+                              <img src={story.image_url} alt={story.title} className="w-20 h-20 rounded object-cover" />
+                            )}
+                            <div>
+                              <h3 className="font-semibold">{story.title}</h3>
+                              <p className="text-sm text-gray-600 mt-1">{story.description}</p>
+                              <p className="text-xs text-gray-500 mt-1">Category: {story.category || 'None'}</p>
+                            </div>
+                          </div>
+                          <div className="flex gap-2">
+                            <Button size="sm" variant="outline" onClick={() => handleEdit(story, 'stories')}>
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button size="sm" variant="destructive" onClick={() => handleDelete(story.id, 'stories')}>
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                      {stories.length === 0 && (
+                        <div className="text-center py-8 text-gray-500">
+                          No success stories yet. Click "Add Story" to get started.
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Gallery Tab */}
+            <TabsContent value="gallery">
+              <Card>
+                <CardHeader>
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <CardTitle>Gallery</CardTitle>
+                      <CardDescription>Manage gallery images</CardDescription>
+                    </div>
+                    <Button onClick={() => handleAdd('gallery')}>
+                      <Plus className="mr-2 h-4 w-4" />
+                      Add Image
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {galleryLoading ? (
+                    <div className="flex justify-center py-8">
+                      <Loader2 className="h-8 w-8 animate-spin" />
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {images.map((image: any) => (
+                        <div key={image.id} className="border rounded-lg overflow-hidden">
+                          <img src={image.image_url} alt={image.title} className="w-full h-48 object-cover" />
+                          <div className="p-4">
+                            <h3 className="font-semibold">{image.title}</h3>
+                            {image.description && (
+                              <p className="text-sm text-gray-600 mt-1">{image.description}</p>
+                            )}
+                            <p className="text-xs text-gray-500 mt-1">Category: {image.category || 'None'}</p>
+                            <div className="flex gap-2 mt-3">
+                              <Button size="sm" variant="outline" onClick={() => handleEdit(image, 'gallery')}>
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button size="sm" variant="destructive" onClick={() => handleDelete(image.id, 'gallery')}>
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                      {images.length === 0 && (
+                        <div className="col-span-full text-center py-8 text-gray-500">
+                          No gallery images yet. Click "Add Image" to get started.
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
           </Tabs>
 
           {/* Universal Edit/Add Dialog */}
@@ -404,7 +544,11 @@ const ContentManagement = () => {
               <DialogHeader>
                 <DialogTitle>
                   {dialogMode === 'add' ? 'Add' : 'Edit'}{' '}
-                  {activeTab === 'team' ? 'Team Member' : activeTab === 'programs' ? 'Program' : activeTab === 'testimonials' ? 'Testimonial' : 'Metric'}
+                  {activeTab === 'team' ? 'Team Member' : 
+                   activeTab === 'programs' ? 'Program' : 
+                   activeTab === 'testimonials' ? 'Testimonial' : 
+                   activeTab === 'metrics' ? 'Metric' :
+                   activeTab === 'stories' ? 'Success Story' : 'Gallery Image'}
                 </DialogTitle>
               </DialogHeader>
               
@@ -513,6 +657,58 @@ const ContentManagement = () => {
                       <Label>Icon (Lucide icon name)</Label>
                       <Input value={editingItem?.icon || ''} onChange={(e) => handleInputChange('icon', e.target.value)} placeholder="e.g., Users, Heart" />
                     </div>
+                  </>
+                )}
+
+                {activeTab === 'stories' && (
+                  <>
+                    <div>
+                      <Label>Title</Label>
+                      <Input value={editingItem?.title || ''} onChange={(e) => handleInputChange('title', e.target.value)} />
+                    </div>
+                    <div>
+                      <Label>Description</Label>
+                      <Textarea value={editingItem?.description || ''} onChange={(e) => handleInputChange('description', e.target.value)} rows={4} />
+                    </div>
+                    <div>
+                      <Label>Category</Label>
+                      <Input value={editingItem?.category || ''} onChange={(e) => handleInputChange('category', e.target.value)} />
+                    </div>
+                    <ImageUpload
+                      mode={dialogMode}
+                      currentImage={imagePreview || editingItem?.image_url}
+                      onImageSelect={handleImageSelect}
+                      onImageRemove={() => {
+                        setSelectedFile(null);
+                        setImagePreview('');
+                      }}
+                    />
+                  </>
+                )}
+
+                {activeTab === 'gallery' && (
+                  <>
+                    <div>
+                      <Label>Title</Label>
+                      <Input value={editingItem?.title || ''} onChange={(e) => handleInputChange('title', e.target.value)} />
+                    </div>
+                    <div>
+                      <Label>Description (Optional)</Label>
+                      <Textarea value={editingItem?.description || ''} onChange={(e) => handleInputChange('description', e.target.value)} rows={3} />
+                    </div>
+                    <div>
+                      <Label>Category</Label>
+                      <Input value={editingItem?.category || ''} onChange={(e) => handleInputChange('category', e.target.value)} />
+                    </div>
+                    <ImageUpload
+                      mode={dialogMode}
+                      currentImage={imagePreview || editingItem?.image_url}
+                      onImageSelect={handleImageSelect}
+                      onImageRemove={() => {
+                        setSelectedFile(null);
+                        setImagePreview('');
+                      }}
+                    />
                   </>
                 )}
               </div>
