@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Award } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface StatItemProps {
   value: string | number;
@@ -25,15 +26,30 @@ interface StatsSectionProps {
     icon: string;
   }>;
   iconComponents: Record<string, React.ReactNode>;
+  loading?: boolean;
 }
 
-const StatsSection = ({ stats, iconComponents }: StatsSectionProps) => {
+const StatsSection = ({ stats, iconComponents, loading = false }: StatsSectionProps) => {
   const getIconComponent = (iconName: string) => {
     return iconComponents[iconName as keyof typeof iconComponents] || 
            <Award className="h-6 w-6 sm:h-8 sm:w-8 text-utu-red" />;
   };
 
   console.log("StatsSection rendering with stats:", stats);
+
+  if (loading) {
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+        {[1, 2, 3, 4].map((i) => (
+          <div key={i} className="bg-white p-6 rounded-lg shadow-md">
+            <Skeleton className="w-16 h-16 rounded-full mx-auto mb-4" />
+            <Skeleton className="h-10 w-24 mx-auto mb-2" />
+            <Skeleton className="h-4 w-32 mx-auto" />
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">

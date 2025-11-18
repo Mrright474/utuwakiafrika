@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Quote, ArrowLeft, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useTestimonialsManagement } from '@/hooks/useTestimonialsManagement';
 
 interface TestimonialProps {
@@ -47,8 +48,21 @@ const Testimonials = () => {
     return (
       <section id="testimonials" className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
-          <div className="text-center">
-            <p className="text-utu-gray">Loading testimonials...</p>
+          <div className="text-center max-w-2xl mx-auto mb-12">
+            <Skeleton className="h-8 w-64 mx-auto mb-4" />
+            <Skeleton className="h-4 w-full" />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-white p-6 rounded-md shadow-sm">
+                <Skeleton className="h-8 w-8 mb-4" />
+                <Skeleton className="h-4 w-full mb-2" />
+                <Skeleton className="h-4 w-full mb-2" />
+                <Skeleton className="h-4 w-3/4 mb-6" />
+                <Skeleton className="h-5 w-32 mb-1" />
+                <Skeleton className="h-4 w-24" />
+              </div>
+            ))}
           </div>
         </div>
       </section>
