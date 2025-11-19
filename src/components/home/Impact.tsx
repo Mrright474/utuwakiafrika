@@ -1,7 +1,6 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import { MapPin, Users, Award, Heart } from 'lucide-react';
-import { ImpactData, defaultImpactData } from './impact/ImpactData';
 import ImpactHeader from './impact/ImpactHeader';
 import StatsSection from './impact/StatsSection';
 import ImpactAreas from './impact/ImpactAreas';
@@ -10,6 +9,7 @@ import AnnualReport from './impact/AnnualReport';
 import CallToAction from './impact/CallToAction';
 import UgandaMap from './impact/UgandaMap';
 import { useMetricsManagement } from '@/hooks/useMetricsManagement';
+import { useSuccessStoriesManagement } from '@/hooks/useSuccessStoriesManagement';
 
 const iconComponents = {
   MapPin: <MapPin className="h-6 w-6 sm:h-8 sm:w-8 text-utu-red" />,
@@ -19,22 +19,8 @@ const iconComponents = {
 };
 
 const Impact = () => {
-  const [impactData, setImpactData] = useState<ImpactData>(defaultImpactData);
   const { metrics, loading: metricsLoading } = useMetricsManagement();
-
-  useEffect(() => {
-    const savedImpact = localStorage.getItem('utu-impact');
-    if (savedImpact) {
-      try {
-        const parsedData = JSON.parse(savedImpact);
-        setImpactData(parsedData);
-      } catch (error) {
-        console.error("Error parsing impact data:", error);
-      }
-    } else {
-      localStorage.setItem('utu-impact', JSON.stringify(defaultImpactData));
-    }
-  }, []);
+  const { stories, loading: storiesLoading } = useSuccessStoriesManagement();
 
   // Map Supabase metrics to stats format
   const stats = metrics.map(metric => ({
@@ -43,6 +29,16 @@ const Impact = () => {
     icon: metric.icon || 'Award'
   }));
 
+  // Map Supabase success stories to component format
+  const mappedStories = useMemo(() => {
+    return stories.map(story => ({
+      name: story.title,
+      quote: story.description,
+      location: story.category || 'Uganda',
+      image: story.image_url || '/placeholder.svg'
+    }));
+  }, [stories]);
+
   return (
     <section id="impact" className="py-12 sm:py-20 bg-gradient-to-b from-white to-utu-light-gray">
       <div className="container mx-auto px-4">
@@ -50,7 +46,7 @@ const Impact = () => {
         <StatsSection stats={stats} iconComponents={iconComponents} loading={metricsLoading} />
         <ImpactAreas />
         <UgandaMap />
-        <SuccessStories stories={impactData.successStories} />
+        <SuccessStories stories={mappedStories} loading={storiesLoading} />
         <AnnualReport />
         <CallToAction />
       </div>
