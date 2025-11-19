@@ -1,27 +1,31 @@
 
-import React, { useState, memo, useCallback, useEffect } from 'react';
+import React, { useState, memo, useCallback, useMemo } from 'react';
 import { Dialog } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { TouchButton } from '@/components/ui/touch-button';
 import GalleryGrid from '@/components/home/gallery/GalleryGrid';
 import SwipeGallery from '@/components/ui/swipe-gallery';
 import ImageViewer from '@/components/home/gallery/ImageViewer';
-import { galleryImages } from '@/components/home/gallery/galleryData';
+import { useGalleryManagement } from '@/hooks/useGalleryManagement';
 import { useIsMobile } from '@/hooks/use-mobile';
 import SkeletonLoader from '@/components/ui/skeleton-loader';
+import { Image } from '@/components/home/gallery/types';
 
 const VisualGallery = memo(() => {
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [visibleImages] = useState(galleryImages);
-  const [isLoading, setIsLoading] = useState(true);
+  const { images: galleryData, loading: isLoading } = useGalleryManagement();
   const isMobile = useIsMobile();
 
-  // Simulate loading state for better UX
-  useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 100);
-    return () => clearTimeout(timer);
-  }, []);
+  // Map Supabase data to component format
+  const visibleImages = useMemo<Image[]>(() => {
+    return galleryData.map(image => ({
+      src: image.image_url,
+      alt: image.title,
+      caption: image.description || undefined,
+      location: image.category || undefined,
+    }));
+  }, [galleryData]);
 
   const handleImageClick = useCallback((index: number) => {
     setSelectedImageIndex(index);
@@ -30,15 +34,15 @@ const VisualGallery = memo(() => {
 
   const handleNext = useCallback(() => {
     if (selectedImageIndex !== null) {
-      setSelectedImageIndex((selectedImageIndex + 1) % galleryImages.length);
+      setSelectedImageIndex((selectedImageIndex + 1) % visibleImages.length);
     }
-  }, [selectedImageIndex]);
+  }, [selectedImageIndex, visibleImages.length]);
 
   const handlePrevious = useCallback(() => {
     if (selectedImageIndex !== null) {
-      setSelectedImageIndex((selectedImageIndex - 1 + galleryImages.length) % galleryImages.length);
+      setSelectedImageIndex((selectedImageIndex - 1 + visibleImages.length) % visibleImages.length);
     }
-  }, [selectedImageIndex]);
+  }, [selectedImageIndex, visibleImages.length]);
 
   const handleCloseDialog = useCallback(() => {
     setIsDialogOpen(false);
@@ -68,10 +72,10 @@ const VisualGallery = memo(() => {
             <>
               {isMobile ? (
                 <SwipeGallery
-                  images={galleryImages.map(img => ({
+                  images={visibleImages.map(img => ({
                     src: img.src,
                     alt: img.alt,
-                    caption: img.alt
+                    caption: img.caption || img.alt
                   }))}
                   currentIndex={selectedImageIndex}
                   onClose={handleCloseDialog}
@@ -80,7 +84,7 @@ const VisualGallery = memo(() => {
                 />
               ) : (
                 <ImageViewer
-                  images={galleryImages}
+                  images={visibleImages}
                   currentIndex={selectedImageIndex}
                   onClose={handleCloseDialog}
                   onNext={handleNext}
