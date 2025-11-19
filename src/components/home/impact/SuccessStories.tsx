@@ -17,6 +17,7 @@ interface Story {
 
 interface SuccessStoriesProps {
   stories: Story[];
+  loading?: boolean;
 }
 
 const StoryCard = ({ story }: { story: Story }) => (
@@ -41,7 +42,29 @@ const StoryCard = ({ story }: { story: Story }) => (
   </div>
 );
 
-const SuccessStories = ({ stories }: SuccessStoriesProps) => {
+const SuccessStories = ({ stories, loading = false }: SuccessStoriesProps) => {
+  if (loading) {
+    return (
+      <div className="mb-16 animate-on-scroll opacity-0 translate-y-10 transition-all duration-700">
+        <h3 className="text-xl sm:text-2xl font-bold mb-8 text-center font-heading text-utu-black">Success Stories</h3>
+        <div className="flex justify-center items-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-utu-red"></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (stories.length === 0) {
+    return (
+      <div className="mb-16 animate-on-scroll opacity-0 translate-y-10 transition-all duration-700">
+        <h3 className="text-xl sm:text-2xl font-bold mb-8 text-center font-heading text-utu-black">Success Stories</h3>
+        <div className="text-center py-12">
+          <p className="text-utu-gray">No success stories available yet.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="mb-16 animate-on-scroll opacity-0 translate-y-10 transition-all duration-700">
       <h3 className="text-xl sm:text-2xl font-bold mb-8 text-center font-heading text-utu-black">Success Stories</h3>
