@@ -1,0 +1,6 @@
+-- Insert sample success stories
+INSERT INTO success_stories (title, description, category, image_url, display_order, active) VALUES
+('Sarah Nakato', 'Before UTU Afrika, I struggled to provide for my children. Through their education program, my daughter graduated top of her class and now she dreams of becoming a teacher. This organization changed our family''s future.', 'Kampala', '/lovable-uploads/3dc1dcd2-b1f2-4b3a-b7c0-cbf19d1cc4b6.png', 1, true),
+('James Okello', 'The vocational training I received gave me skills to start my own carpentry business. Today, I employ three other young people from my community and we are building a better future together.', 'Gulu', '/lovable-uploads/6cd3fe56-1a5f-44a7-9c67-f1e38eff4112.png', 2, true),
+('Grace Achieng', 'UTU Afrika''s healthcare initiative saved my son''s life. The mobile clinic reached our village when he was critically ill. Now he is healthy and thriving, and I volunteer to help other mothers access care.', 'Lira', '/lovable-uploads/5c0c13e3-35d9-4652-809d-12cbd9a79740.png', 3, true),
+('Community Impact', 'Our village now has clean water, thanks to UTU Afrika. No more walking 5 kilometers each day. Our children can focus on school, and waterborne diseases have dropped by 80% in just one year.', 'Mbale', '/lovable-uploads/b07d8f50-577a-4699-87ba-8759e7ace688.png', 4, true);
