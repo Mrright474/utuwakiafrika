@@ -178,6 +178,13 @@ const Navbar = () => {
               Impact
             </Link>
             <Link 
+              to="/stories"
+              className={`${isActive('/stories') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium`}
+              onClick={() => handleNavLinkClick('/stories')}
+            >
+              Stories
+            </Link>
+            <Link 
               to="/contact"
               className={`${isActive('/contact') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium`}
               onClick={() => handleNavLinkClick('/contact')}
@@ -342,6 +349,22 @@ const Navbar = () => {
             >
               <Link to="/impact" onClick={() => handleNavLinkClick('/impact')}>
                 Impact
+              </Link>
+            </TouchButton>
+            
+            <TouchButton
+              variant="ghost"
+              size="touch"
+              asChild
+              className={cn(
+                "justify-start gap-3 w-full rounded-lg",
+                isActive('/stories') 
+                  ? 'text-utu-red font-semibold bg-utu-red/10' 
+                  : 'text-utu-black hover:text-utu-red hover:bg-utu-red/5'
+              )}
+            >
+              <Link to="/stories" onClick={() => handleNavLinkClick('/stories')}>
+                Stories
               </Link>
             </TouchButton>
             
