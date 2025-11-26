@@ -7,7 +7,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { MapPin, Users, Search, ArrowUpDown, Printer } from 'lucide-react';
+import { MapPin, Users, Search, ArrowUpDown, Printer, Heart } from 'lucide-react';
+import { useFavoriteStories } from '@/hooks/useFavoriteStories';
 import {
   Pagination,
   PaginationContent,
@@ -20,11 +21,13 @@ import {
 
 const SuccessStoriesPage = () => {
   const { stories, loading } = useSuccessStoriesManagement();
+  const { favorites, toggleFavorite, isFavorite } = useFavoriteStories();
   const [selectedStory, setSelectedStory] = useState<typeof stories[0] | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'alphabetical'>('newest');
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const itemsPerPage = 6;
 
   // Get unique categories
@@ -33,9 +36,16 @@ const SuccessStoriesPage = () => {
     return ['all', ...Array.from(cats)];
   }, [stories]);
 
+  const favoriteCount = favorites.length;
+
   // Filter and sort stories
   const filteredStories = useMemo(() => {
     let filtered = stories;
+    
+    // Filter by favorites
+    if (showFavoritesOnly) {
+      filtered = filtered.filter(story => isFavorite(story.id));
+    }
     
     // Filter by category
     if (selectedCategory !== 'all') {
@@ -66,12 +76,12 @@ const SuccessStoriesPage = () => {
     });
     
     return sorted;
-  }, [stories, selectedCategory, searchQuery, sortBy]);
+  }, [stories, selectedCategory, searchQuery, sortBy, showFavoritesOnly, favorites, isFavorite]);
 
-  // Reset to page 1 when category or search changes
+  // Reset to page 1 when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [selectedCategory, searchQuery]);
+  }, [selectedCategory, searchQuery, showFavoritesOnly]);
 
   // Calculate pagination
   const totalPages = Math.ceil(filteredStories.length / itemsPerPage);
@@ -150,24 +160,42 @@ const SuccessStoriesPage = () => {
               </div>
             </div>
 
-            {/* Category Filter */}
-            <div className="flex items-center justify-center gap-3 flex-wrap">
-              <span className="text-sm font-medium text-utu-gray">Filter by location:</span>
-              {categories.map((category) => (
-                <Button
-                  key={category}
-                  onClick={() => setSelectedCategory(category)}
-                  variant={selectedCategory === category ? 'default' : 'outline'}
-                  size="sm"
-                  className={
-                    selectedCategory === category
-                      ? 'bg-utu-red hover:bg-red-700 text-white'
-                      : 'border-utu-red text-utu-red hover:bg-utu-red hover:text-white'
-                  }
-                >
-                  {category === 'all' ? 'All Stories' : category}
-                </Button>
-              ))}
+            {/* Category Filter and Favorites */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <div className="flex items-center gap-3 flex-wrap justify-center">
+                <span className="text-sm font-medium text-utu-gray">Filter by location:</span>
+                {categories.map((category) => (
+                  <Button
+                    key={category}
+                    onClick={() => setSelectedCategory(category)}
+                    variant={selectedCategory === category ? 'default' : 'outline'}
+                    size="sm"
+                    className={
+                      selectedCategory === category
+                        ? 'bg-utu-red hover:bg-red-700 text-white'
+                        : 'border-utu-red text-utu-red hover:bg-utu-red hover:text-white'
+                    }
+                  >
+                    {category === 'all' ? 'All Stories' : category}
+                  </Button>
+                ))}
+              </div>
+              
+              <div className="h-8 w-px bg-gray-300 hidden sm:block"></div>
+              
+              <Button
+                onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
+                variant={showFavoritesOnly ? 'default' : 'outline'}
+                size="sm"
+                className={
+                  showFavoritesOnly
+                    ? 'bg-utu-red hover:bg-red-700 text-white'
+                    : 'border-utu-red text-utu-red hover:bg-utu-red hover:text-white'
+                }
+              >
+                <Heart className={`h-4 w-4 mr-2 ${showFavoritesOnly ? 'fill-current' : ''}`} />
+                Favorites {favoriteCount > 0 && `(${favoriteCount})`}
+              </Button>
             </div>
           </div>
         </section>
@@ -201,44 +229,62 @@ const SuccessStoriesPage = () => {
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
                   {paginatedStories.map((story) => (
-                  <Card
-                    key={story.id}
-                    className="overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group"
-                    onClick={() => setSelectedStory(story)}
-                  >
-                    {story.image_url && (
-                      <div className="relative h-48 overflow-hidden">
-                        <img
-                          src={story.image_url}
-                          alt={story.title}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                          onError={(e) => {
-                            e.currentTarget.src = '/placeholder.svg';
-                          }}
-                        />
-                        {story.category && (
-                          <Badge className="absolute top-3 right-3 bg-utu-red text-white">
-                            <MapPin className="h-3 w-3 mr-1" />
-                            {story.category}
-                          </Badge>
-                        )}
-                      </div>
-                    )}
-                    <CardContent className="p-6">
-                      <h3 className="text-xl font-bold mb-3 text-utu-black font-heading group-hover:text-utu-red transition-colors">
-                        {story.title}
-                      </h3>
-                      <p className="text-utu-gray line-clamp-3">
-                        {story.description}
-                      </p>
+                    <Card
+                      key={story.id}
+                      className="overflow-hidden hover:shadow-xl transition-all duration-300 group relative"
+                    >
                       <Button
-                        variant="link"
-                        className="mt-4 p-0 h-auto text-utu-red hover:text-red-700"
+                        variant="ghost"
+                        size="icon"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleFavorite(story.id);
+                        }}
+                        className="absolute top-3 left-3 z-10 bg-white/90 hover:bg-white rounded-full shadow-md"
                       >
-                        Read full story →
+                        <Heart 
+                          className={`h-5 w-5 transition-colors ${
+                            isFavorite(story.id) 
+                              ? 'fill-utu-red text-utu-red' 
+                              : 'text-gray-600'
+                          }`}
+                        />
                       </Button>
-                    </CardContent>
-                  </Card>
+                      <div onClick={() => setSelectedStory(story)} className="cursor-pointer">
+                        {story.image_url && (
+                          <div className="relative h-48 overflow-hidden">
+                            <img
+                              src={story.image_url}
+                              alt={story.title}
+                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                              onError={(e) => {
+                                e.currentTarget.src = '/placeholder.svg';
+                              }}
+                            />
+                            {story.category && (
+                              <Badge className="absolute top-3 right-3 bg-utu-red text-white">
+                                <MapPin className="h-3 w-3 mr-1" />
+                                {story.category}
+                              </Badge>
+                            )}
+                          </div>
+                        )}
+                        <CardContent className="p-6">
+                          <h3 className="text-xl font-bold mb-3 text-utu-black font-heading group-hover:text-utu-red transition-colors">
+                            {story.title}
+                          </h3>
+                          <p className="text-utu-gray line-clamp-3">
+                            {story.description}
+                          </p>
+                          <Button
+                            variant="link"
+                            className="mt-4 p-0 h-auto text-utu-red hover:text-red-700"
+                          >
+                            Read full story →
+                          </Button>
+                        </CardContent>
+                      </div>
+                    </Card>
                 ))}
               </div>
 

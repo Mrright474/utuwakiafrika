@@ -14,9 +14,9 @@ import { useTeamManagement } from '@/hooks/useTeamManagement';
 import { useProgramsManagement } from '@/hooks/useProgramsManagement';
 import { useTestimonialsManagement } from '@/hooks/useTestimonialsManagement';
 import { useMetricsManagement } from '@/hooks/useMetricsManagement';
-import { useSuccessStoriesManagement } from '@/hooks/useSuccessStoriesManagement';
 import { useGalleryManagement } from '@/hooks/useGalleryManagement';
 import ImageUpload from '@/components/home/ImageUpload';
+import { SuccessStoriesManagement } from '@/components/admin/SuccessStoriesManagement';
 
 const ContentManagement = () => {
   const { user, isAdmin, loading: authLoading, signOut } = useAdminAuth();
@@ -32,7 +32,6 @@ const ContentManagement = () => {
   const { programs, loading: programsLoading, addProgram, updateProgram, deleteProgram } = useProgramsManagement();
   const { testimonials, loading: testimonialsLoading, addTestimonial, updateTestimonial, deleteTestimonial } = useTestimonialsManagement();
   const { metrics, loading: metricsLoading, addMetric, updateMetric, deleteMetric } = useMetricsManagement();
-  const { stories, loading: storiesLoading, addStory, updateStory, deleteStory } = useSuccessStoriesManagement();
   const { images, loading: galleryLoading, addImage, updateImage, deleteImage } = useGalleryManagement();
 
   if (!authLoading && (!user || !isAdmin)) {
@@ -200,7 +199,7 @@ const ContentManagement = () => {
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-4 mb-8">
+            <TabsList className="grid w-full grid-cols-5 mb-8">
               <TabsTrigger value="team">
                 <Users className="mr-2 h-4 w-4" />
                 Team ({teamMembers.length})
@@ -216,6 +215,10 @@ const ContentManagement = () => {
               <TabsTrigger value="metrics">
                 <BarChart className="mr-2 h-4 w-4" />
                 Metrics ({metrics.length})
+              </TabsTrigger>
+              <TabsTrigger value="stories">
+                <Star className="mr-2 h-4 w-4" />
+                Stories
               </TabsTrigger>
             </TabsList>
 

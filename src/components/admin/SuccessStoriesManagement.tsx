@@ -35,10 +35,15 @@ export const SuccessStoriesManagement = () => {
 
     try {
       await addStory({
-        title: formData.title,
-        description: formData.description,
-        category: formData.category || null,
-        image: formData.image,
+        story: {
+          title: formData.title,
+          description: formData.description,
+          category: formData.category || null,
+          image_url: null,
+          display_order: 0,
+          active: true,
+        },
+        imageFile: formData.image || undefined,
       });
       setIsAddDialogOpen(false);
       setFormData({ title: '', description: '', category: '', image: null });
@@ -59,11 +64,13 @@ export const SuccessStoriesManagement = () => {
 
     try {
       await updateStory({
-        id: selectedStory.id,
-        title: formData.title,
-        description: formData.description,
-        category: formData.category || null,
-        image: formData.image,
+        story: {
+          ...selectedStory,
+          title: formData.title,
+          description: formData.description,
+          category: formData.category || null,
+        },
+        imageFile: formData.image || undefined,
       });
       setIsEditDialogOpen(false);
       setSelectedStory(null);
@@ -73,11 +80,11 @@ export const SuccessStoriesManagement = () => {
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (story: any) => {
     if (!confirm('Are you sure you want to delete this success story?')) return;
 
     try {
-      await deleteStory(id);
+      await deleteStory(story);
     } catch (error) {
       console.error('Error deleting story:', error);
     }
@@ -200,7 +207,7 @@ export const SuccessStoriesManagement = () => {
                       <Button
                         variant="outline"
                         size="icon"
-                        onClick={() => handleDelete(story.id)}
+                        onClick={() => handleDelete(story)}
                         className="text-red-600 hover:text-red-700"
                       >
                         <Trash2 className="h-4 w-4" />
