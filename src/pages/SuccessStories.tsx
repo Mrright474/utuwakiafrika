@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Users } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { MapPin, Users, Search } from 'lucide-react';
 import {
   Pagination,
   PaginationContent,
@@ -21,6 +22,7 @@ const SuccessStoriesPage = () => {
   const [selectedStory, setSelectedStory] = useState<typeof stories[0] | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState('');
   const itemsPerPage = 6;
 
   // Get unique categories
@@ -29,16 +31,31 @@ const SuccessStoriesPage = () => {
     return ['all', ...Array.from(cats)];
   }, [stories]);
 
-  // Filter stories by category
+  // Filter stories by category and search query
   const filteredStories = useMemo(() => {
-    if (selectedCategory === 'all') return stories;
-    return stories.filter(story => story.category === selectedCategory);
-  }, [stories, selectedCategory]);
+    let filtered = stories;
+    
+    // Filter by category
+    if (selectedCategory !== 'all') {
+      filtered = filtered.filter(story => story.category === selectedCategory);
+    }
+    
+    // Filter by search query
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(story => 
+        story.title.toLowerCase().includes(query) || 
+        story.description.toLowerCase().includes(query)
+      );
+    }
+    
+    return filtered;
+  }, [stories, selectedCategory, searchQuery]);
 
-  // Reset to page 1 when category changes
+  // Reset to page 1 when category or search changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [selectedCategory]);
+  }, [selectedCategory, searchQuery]);
 
   // Calculate pagination
   const totalPages = Math.ceil(filteredStories.length / itemsPerPage);
@@ -83,9 +100,24 @@ const SuccessStoriesPage = () => {
           </div>
         </section>
 
-        {/* Category Filter Section */}
+        {/* Search and Filter Section */}
         <section className="py-8 bg-white shadow-sm sticky top-[72px] z-40">
-          <div className="container mx-auto px-4">
+          <div className="container mx-auto px-4 space-y-6">
+            {/* Search Bar */}
+            <div className="max-w-xl mx-auto">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-utu-gray" />
+                <Input
+                  type="text"
+                  placeholder="Search stories by title or description..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 pr-4 py-6 text-base border-utu-gray/30 focus:border-utu-red focus:ring-utu-red"
+                />
+              </div>
+            </div>
+
+            {/* Category Filter */}
             <div className="flex items-center justify-center gap-3 flex-wrap">
               <span className="text-sm font-medium text-utu-gray">Filter by location:</span>
               {categories.map((category) => (
@@ -117,7 +149,20 @@ const SuccessStoriesPage = () => {
             ) : filteredStories.length === 0 ? (
               <div className="text-center py-20">
                 <Users className="h-16 w-16 text-utu-gray mx-auto mb-4" />
-                <p className="text-xl text-utu-gray">No success stories found for this category.</p>
+                <p className="text-xl text-utu-gray">
+                  {searchQuery.trim() 
+                    ? `No success stories found matching "${searchQuery}"`
+                    : 'No success stories found for this category.'}
+                </p>
+                {searchQuery.trim() && (
+                  <Button
+                    onClick={() => setSearchQuery('')}
+                    variant="outline"
+                    className="mt-4 border-utu-red text-utu-red hover:bg-utu-red hover:text-white"
+                  >
+                    Clear search
+                  </Button>
+                )}
               </div>
             ) : (
               <>
