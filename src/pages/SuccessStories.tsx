@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { MapPin, Users, Search, ArrowUpDown } from 'lucide-react';
+import { MapPin, Users, Search, ArrowUpDown, Printer } from 'lucide-react';
 import {
   Pagination,
   PaginationContent,
@@ -96,6 +96,10 @@ const SuccessStoriesPage = () => {
       }
     }
     return pages;
+  };
+
+  const handlePrint = () => {
+    window.print();
   };
 
   return (
@@ -283,16 +287,27 @@ const SuccessStoriesPage = () => {
 
         {/* Story Detail Dialog */}
         <Dialog open={!!selectedStory} onOpenChange={() => setSelectedStory(null)}>
-          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle className="text-2xl sm:text-3xl font-bold font-heading text-utu-black">
-                {selectedStory?.title}
-              </DialogTitle>
+          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto print:max-w-full print:max-h-full print:overflow-visible">
+            <DialogHeader className="print:mb-8">
+              <div className="flex items-start justify-between gap-4">
+                <DialogTitle className="text-2xl sm:text-3xl font-bold font-heading text-utu-black print:text-4xl">
+                  {selectedStory?.title}
+                </DialogTitle>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={handlePrint}
+                  className="flex-shrink-0 print:hidden border-utu-red text-utu-red hover:bg-utu-red hover:text-white"
+                  title="Print or save as PDF"
+                >
+                  <Printer className="h-4 w-4" />
+                </Button>
+              </div>
             </DialogHeader>
             {selectedStory && (
-              <div className="space-y-6">
+              <div className="space-y-6 print:space-y-8">
                 {selectedStory.image_url && (
-                  <div className="relative h-64 sm:h-80 rounded-lg overflow-hidden">
+                  <div className="relative h-64 sm:h-80 rounded-lg overflow-hidden print:h-96 print:page-break-inside-avoid">
                     <img
                       src={selectedStory.image_url}
                       alt={selectedStory.title}
@@ -304,20 +319,67 @@ const SuccessStoriesPage = () => {
                   </div>
                 )}
                 {selectedStory.category && (
-                  <Badge className="bg-utu-red text-white w-fit">
+                  <Badge className="bg-utu-red text-white w-fit print:text-lg print:px-4 print:py-2">
                     <MapPin className="h-4 w-4 mr-1" />
                     {selectedStory.category}
                   </Badge>
                 )}
-                <div className="prose prose-lg max-w-none">
-                  <p className="text-utu-gray leading-relaxed whitespace-pre-wrap">
+                <div className="prose prose-lg max-w-none print:prose-xl">
+                  <p className="text-utu-gray leading-relaxed whitespace-pre-wrap print:text-black print:leading-loose">
                     {selectedStory.description}
                   </p>
+                </div>
+                
+                {/* Print-only footer */}
+                <div className="hidden print:block print:mt-12 print:pt-8 print:border-t-2 print:border-gray-300">
+                  <div className="text-center space-y-2">
+                    <p className="text-lg font-semibold text-utu-black">UTU Afrika</p>
+                    <p className="text-sm text-gray-600">Transforming lives across Africa</p>
+                    <p className="text-sm text-gray-600">www.utuafrika.org</p>
+                  </div>
                 </div>
               </div>
             )}
           </DialogContent>
         </Dialog>
+
+        {/* Print-specific styles */}
+        <style>{`
+          @media print {
+            @page {
+              margin: 2cm;
+              size: A4;
+            }
+            
+            body * {
+              visibility: hidden;
+            }
+            
+            [role="dialog"],
+            [role="dialog"] * {
+              visibility: visible;
+            }
+            
+            [role="dialog"] {
+              position: absolute;
+              left: 0;
+              top: 0;
+              width: 100%;
+              max-width: 100% !important;
+              margin: 0;
+              padding: 0;
+              box-shadow: none;
+              border: none;
+            }
+            
+            /* Hide dialog overlay and close button */
+            [data-radix-dialog-overlay],
+            button[aria-label*="Close"],
+            .print\\:hidden {
+              display: none !important;
+            }
+          }
+        `}</style>
 
         {/* Call to Action Section */}
         <section className="py-16 bg-gradient-to-br from-utu-red to-red-700 text-white">
