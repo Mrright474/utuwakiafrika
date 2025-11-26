@@ -59,13 +59,11 @@ const ContentManagement = () => {
       setEditingItem({ title: '', description: '', category: '', icon: '', image: '' });
     } else if (type === 'testimonials') {
       setEditingItem({ name: '', role: '', quote: '', image_url: '' });
-    } else if (type === 'metrics') {
-      setEditingItem({ metric_name: '', metric_value: '', category: '', icon: '' });
-    } else if (type === 'stories') {
-      setEditingItem({ title: '', description: '', category: '', image_url: '' });
-    } else if (type === 'gallery') {
-      setEditingItem({ title: '', description: '', category: '', image_url: '' });
-    }
+      } else if (type === 'metrics') {
+        setEditingItem({ metric_name: '', metric_value: '', category: '', icon: '' });
+      } else if (type === 'gallery') {
+        setEditingItem({ title: '', description: '', category: '', image_url: '' });
+      }
     
     setSelectedFile(null);
     setImagePreview('');
@@ -434,57 +432,7 @@ const ContentManagement = () => {
 
             {/* Success Stories Tab */}
             <TabsContent value="stories">
-              <Card>
-                <CardHeader>
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <CardTitle>Success Stories</CardTitle>
-                      <CardDescription>Manage inspiring success stories</CardDescription>
-                    </div>
-                    <Button onClick={() => handleAdd('stories')}>
-                      <Plus className="mr-2 h-4 w-4" />
-                      Add Story
-                    </Button>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  {storiesLoading ? (
-                    <div className="flex justify-center py-8">
-                      <Loader2 className="h-8 w-8 animate-spin" />
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      {stories.map((story: any) => (
-                        <div key={story.id} className="border rounded-lg p-4 flex justify-between items-start">
-                          <div className="flex gap-4 flex-1">
-                            {story.image_url && (
-                              <img src={story.image_url} alt={story.title} className="w-20 h-20 rounded object-cover" />
-                            )}
-                            <div>
-                              <h3 className="font-semibold">{story.title}</h3>
-                              <p className="text-sm text-gray-600 mt-1">{story.description}</p>
-                              <p className="text-xs text-gray-500 mt-1">Category: {story.category || 'None'}</p>
-                            </div>
-                          </div>
-                          <div className="flex gap-2">
-                            <Button size="sm" variant="outline" onClick={() => handleEdit(story, 'stories')}>
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button size="sm" variant="destructive" onClick={() => handleDelete(story.id, 'stories')}>
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                      {stories.length === 0 && (
-                        <div className="text-center py-8 text-gray-500">
-                          No success stories yet. Click "Add Story" to get started.
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
+              <SuccessStoriesManagement />
             </TabsContent>
 
             {/* Gallery Tab */}
