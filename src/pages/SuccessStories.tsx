@@ -6,7 +6,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { MapPin, Users, Search } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { MapPin, Users, Search, ArrowUpDown } from 'lucide-react';
 import {
   Pagination,
   PaginationContent,
@@ -23,6 +24,7 @@ const SuccessStoriesPage = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'alphabetical'>('newest');
   const itemsPerPage = 6;
 
   // Get unique categories
@@ -31,7 +33,7 @@ const SuccessStoriesPage = () => {
     return ['all', ...Array.from(cats)];
   }, [stories]);
 
-  // Filter stories by category and search query
+  // Filter and sort stories
   const filteredStories = useMemo(() => {
     let filtered = stories;
     
@@ -49,8 +51,22 @@ const SuccessStoriesPage = () => {
       );
     }
     
-    return filtered;
-  }, [stories, selectedCategory, searchQuery]);
+    // Sort stories
+    const sorted = [...filtered].sort((a, b) => {
+      switch (sortBy) {
+        case 'newest':
+          return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
+        case 'oldest':
+          return new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime();
+        case 'alphabetical':
+          return a.title.localeCompare(b.title);
+        default:
+          return 0;
+      }
+    });
+    
+    return sorted;
+  }, [stories, selectedCategory, searchQuery, sortBy]);
 
   // Reset to page 1 when category or search changes
   useEffect(() => {
@@ -103,9 +119,9 @@ const SuccessStoriesPage = () => {
         {/* Search and Filter Section */}
         <section className="py-8 bg-white shadow-sm sticky top-[72px] z-40">
           <div className="container mx-auto px-4 space-y-6">
-            {/* Search Bar */}
-            <div className="max-w-xl mx-auto">
-              <div className="relative">
+            {/* Search Bar and Sort */}
+            <div className="max-w-4xl mx-auto flex flex-col sm:flex-row gap-4">
+              <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-utu-gray" />
                 <Input
                   type="text"
@@ -114,6 +130,19 @@ const SuccessStoriesPage = () => {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10 pr-4 py-6 text-base border-utu-gray/30 focus:border-utu-red focus:ring-utu-red"
                 />
+              </div>
+              <div className="flex items-center gap-2 sm:w-auto">
+                <ArrowUpDown className="h-5 w-5 text-utu-gray hidden sm:block" />
+                <Select value={sortBy} onValueChange={(value: any) => setSortBy(value)}>
+                  <SelectTrigger className="w-full sm:w-[180px] border-utu-gray/30 focus:border-utu-red focus:ring-utu-red">
+                    <SelectValue placeholder="Sort by..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="newest">Newest First</SelectItem>
+                    <SelectItem value="oldest">Oldest First</SelectItem>
+                    <SelectItem value="alphabetical">A-Z</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 

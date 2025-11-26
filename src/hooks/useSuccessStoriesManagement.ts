@@ -10,6 +10,8 @@ export interface SuccessStory {
   category: string | null;
   display_order: number;
   active: boolean;
+  created_at?: string | null;
+  updated_at?: string | null;
 }
 
 export const useSuccessStoriesManagement = () => {
