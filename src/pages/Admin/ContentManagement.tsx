@@ -200,7 +200,7 @@ const ContentManagement = () => {
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-4 mb-8">
+            <TabsList className="grid w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-6 mb-8">
               <TabsTrigger value="team">
                 <Users className="mr-2 h-4 w-4" />
                 Team ({teamMembers.length})
@@ -216,6 +216,14 @@ const ContentManagement = () => {
               <TabsTrigger value="metrics">
                 <BarChart className="mr-2 h-4 w-4" />
                 Metrics ({metrics.length})
+              </TabsTrigger>
+              <TabsTrigger value="stories">
+                <Star className="mr-2 h-4 w-4" />
+                Stories ({stories.length})
+              </TabsTrigger>
+              <TabsTrigger value="gallery">
+                <ImageIcon className="mr-2 h-4 w-4" />
+                Gallery ({images.length})
               </TabsTrigger>
             </TabsList>
 
