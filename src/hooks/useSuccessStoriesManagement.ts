@@ -10,6 +10,7 @@ export interface SuccessStory {
   category: string | null;
   display_order: number;
   active: boolean;
+  view_count?: number;
   created_at?: string | null;
   updated_at?: string | null;
 }

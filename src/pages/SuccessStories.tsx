@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import Layout from '@/components/layout/Layout';
 import { useSuccessStoriesManagement } from '@/hooks/useSuccessStoriesManagement';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -100,6 +101,17 @@ const SuccessStoriesPage = () => {
 
   const handlePrint = () => {
     window.print();
+  };
+
+  const handleStoryClick = async (story: typeof stories[0]) => {
+    setSelectedStory(story);
+    
+    // Track view count
+    try {
+      await supabase.rpc('increment_story_view_count', { story_id: story.id });
+    } catch (error) {
+      console.error('Error tracking view:', error);
+    }
   };
 
   return (
@@ -204,7 +216,7 @@ const SuccessStoriesPage = () => {
                   <Card
                     key={story.id}
                     className="overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group"
-                    onClick={() => setSelectedStory(story)}
+                    onClick={() => handleStoryClick(story)}
                   >
                     {story.image_url && (
                       <div className="relative h-48 overflow-hidden">

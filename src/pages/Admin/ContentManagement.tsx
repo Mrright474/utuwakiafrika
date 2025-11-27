@@ -444,7 +444,7 @@ const ContentManagement = () => {
                   <div className="flex justify-between items-center">
                     <div>
                       <CardTitle>Success Stories</CardTitle>
-                      <CardDescription>Manage inspiring success stories</CardDescription>
+                      <CardDescription>Manage inspiring success stories with view analytics</CardDescription>
                     </div>
                     <Button onClick={() => handleAdd('stories')}>
                       <Plus className="mr-2 h-4 w-4" />
@@ -459,16 +459,26 @@ const ContentManagement = () => {
                     </div>
                   ) : (
                     <div className="space-y-4">
-                      {stories.map((story: any) => (
+                      {[...stories].sort((a: any, b: any) => (b.view_count || 0) - (a.view_count || 0)).map((story: any) => (
                         <div key={story.id} className="border rounded-lg p-4 flex justify-between items-start">
                           <div className="flex gap-4 flex-1">
                             {story.image_url && (
                               <img src={story.image_url} alt={story.title} className="w-20 h-20 rounded object-cover" />
                             )}
-                            <div>
-                              <h3 className="font-semibold">{story.title}</h3>
-                              <p className="text-sm text-gray-600 mt-1">{story.description}</p>
-                              <p className="text-xs text-gray-500 mt-1">Category: {story.category || 'None'}</p>
+                            <div className="flex-1">
+                              <div className="flex items-start justify-between gap-4">
+                                <div>
+                                  <h3 className="font-semibold">{story.title}</h3>
+                                  <p className="text-sm text-gray-600 mt-1 line-clamp-2">{story.description}</p>
+                                  <div className="flex items-center gap-3 mt-2">
+                                    <p className="text-xs text-gray-500">Category: {story.category || 'None'}</p>
+                                    <div className="flex items-center gap-1 text-xs font-medium text-utu-red">
+                                      <BarChart className="h-3 w-3" />
+                                      <span>{story.view_count || 0} views</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
                             </div>
                           </div>
                           <div className="flex gap-2">
