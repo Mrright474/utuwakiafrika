@@ -232,6 +232,7 @@ export type Database = {
           image_url: string | null
           title: string
           updated_at: string | null
+          view_count: number
         }
         Insert: {
           active?: boolean | null
@@ -243,6 +244,7 @@ export type Database = {
           image_url?: string | null
           title: string
           updated_at?: string | null
+          view_count?: number
         }
         Update: {
           active?: boolean | null
@@ -254,6 +256,7 @@ export type Database = {
           image_url?: string | null
           title?: string
           updated_at?: string | null
+          view_count?: number
         }
         Relationships: []
       }
@@ -505,6 +508,10 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      increment_story_view_count: {
+        Args: { story_id: string }
+        Returns: undefined
       }
       promote_self_to_admin: { Args: never; Returns: undefined }
     }
