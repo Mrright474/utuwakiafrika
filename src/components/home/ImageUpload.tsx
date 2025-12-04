@@ -42,8 +42,9 @@ const ImageUpload = ({
   };
 
   const handleEditorSave = (blob: Blob) => {
-    // Convert blob to File
-    const file = new File([blob], 'edited-image.jpg', { type: 'image/jpeg' });
+    // Determine file extension from blob type
+    const ext = blob.type === 'image/png' ? 'png' : blob.type === 'image/webp' ? 'webp' : 'jpg';
+    const file = new File([blob], `edited-image.${ext}`, { type: blob.type });
     onImageSelect(file);
     
     // Clean up temporary URL
