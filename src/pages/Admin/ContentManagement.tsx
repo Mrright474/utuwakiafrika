@@ -250,15 +250,24 @@ const ContentManagement = () => {
                   ) : (
                     <div className="space-y-4">
                       {teamMembers.map((member: any) => (
-                        <div key={member.id} className="border rounded-lg p-4 flex justify-between items-center">
+                        <div key={member.id} className={`border rounded-lg p-4 flex justify-between items-center ${member.active === false ? 'opacity-60 bg-muted' : ''}`}>
                           <div className="flex items-center gap-4">
-                            {member.image && (
+                            {member.image ? (
                               <img src={member.image} alt={member.name} className="w-12 h-12 rounded-full object-cover" />
+                            ) : (
+                              <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
+                                <Users className="h-6 w-6 text-muted-foreground" />
+                              </div>
                             )}
                             <div>
-                              <h3 className="font-semibold">{member.name}</h3>
-                              <p className="text-sm text-gray-600">{member.position}</p>
-                              <p className="text-xs text-gray-500">{member.role}</p>
+                              <div className="flex items-center gap-2">
+                                <h3 className="font-semibold">{member.name}</h3>
+                                {member.active === false && (
+                                  <span className="text-xs bg-destructive/10 text-destructive px-2 py-0.5 rounded">Inactive</span>
+                                )}
+                              </div>
+                              <p className="text-sm text-muted-foreground">{member.position}</p>
+                              <p className="text-xs text-muted-foreground/70">{member.role}</p>
                             </div>
                           </div>
                           <div className="flex gap-2">
@@ -307,8 +316,12 @@ const ContentManagement = () => {
                       {programs.map((program: any) => (
                         <div key={program.id} className="border rounded-lg p-4 flex justify-between items-start">
                           <div className="flex gap-4 flex-1">
-                            {program.image && (
+                            {program.image ? (
                               <img src={program.image} alt={program.title} className="w-20 h-20 rounded object-cover" />
+                            ) : (
+                              <div className="w-20 h-20 rounded bg-muted flex items-center justify-center">
+                                <FileText className="h-8 w-8 text-muted-foreground" />
+                              </div>
                             )}
                             <div>
                               <h3 className="font-semibold">{program.title}</h3>
@@ -361,10 +374,19 @@ const ContentManagement = () => {
                     <div className="space-y-4">
                       {testimonials.map((testimonial: any) => (
                         <div key={testimonial.id} className="border rounded-lg p-4 flex justify-between items-start">
-                          <div>
-                            <h3 className="font-semibold">{testimonial.name}</h3>
-                            <p className="text-sm text-gray-600">{testimonial.role}</p>
-                            <p className="text-sm mt-2 italic">"{testimonial.quote}"</p>
+                          <div className="flex items-start gap-4">
+                            {testimonial.image_url ? (
+                              <img src={testimonial.image_url} alt={testimonial.name} className="w-12 h-12 rounded-full object-cover" />
+                            ) : (
+                              <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
+                                <MessageSquare className="h-6 w-6 text-muted-foreground" />
+                              </div>
+                            )}
+                            <div>
+                              <h3 className="font-semibold">{testimonial.name}</h3>
+                              <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                              <p className="text-sm mt-2 italic line-clamp-2">"{testimonial.quote}"</p>
+                            </div>
                           </div>
                           <div className="flex gap-2">
                             <Button size="sm" variant="outline" onClick={() => handleEdit(testimonial, 'testimonials')}>
@@ -462,8 +484,12 @@ const ContentManagement = () => {
                       {[...stories].sort((a: any, b: any) => (b.view_count || 0) - (a.view_count || 0)).map((story: any) => (
                         <div key={story.id} className="border rounded-lg p-4 flex justify-between items-start">
                           <div className="flex gap-4 flex-1">
-                            {story.image_url && (
+                            {story.image_url ? (
                               <img src={story.image_url} alt={story.title} className="w-20 h-20 rounded object-cover" />
+                            ) : (
+                              <div className="w-20 h-20 rounded bg-muted flex items-center justify-center">
+                                <Star className="h-8 w-8 text-muted-foreground" />
+                              </div>
                             )}
                             <div className="flex-1">
                               <div className="flex items-start justify-between gap-4">
