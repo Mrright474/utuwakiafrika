@@ -11,6 +11,7 @@ export interface TeamMember {
   position: string;
   bio: string;
   role: string;
+  active?: boolean;
 }
 
 const uploadImage = async (file: File, folder: string = 'team'): Promise<string> => {
@@ -39,12 +40,11 @@ export const useTeamManagement = () => {
   const [isUploading, setIsUploading] = useState(false);
 
   const { data: teamMembers = [], isLoading } = useQuery({
-    queryKey: ['team-members'],
+    queryKey: ['team-members-admin'],
     queryFn: async () => {
       const { data, error } = await (supabase as any)
         .from('team_members')
         .select('*')
-        .eq('active', true)
         .order('display_order');
       
       if (error) throw error;
@@ -54,7 +54,8 @@ export const useTeamManagement = () => {
         name: member.name,
         position: member.position,
         bio: member.bio,
-        role: member.role
+        role: member.role,
+        active: member.active
       }));
     }
   });
@@ -81,7 +82,7 @@ export const useTeamManagement = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['team-members'] });
+      queryClient.invalidateQueries({ queryKey: ['team-members-admin'] });
       toast({
         title: "Success",
         description: "Team member updated successfully.",
@@ -118,7 +119,7 @@ export const useTeamManagement = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['team-members'] });
+      queryClient.invalidateQueries({ queryKey: ['team-members-admin'] });
       toast({
         title: "Success",
         description: "Team member added successfully.",
@@ -144,7 +145,7 @@ export const useTeamManagement = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['team-members'] });
+      queryClient.invalidateQueries({ queryKey: ['team-members-admin'] });
       toast({
         title: "Success",
         description: "Team member deleted successfully.",
