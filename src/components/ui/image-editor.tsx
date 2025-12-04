@@ -1,11 +1,12 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import ReactCrop, { Crop, PixelCrop, centerCrop, makeAspectCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 import { Button } from './button';
 import { Slider } from './slider';
 import { Label } from './label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from './dialog';
-import { Crop as CropIcon, RotateCw, ZoomIn, Check, X } from 'lucide-react';
+import { Crop as CropIcon, RotateCw, ZoomIn, Check, X, FileDown } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
 
 interface ImageEditorProps {
   open: boolean;
@@ -35,11 +36,20 @@ function centerAspectCrop(
   );
 }
 
+function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+}
+
 async function getCroppedImg(
   image: HTMLImageElement,
   crop: PixelCrop,
   scale: number = 1,
-  rotation: number = 0
+  rotation: number = 0,
+  quality: number = 0.9,
+  outputFormat: 'jpeg' | 'png' | 'webp' = 'jpeg',
+  maxWidth?: number
 ): Promise<Blob> {
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
@@ -51,41 +61,80 @@ async function getCroppedImg(
   const scaleX = image.naturalWidth / image.width;
   const scaleY = image.naturalHeight / image.height;
 
-  const pixelRatio = window.devicePixelRatio || 1;
+  let outputWidth = Math.floor(crop.width * scaleX);
+  let outputHeight = Math.floor(crop.height * scaleY);
 
-  canvas.width = Math.floor(crop.width * scaleX * pixelRatio);
-  canvas.height = Math.floor(crop.height * scaleY * pixelRatio);
+  // Apply max width constraint if specified
+  if (maxWidth && outputWidth > maxWidth) {
+    const ratio = maxWidth / outputWidth;
+    outputWidth = maxWidth;
+    outputHeight = Math.floor(outputHeight * ratio);
+  }
+
+  const pixelRatio = 1;
+
+  canvas.width = outputWidth * pixelRatio;
+  canvas.height = outputHeight * pixelRatio;
 
   ctx.scale(pixelRatio, pixelRatio);
   ctx.imageSmoothingQuality = 'high';
 
   const cropX = crop.x * scaleX;
   const cropY = crop.y * scaleY;
+  const cropWidth = crop.width * scaleX;
+  const cropHeight = crop.height * scaleY;
 
-  const rotateRads = (rotation * Math.PI) / 180;
-  const centerX = image.naturalWidth / 2;
-  const centerY = image.naturalHeight / 2;
+  // Handle rotation
+  if (rotation !== 0) {
+    const rotateRads = (rotation * Math.PI) / 180;
+    
+    const tempCanvas = document.createElement('canvas');
+    const tempCtx = tempCanvas.getContext('2d');
+    if (!tempCtx) throw new Error('No temp context');
 
-  ctx.save();
+    const sin = Math.abs(Math.sin(rotateRads));
+    const cos = Math.abs(Math.cos(rotateRads));
+    const newWidth = image.naturalWidth * cos + image.naturalHeight * sin;
+    const newHeight = image.naturalWidth * sin + image.naturalHeight * cos;
 
-  ctx.translate(-cropX, -cropY);
-  ctx.translate(centerX, centerY);
-  ctx.rotate(rotateRads);
-  ctx.scale(scale, scale);
-  ctx.translate(-centerX, -centerY);
-  ctx.drawImage(
-    image,
-    0,
-    0,
-    image.naturalWidth,
-    image.naturalHeight,
-    0,
-    0,
-    image.naturalWidth,
-    image.naturalHeight
-  );
+    tempCanvas.width = newWidth;
+    tempCanvas.height = newHeight;
 
-  ctx.restore();
+    tempCtx.translate(newWidth / 2, newHeight / 2);
+    tempCtx.rotate(rotateRads);
+    tempCtx.scale(scale, scale);
+    tempCtx.drawImage(
+      image,
+      -image.naturalWidth / 2,
+      -image.naturalHeight / 2
+    );
+
+    ctx.drawImage(
+      tempCanvas,
+      cropX + (newWidth - image.naturalWidth) / 2,
+      cropY + (newHeight - image.naturalHeight) / 2,
+      cropWidth,
+      cropHeight,
+      0,
+      0,
+      outputWidth,
+      outputHeight
+    );
+  } else {
+    ctx.drawImage(
+      image,
+      cropX,
+      cropY,
+      cropWidth,
+      cropHeight,
+      0,
+      0,
+      outputWidth,
+      outputHeight
+    );
+  }
+
+  const mimeType = `image/${outputFormat}`;
 
   return new Promise((resolve, reject) => {
     canvas.toBlob(
@@ -96,11 +145,19 @@ async function getCroppedImg(
           reject(new Error('Canvas is empty'));
         }
       },
-      'image/jpeg',
-      0.9
+      mimeType,
+      outputFormat === 'png' ? undefined : quality
     );
   });
 }
+
+const MAX_WIDTH_OPTIONS = [
+  { value: '0', label: 'Original' },
+  { value: '1920', label: '1920px (Full HD)' },
+  { value: '1280', label: '1280px (HD)' },
+  { value: '800', label: '800px (Web)' },
+  { value: '400', label: '400px (Thumbnail)' },
+];
 
 export function ImageEditor({
   open,
@@ -113,6 +170,10 @@ export function ImageEditor({
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
   const [scale, setScale] = useState(1);
   const [rotation, setRotation] = useState(0);
+  const [quality, setQuality] = useState(0.85);
+  const [outputFormat, setOutputFormat] = useState<'jpeg' | 'png' | 'webp'>('jpeg');
+  const [maxWidth, setMaxWidth] = useState<number>(1280);
+  const [estimatedSize, setEstimatedSize] = useState<string>('');
   const [isProcessing, setIsProcessing] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
 
@@ -133,6 +194,34 @@ export function ImageEditor({
     [aspectRatio]
   );
 
+  // Estimate file size when settings change
+  useEffect(() => {
+    const estimateSize = async () => {
+      if (!imgRef.current || !completedCrop) {
+        setEstimatedSize('');
+        return;
+      }
+
+      try {
+        const blob = await getCroppedImg(
+          imgRef.current,
+          completedCrop,
+          scale,
+          rotation,
+          quality,
+          outputFormat,
+          maxWidth || undefined
+        );
+        setEstimatedSize(formatFileSize(blob.size));
+      } catch {
+        setEstimatedSize('');
+      }
+    };
+
+    const debounce = setTimeout(estimateSize, 300);
+    return () => clearTimeout(debounce);
+  }, [completedCrop, scale, rotation, quality, outputFormat, maxWidth]);
+
   const handleSave = async () => {
     if (!imgRef.current || !completedCrop) return;
 
@@ -142,7 +231,10 @@ export function ImageEditor({
         imgRef.current,
         completedCrop,
         scale,
-        rotation
+        rotation,
+        quality,
+        outputFormat,
+        maxWidth || undefined
       );
       onSave(blob);
       onOpenChange(false);
@@ -160,6 +252,9 @@ export function ImageEditor({
   const resetEdits = () => {
     setScale(1);
     setRotation(0);
+    setQuality(0.85);
+    setOutputFormat('jpeg');
+    setMaxWidth(1280);
     if (imgRef.current) {
       const { width, height } = imgRef.current;
       const newCrop = aspectRatio
@@ -193,7 +288,7 @@ export function ImageEditor({
               onChange={(_, percentCrop) => setCrop(percentCrop)}
               onComplete={(c) => setCompletedCrop(c)}
               aspect={aspectRatio}
-              className="max-h-[400px]"
+              className="max-h-[350px]"
             >
               <img
                 ref={imgRef}
@@ -201,7 +296,7 @@ export function ImageEditor({
                 alt="Edit"
                 style={{
                   transform: `scale(${scale}) rotate(${rotation}deg)`,
-                  maxHeight: '400px',
+                  maxHeight: '350px',
                   width: 'auto',
                 }}
                 onLoad={onImageLoad}
@@ -213,7 +308,7 @@ export function ImageEditor({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Zoom control */}
             <div className="space-y-2">
-              <Label className="flex items-center gap-2">
+              <Label className="flex items-center gap-2 text-sm">
                 <ZoomIn className="h-4 w-4" />
                 Zoom: {Math.round(scale * 100)}%
               </Label>
@@ -228,7 +323,7 @@ export function ImageEditor({
 
             {/* Rotation control */}
             <div className="space-y-2">
-              <Label className="flex items-center gap-2">
+              <Label className="flex items-center gap-2 text-sm">
                 <RotateCw className="h-4 w-4" />
                 Rotation: {rotation}°
               </Label>
@@ -244,6 +339,74 @@ export function ImageEditor({
                 <Button variant="outline" size="sm" onClick={handleRotate}>
                   +90°
                 </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* Compression settings */}
+          <div className="border-t pt-4">
+            <Label className="flex items-center gap-2 text-sm font-medium mb-3">
+              <FileDown className="h-4 w-4" />
+              Compression Settings
+              {estimatedSize && (
+                <span className="ml-auto text-xs font-normal bg-primary/10 text-primary px-2 py-1 rounded">
+                  Est. size: {estimatedSize}
+                </span>
+              )}
+            </Label>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Quality slider */}
+              <div className="space-y-2">
+                <Label className="text-xs text-muted-foreground">
+                  Quality: {Math.round(quality * 100)}%
+                </Label>
+                <Slider
+                  value={[quality]}
+                  min={0.1}
+                  max={1}
+                  step={0.05}
+                  onValueChange={([value]) => setQuality(value)}
+                  disabled={outputFormat === 'png'}
+                />
+              </div>
+
+              {/* Max width */}
+              <div className="space-y-2">
+                <Label className="text-xs text-muted-foreground">Max Width</Label>
+                <Select
+                  value={maxWidth.toString()}
+                  onValueChange={(v) => setMaxWidth(parseInt(v))}
+                >
+                  <SelectTrigger className="h-9">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {MAX_WIDTH_OPTIONS.map((opt) => (
+                      <SelectItem key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Format */}
+              <div className="space-y-2">
+                <Label className="text-xs text-muted-foreground">Format</Label>
+                <Select
+                  value={outputFormat}
+                  onValueChange={(v) => setOutputFormat(v as 'jpeg' | 'png' | 'webp')}
+                >
+                  <SelectTrigger className="h-9">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="jpeg">JPEG (smaller)</SelectItem>
+                    <SelectItem value="webp">WebP (best)</SelectItem>
+                    <SelectItem value="png">PNG (lossless)</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           </div>
