@@ -92,6 +92,46 @@ export const useGalleryManagement = () => {
     }
   });
 
+  const batchAddMutation = useMutation({
+    mutationFn: async ({ files, category }: { files: File[]; category?: string }) => {
+      const results = [];
+      for (const file of files) {
+        const image_url = await uploadImage(file);
+        const title = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
+        
+        const { error } = await supabase
+          .from('gallery_images')
+          .insert({
+            title,
+            description: null,
+            image_url,
+            category: category || null,
+            display_order: 0,
+            active: true
+          });
+        
+        if (error) throw error;
+        results.push(image_url);
+      }
+      return results;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['gallery-images'] });
+      toast({
+        title: "Success",
+        description: `${variables.files.length} images added successfully.`,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to add some images.",
+        variant: "destructive",
+      });
+      console.error(error);
+    }
+  });
+
   const updateMutation = useMutation({
     mutationFn: async ({ image, imageFile }: { image: GalleryImage; imageFile?: File }) => {
       let image_url = image.image_url;
@@ -163,6 +203,8 @@ export const useGalleryManagement = () => {
     images,
     loading: isLoading,
     addImage: addMutation.mutateAsync,
+    batchAddImages: batchAddMutation.mutateAsync,
+    isBatchUploading: batchAddMutation.isPending,
     updateImage: updateMutation.mutateAsync,
     deleteImage: deleteMutation.mutateAsync,
   };
