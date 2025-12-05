@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Loader2, Users, FileText, MessageSquare, BarChart, Plus, Edit, Trash2, LogOut, ArrowLeft, Star, Image as ImageIcon } from 'lucide-react';
+import { Loader2, Users, FileText, MessageSquare, BarChart, Plus, Edit, Trash2, LogOut, ArrowLeft, Star, Image as ImageIcon, Images } from 'lucide-react';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { useTeamManagement } from '@/hooks/useTeamManagement';
 import { useProgramsManagement } from '@/hooks/useProgramsManagement';
@@ -17,6 +17,7 @@ import { useMetricsManagement } from '@/hooks/useMetricsManagement';
 import { useSuccessStoriesManagement } from '@/hooks/useSuccessStoriesManagement';
 import { useGalleryManagement } from '@/hooks/useGalleryManagement';
 import ImageUpload from '@/components/home/ImageUpload';
+import BatchImageUpload from '@/components/home/BatchImageUpload';
 
 const ContentManagement = () => {
   const { user, isAdmin, loading: authLoading, signOut } = useAdminAuth();
@@ -33,7 +34,9 @@ const ContentManagement = () => {
   const { testimonials, loading: testimonialsLoading, addTestimonial, updateTestimonial, deleteTestimonial } = useTestimonialsManagement();
   const { metrics, loading: metricsLoading, addMetric, updateMetric, deleteMetric } = useMetricsManagement();
   const { stories, loading: storiesLoading, addStory, updateStory, deleteStory } = useSuccessStoriesManagement();
-  const { images, loading: galleryLoading, addImage, updateImage, deleteImage } = useGalleryManagement();
+  const { images, loading: galleryLoading, addImage, batchAddImages, isBatchUploading, updateImage, deleteImage } = useGalleryManagement();
+  const [batchDialogOpen, setBatchDialogOpen] = useState(false);
+  const [batchCategory, setBatchCategory] = useState('');
 
   if (!authLoading && (!user || !isAdmin)) {
     return <Navigate to="/admin/auth" replace />;
@@ -537,10 +540,16 @@ const ContentManagement = () => {
                       <CardTitle>Gallery</CardTitle>
                       <CardDescription>Manage gallery images</CardDescription>
                     </div>
-                    <Button onClick={() => handleAdd('gallery')}>
-                      <Plus className="mr-2 h-4 w-4" />
-                      Add Image
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button variant="outline" onClick={() => setBatchDialogOpen(true)}>
+                        <Images className="mr-2 h-4 w-4" />
+                        Batch Upload
+                      </Button>
+                      <Button onClick={() => handleAdd('gallery')}>
+                        <Plus className="mr-2 h-4 w-4" />
+                        Add Image
+                      </Button>
+                    </div>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -761,6 +770,37 @@ const ContentManagement = () => {
                 <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
                 <Button onClick={handleSave}>Save</Button>
               </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          {/* Batch Upload Dialog */}
+          <Dialog open={batchDialogOpen} onOpenChange={setBatchDialogOpen}>
+            <DialogContent className="max-w-xl">
+              <DialogHeader>
+                <DialogTitle>Batch Upload Gallery Images</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 py-4">
+                <div>
+                  <Label>Category (Optional)</Label>
+                  <Input 
+                    value={batchCategory} 
+                    onChange={(e) => setBatchCategory(e.target.value)} 
+                    placeholder="e.g., events, community"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    All uploaded images will be assigned this category
+                  </p>
+                </div>
+                <BatchImageUpload
+                  onImagesSelect={async (files) => {
+                    await batchAddImages({ files, category: batchCategory || undefined });
+                    setBatchDialogOpen(false);
+                    setBatchCategory('');
+                  }}
+                  isUploading={isBatchUploading}
+                  maxFiles={20}
+                />
+              </div>
             </DialogContent>
           </Dialog>
         </div>
