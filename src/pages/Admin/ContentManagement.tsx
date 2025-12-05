@@ -10,7 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Loader2, Users, FileText, MessageSquare, BarChart, Plus, Edit, Trash2, LogOut, ArrowLeft, Star, Image as ImageIcon, Images } from 'lucide-react';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
-import { useTeamManagement } from '@/hooks/useTeamManagement';
+import { useTeamManagement, TeamMember } from '@/hooks/useTeamManagement';
 import { useProgramsManagement } from '@/hooks/useProgramsManagement';
 import { useTestimonialsManagement } from '@/hooks/useTestimonialsManagement';
 import { useMetricsManagement } from '@/hooks/useMetricsManagement';
@@ -18,6 +18,7 @@ import { useSuccessStoriesManagement } from '@/hooks/useSuccessStoriesManagement
 import { useGalleryManagement } from '@/hooks/useGalleryManagement';
 import ImageUpload from '@/components/home/ImageUpload';
 import BatchImageUpload from '@/components/home/BatchImageUpload';
+import SortableTeamList from '@/components/admin/SortableTeamList';
 
 const ContentManagement = () => {
   const { user, isAdmin, loading: authLoading, signOut } = useAdminAuth();
@@ -29,7 +30,7 @@ const ContentManagement = () => {
   const [imagePreview, setImagePreview] = useState<string>('');
 
   // Management hooks
-  const { teamMembers, loading: teamLoading, addTeamMember, updateTeamMember, deleteTeamMember } = useTeamManagement();
+  const { teamMembers, loading: teamLoading, addTeamMember, updateTeamMember, deleteTeamMember, reorderTeamMembers } = useTeamManagement();
   const { programs, loading: programsLoading, addProgram, updateProgram, deleteProgram } = useProgramsManagement();
   const { testimonials, loading: testimonialsLoading, addTestimonial, updateTestimonial, deleteTestimonial } = useTestimonialsManagement();
   const { metrics, loading: metricsLoading, addMetric, updateMetric, deleteMetric } = useMetricsManagement();
@@ -237,7 +238,7 @@ const ContentManagement = () => {
                   <div className="flex justify-between items-center">
                     <div>
                       <CardTitle>Team Members</CardTitle>
-                      <CardDescription>Manage your organization's team members</CardDescription>
+                      <CardDescription>Manage your organization's team members. Drag to reorder.</CardDescription>
                     </div>
                     <Button onClick={() => handleAdd('team')}>
                       <Plus className="mr-2 h-4 w-4" />
@@ -250,45 +251,17 @@ const ContentManagement = () => {
                     <div className="flex justify-center py-8">
                       <Loader2 className="h-8 w-8 animate-spin" />
                     </div>
-                  ) : (
-                    <div className="space-y-4">
-                      {teamMembers.map((member: any) => (
-                        <div key={member.id} className={`border rounded-lg p-4 flex justify-between items-center ${member.active === false ? 'opacity-60 bg-muted' : ''}`}>
-                          <div className="flex items-center gap-4">
-                            {member.image ? (
-                              <img src={member.image} alt={member.name} className="w-12 h-12 rounded-full object-cover" />
-                            ) : (
-                              <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
-                                <Users className="h-6 w-6 text-muted-foreground" />
-                              </div>
-                            )}
-                            <div>
-                              <div className="flex items-center gap-2">
-                                <h3 className="font-semibold">{member.name}</h3>
-                                {member.active === false && (
-                                  <span className="text-xs bg-destructive/10 text-destructive px-2 py-0.5 rounded">Inactive</span>
-                                )}
-                              </div>
-                              <p className="text-sm text-muted-foreground">{member.position}</p>
-                              <p className="text-xs text-muted-foreground/70">{member.role}</p>
-                            </div>
-                          </div>
-                          <div className="flex gap-2">
-                            <Button size="sm" variant="outline" onClick={() => handleEdit(member, 'team')}>
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button size="sm" variant="destructive" onClick={() => handleDelete(member.id, 'team')}>
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                      {teamMembers.length === 0 && (
-                        <div className="text-center py-8 text-gray-500">
-                          No team members yet. Click "Add Member" to get started.
-                        </div>
-                      )}
+                  ) : teamMembers.length === 0 ? (
+                    <div className="text-center py-8 text-gray-500">
+                      No team members yet. Click "Add Member" to get started.
                     </div>
+                  ) : (
+                    <SortableTeamList
+                      members={teamMembers}
+                      onReorder={reorderTeamMembers}
+                      onEdit={(member) => handleEdit(member, 'team')}
+                      onDelete={(id) => handleDelete(id, 'team')}
+                    />
                   )}
                 </CardContent>
               </Card>

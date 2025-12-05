@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,6 +11,7 @@ export interface TeamMember {
   bio: string;
   role: string;
   active?: boolean;
+  display_order?: number;
 }
 
 const uploadImage = async (file: File, folder: string = 'team'): Promise<string> => {
@@ -55,7 +55,8 @@ export const useTeamManagement = () => {
         position: member.position,
         bio: member.bio,
         role: member.role,
-        active: member.active
+        active: member.active,
+        display_order: member.display_order
       }));
     }
   });
@@ -106,6 +107,15 @@ export const useTeamManagement = () => {
         imageUrl = await uploadImage(file, 'team');
       }
 
+      // Get max display_order
+      const { data: existing } = await (supabase as any)
+        .from('team_members')
+        .select('display_order')
+        .order('display_order', { ascending: false })
+        .limit(1);
+      
+      const maxOrder = existing?.[0]?.display_order ?? -1;
+
       const { error } = await (supabase as any)
         .from('team_members')
         .insert({
@@ -113,7 +123,8 @@ export const useTeamManagement = () => {
           position: member.position,
           bio: member.bio,
           role: member.role,
-          image_url: imageUrl
+          image_url: imageUrl,
+          display_order: maxOrder + 1
         });
       
       if (error) throw error;
@@ -155,6 +166,37 @@ export const useTeamManagement = () => {
       toast({
         title: "Error",
         description: "Failed to delete team member.",
+        variant: "destructive",
+      });
+      console.error(error);
+    }
+  });
+
+  const reorderMutation = useMutation({
+    mutationFn: async (members: TeamMember[]) => {
+      // Update display_order for each member
+      const updates = members.map((member, index) => 
+        (supabase as any)
+          .from('team_members')
+          .update({ display_order: index })
+          .eq('id', member.id)
+      );
+      
+      const results = await Promise.all(updates);
+      const errors = results.filter(r => r.error);
+      if (errors.length > 0) throw errors[0].error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['team-members-admin'] });
+      toast({
+        title: "Success",
+        description: "Team order updated.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to update order.",
         variant: "destructive",
       });
       console.error(error);
@@ -271,6 +313,9 @@ export const useTeamManagement = () => {
     },
     deleteTeamMember: async (id: string) => {
       return deleteMutation.mutateAsync(id);
+    },
+    reorderTeamMembers: async (members: TeamMember[]) => {
+      return reorderMutation.mutateAsync(members);
     }
   };
 };
