@@ -8,8 +8,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Loader2, Users, FileText, MessageSquare, BarChart, Plus, Edit, Trash2, LogOut, ArrowLeft, Star, Image as ImageIcon, Images, EyeOff } from 'lucide-react';
+import { Loader2, Users, FileText, MessageSquare, BarChart, Plus, Edit, Trash2, LogOut, ArrowLeft, Star, Image as ImageIcon, Images, EyeOff, Eye } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { useTeamManagement, TeamMember } from '@/hooks/useTeamManagement';
 import { useProgramsManagement } from '@/hooks/useProgramsManagement';
@@ -32,11 +33,11 @@ const ContentManagement = () => {
 
   // Management hooks
   const { teamMembers, loading: teamLoading, addTeamMember, updateTeamMember, deleteTeamMember, reorderTeamMembers } = useTeamManagement();
-  const { programs, loading: programsLoading, addProgram, updateProgram, deleteProgram } = useProgramsManagement();
-  const { testimonials, loading: testimonialsLoading, addTestimonial, updateTestimonial, deleteTestimonial } = useTestimonialsManagement();
-  const { metrics, loading: metricsLoading, addMetric, updateMetric, deleteMetric } = useMetricsManagement();
-  const { stories, loading: storiesLoading, addStory, updateStory, deleteStory } = useSuccessStoriesManagement();
-  const { images, loading: galleryLoading, addImage, batchAddImages, isBatchUploading, updateImage, deleteImage } = useGalleryManagement();
+  const { programs, loading: programsLoading, addProgram, updateProgram, deleteProgram, toggleProgramActive } = useProgramsManagement();
+  const { testimonials, loading: testimonialsLoading, addTestimonial, updateTestimonial, deleteTestimonial, toggleTestimonialActive } = useTestimonialsManagement();
+  const { metrics, loading: metricsLoading, addMetric, updateMetric, deleteMetric, toggleMetricActive } = useMetricsManagement();
+  const { stories, loading: storiesLoading, addStory, updateStory, deleteStory, toggleStoryActive } = useSuccessStoriesManagement();
+  const { images, loading: galleryLoading, addImage, batchAddImages, isBatchUploading, updateImage, deleteImage, toggleImageActive } = useGalleryManagement();
   const [batchDialogOpen, setBatchDialogOpen] = useState(false);
   const [batchCategory, setBatchCategory] = useState('');
 
@@ -314,7 +315,14 @@ const ContentManagement = () => {
                               <p className="text-xs text-gray-500 mt-1">Category: {program.category || 'None'}</p>
                             </div>
                           </div>
-                          <div className="flex gap-2">
+                          <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-1">
+                              <Switch
+                                checked={program.active !== false}
+                                onCheckedChange={(checked) => toggleProgramActive(program.id, checked)}
+                              />
+                              <span className="text-xs text-muted-foreground">{program.active !== false ? 'Active' : 'Hidden'}</span>
+                            </div>
                             <Button size="sm" variant="outline" onClick={() => handleEdit(program, 'programs')}>
                               <Edit className="h-4 w-4" />
                             </Button>
@@ -381,7 +389,14 @@ const ContentManagement = () => {
                               <p className="text-sm mt-2 italic line-clamp-2">"{testimonial.quote}"</p>
                             </div>
                           </div>
-                          <div className="flex gap-2">
+                          <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-1">
+                              <Switch
+                                checked={testimonial.active !== false}
+                                onCheckedChange={(checked) => toggleTestimonialActive(testimonial.id, checked)}
+                              />
+                              <span className="text-xs text-muted-foreground">{testimonial.active !== false ? 'Active' : 'Hidden'}</span>
+                            </div>
                             <Button size="sm" variant="outline" onClick={() => handleEdit(testimonial, 'testimonials')}>
                               <Edit className="h-4 w-4" />
                             </Button>
@@ -439,7 +454,14 @@ const ContentManagement = () => {
                             <p className="text-sm text-gray-600">{metric.metric_name}</p>
                             <p className="text-xs text-gray-500">Category: {metric.category || 'None'}</p>
                           </div>
-                          <div className="flex gap-2">
+                          <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-1">
+                              <Switch
+                                checked={metric.active !== false}
+                                onCheckedChange={(checked) => toggleMetricActive(metric.id, checked)}
+                              />
+                              <span className="text-xs text-muted-foreground">{metric.active !== false ? 'Active' : 'Hidden'}</span>
+                            </div>
                             <Button size="sm" variant="outline" onClick={() => handleEdit(metric, 'metrics')}>
                               <Edit className="h-4 w-4" />
                             </Button>
@@ -516,7 +538,14 @@ const ContentManagement = () => {
                               </div>
                             </div>
                           </div>
-                          <div className="flex gap-2">
+                          <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-1">
+                              <Switch
+                                checked={story.active !== false}
+                                onCheckedChange={(checked) => toggleStoryActive(story.id, checked)}
+                              />
+                              <span className="text-xs text-muted-foreground">{story.active !== false ? 'Active' : 'Hidden'}</span>
+                            </div>
                             <Button size="sm" variant="outline" onClick={() => handleEdit(story, 'stories')}>
                               <Edit className="h-4 w-4" />
                             </Button>
@@ -582,13 +611,22 @@ const ContentManagement = () => {
                               <p className="text-sm text-gray-600 mt-1">{image.description}</p>
                             )}
                             <p className="text-xs text-gray-500 mt-1">Category: {image.category || 'None'}</p>
-                            <div className="flex gap-2 mt-3">
-                              <Button size="sm" variant="outline" onClick={() => handleEdit(image, 'gallery')}>
-                                <Edit className="h-4 w-4" />
-                              </Button>
-                              <Button size="sm" variant="destructive" onClick={() => handleDelete(image.id, 'gallery')}>
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
+                            <div className="flex items-center justify-between gap-2 mt-3">
+                              <div className="flex items-center gap-1">
+                                <Switch
+                                  checked={image.active !== false}
+                                  onCheckedChange={(checked) => toggleImageActive(image.id, checked)}
+                                />
+                                <span className="text-xs text-muted-foreground">{image.active !== false ? 'Active' : 'Hidden'}</span>
+                              </div>
+                              <div className="flex gap-2">
+                                <Button size="sm" variant="outline" onClick={() => handleEdit(image, 'gallery')}>
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button size="sm" variant="destructive" onClick={() => handleDelete(image.id, 'gallery')}>
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
                             </div>
                           </div>
                         </div>

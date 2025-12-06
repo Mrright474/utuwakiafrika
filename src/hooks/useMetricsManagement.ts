@@ -123,12 +123,40 @@ export const useMetricsManagement = () => {
     }
   });
 
+  const toggleActiveMutation = useMutation({
+    mutationFn: async ({ id, active }: { id: string; active: boolean }) => {
+      const { error } = await (supabase as any)
+        .from('success_metrics')
+        .update({ active })
+        .eq('id', id);
+      
+      if (error) throw error;
+    },
+    onSuccess: (_, { active }) => {
+      queryClient.invalidateQueries({ queryKey: ['success-metrics'] });
+      toast({
+        title: "Success",
+        description: `Metric ${active ? 'activated' : 'deactivated'} successfully.`,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to update metric status.",
+        variant: "destructive",
+      });
+      console.error(error);
+    }
+  });
+
   return {
     metrics,
     loading: isLoading,
     addMetric: addMutation.mutateAsync,
     updateMetric: updateMutation.mutateAsync,
     deleteMetric: deleteMutation.mutateAsync,
+    toggleMetricActive: (id: string, active: boolean) => 
+      toggleActiveMutation.mutateAsync({ id, active }),
     refetch: () => queryClient.invalidateQueries({ queryKey: ['success-metrics'] })
   };
 };

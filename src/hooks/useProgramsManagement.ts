@@ -161,6 +161,32 @@ export const useProgramsManagement = () => {
     }
   });
 
+  const toggleActiveMutation = useMutation({
+    mutationFn: async ({ id, active }: { id: string; active: boolean }) => {
+      const { error } = await (supabase as any)
+        .from('programs')
+        .update({ active })
+        .eq('id', id);
+      
+      if (error) throw error;
+    },
+    onSuccess: (_, { active }) => {
+      queryClient.invalidateQueries({ queryKey: ['programs'] });
+      toast({
+        title: "Success",
+        description: `Program ${active ? 'activated' : 'deactivated'} successfully.`,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to update program status.",
+        variant: "destructive",
+      });
+      console.error(error);
+    }
+  });
+
   return {
     programs,
     loading: isLoading,
@@ -169,6 +195,8 @@ export const useProgramsManagement = () => {
     updateProgram: (program: Program, file?: File) => 
       updateMutation.mutateAsync({ program, file }),
     deleteProgram: deleteMutation.mutateAsync,
+    toggleProgramActive: (id: string, active: boolean) => 
+      toggleActiveMutation.mutateAsync({ id, active }),
     refetch: () => queryClient.invalidateQueries({ queryKey: ['programs'] })
   };
 };

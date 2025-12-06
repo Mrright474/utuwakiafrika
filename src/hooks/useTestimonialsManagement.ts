@@ -152,6 +152,32 @@ export const useTestimonialsManagement = () => {
     }
   });
 
+  const toggleActiveMutation = useMutation({
+    mutationFn: async ({ id, active }: { id: string; active: boolean }) => {
+      const { error } = await (supabase as any)
+        .from('testimonials')
+        .update({ active })
+        .eq('id', id);
+      
+      if (error) throw error;
+    },
+    onSuccess: (_, { active }) => {
+      queryClient.invalidateQueries({ queryKey: ['testimonials'] });
+      toast({
+        title: "Success",
+        description: `Testimonial ${active ? 'activated' : 'deactivated'} successfully.`,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to update testimonial status.",
+        variant: "destructive",
+      });
+      console.error(error);
+    }
+  });
+
   return {
     testimonials,
     loading: isLoading,
@@ -160,6 +186,8 @@ export const useTestimonialsManagement = () => {
     updateTestimonial: (testimonial: Testimonial, file?: File) => 
       updateMutation.mutateAsync({ testimonial, file }),
     deleteTestimonial: deleteMutation.mutateAsync,
+    toggleTestimonialActive: (id: string, active: boolean) => 
+      toggleActiveMutation.mutateAsync({ id, active }),
     refetch: () => queryClient.invalidateQueries({ queryKey: ['testimonials'] })
   };
 };
