@@ -8,7 +8,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Loader2, Users, FileText, MessageSquare, BarChart, Plus, Edit, Trash2, LogOut, ArrowLeft, Star, Image as ImageIcon, Images } from 'lucide-react';
+import { Loader2, Users, FileText, MessageSquare, BarChart, Plus, Edit, Trash2, LogOut, ArrowLeft, Star, Image as ImageIcon, Images, EyeOff } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { useTeamManagement, TeamMember } from '@/hooks/useTeamManagement';
 import { useProgramsManagement } from '@/hooks/useProgramsManagement';
@@ -290,17 +291,25 @@ const ContentManagement = () => {
                   ) : (
                     <div className="space-y-4">
                       {programs.map((program: any) => (
-                        <div key={program.id} className="border rounded-lg p-4 flex justify-between items-start">
+                        <div key={program.id} className={`border rounded-lg p-4 flex justify-between items-start ${program.active === false ? 'opacity-60 bg-muted/50' : ''}`}>
                           <div className="flex gap-4 flex-1">
                             {program.image ? (
-                              <img src={program.image} alt={program.title} className="w-20 h-20 rounded object-cover" />
+                              <img src={program.image} alt={program.title} className={`w-20 h-20 rounded object-cover ${program.active === false ? 'grayscale' : ''}`} />
                             ) : (
                               <div className="w-20 h-20 rounded bg-muted flex items-center justify-center">
                                 <FileText className="h-8 w-8 text-muted-foreground" />
                               </div>
                             )}
                             <div>
-                              <h3 className="font-semibold">{program.title}</h3>
+                              <div className="flex items-center gap-2">
+                                <h3 className="font-semibold">{program.title}</h3>
+                                {program.active === false && (
+                                  <Badge variant="secondary" className="text-xs">
+                                    <EyeOff className="h-3 w-3 mr-1" />
+                                    Inactive
+                                  </Badge>
+                                )}
+                              </div>
                               <p className="text-sm text-gray-600 mt-1">{program.description}</p>
                               <p className="text-xs text-gray-500 mt-1">Category: {program.category || 'None'}</p>
                             </div>
@@ -349,17 +358,25 @@ const ContentManagement = () => {
                   ) : (
                     <div className="space-y-4">
                       {testimonials.map((testimonial: any) => (
-                        <div key={testimonial.id} className="border rounded-lg p-4 flex justify-between items-start">
+                        <div key={testimonial.id} className={`border rounded-lg p-4 flex justify-between items-start ${testimonial.active === false ? 'opacity-60 bg-muted/50' : ''}`}>
                           <div className="flex items-start gap-4">
                             {testimonial.image_url ? (
-                              <img src={testimonial.image_url} alt={testimonial.name} className="w-12 h-12 rounded-full object-cover" />
+                              <img src={testimonial.image_url} alt={testimonial.name} className={`w-12 h-12 rounded-full object-cover ${testimonial.active === false ? 'grayscale' : ''}`} />
                             ) : (
                               <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
                                 <MessageSquare className="h-6 w-6 text-muted-foreground" />
                               </div>
                             )}
                             <div>
-                              <h3 className="font-semibold">{testimonial.name}</h3>
+                              <div className="flex items-center gap-2">
+                                <h3 className="font-semibold">{testimonial.name}</h3>
+                                {testimonial.active === false && (
+                                  <Badge variant="secondary" className="text-xs">
+                                    <EyeOff className="h-3 w-3 mr-1" />
+                                    Inactive
+                                  </Badge>
+                                )}
+                              </div>
                               <p className="text-sm text-muted-foreground">{testimonial.role}</p>
                               <p className="text-sm mt-2 italic line-clamp-2">"{testimonial.quote}"</p>
                             </div>
@@ -408,9 +425,17 @@ const ContentManagement = () => {
                   ) : (
                     <div className="space-y-4">
                       {metrics.map((metric: any) => (
-                        <div key={metric.id} className="border rounded-lg p-4 flex justify-between items-center">
+                        <div key={metric.id} className={`border rounded-lg p-4 flex justify-between items-center ${metric.active === false ? 'opacity-60 bg-muted/50' : ''}`}>
                           <div>
-                            <h3 className="font-semibold text-2xl">{metric.metric_value}</h3>
+                            <div className="flex items-center gap-2">
+                              <h3 className="font-semibold text-2xl">{metric.metric_value}</h3>
+                              {metric.active === false && (
+                                <Badge variant="secondary" className="text-xs">
+                                  <EyeOff className="h-3 w-3 mr-1" />
+                                  Inactive
+                                </Badge>
+                              )}
+                            </div>
                             <p className="text-sm text-gray-600">{metric.metric_name}</p>
                             <p className="text-xs text-gray-500">Category: {metric.category || 'None'}</p>
                           </div>
@@ -458,10 +483,10 @@ const ContentManagement = () => {
                   ) : (
                     <div className="space-y-4">
                       {[...stories].sort((a: any, b: any) => (b.view_count || 0) - (a.view_count || 0)).map((story: any) => (
-                        <div key={story.id} className="border rounded-lg p-4 flex justify-between items-start">
+                        <div key={story.id} className={`border rounded-lg p-4 flex justify-between items-start ${story.active === false ? 'opacity-60 bg-muted/50' : ''}`}>
                           <div className="flex gap-4 flex-1">
                             {story.image_url ? (
-                              <img src={story.image_url} alt={story.title} className="w-20 h-20 rounded object-cover" />
+                              <img src={story.image_url} alt={story.title} className={`w-20 h-20 rounded object-cover ${story.active === false ? 'grayscale' : ''}`} />
                             ) : (
                               <div className="w-20 h-20 rounded bg-muted flex items-center justify-center">
                                 <Star className="h-8 w-8 text-muted-foreground" />
@@ -470,7 +495,15 @@ const ContentManagement = () => {
                             <div className="flex-1">
                               <div className="flex items-start justify-between gap-4">
                                 <div>
-                                  <h3 className="font-semibold">{story.title}</h3>
+                                  <div className="flex items-center gap-2">
+                                    <h3 className="font-semibold">{story.title}</h3>
+                                    {story.active === false && (
+                                      <Badge variant="secondary" className="text-xs">
+                                        <EyeOff className="h-3 w-3 mr-1" />
+                                        Inactive
+                                      </Badge>
+                                    )}
+                                  </div>
                                   <p className="text-sm text-gray-600 mt-1 line-clamp-2">{story.description}</p>
                                   <div className="flex items-center gap-3 mt-2">
                                     <p className="text-xs text-gray-500">Category: {story.category || 'None'}</p>
@@ -533,8 +566,16 @@ const ContentManagement = () => {
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                       {images.map((image: any) => (
-                        <div key={image.id} className="border rounded-lg overflow-hidden">
-                          <img src={image.image_url} alt={image.title} className="w-full h-48 object-cover" />
+                        <div key={image.id} className={`border rounded-lg overflow-hidden ${image.active === false ? 'opacity-60 bg-muted/50' : ''}`}>
+                          <div className="relative">
+                            <img src={image.image_url} alt={image.title} className={`w-full h-48 object-cover ${image.active === false ? 'grayscale' : ''}`} />
+                            {image.active === false && (
+                              <Badge variant="secondary" className="absolute top-2 right-2 text-xs">
+                                <EyeOff className="h-3 w-3 mr-1" />
+                                Inactive
+                              </Badge>
+                            )}
+                          </div>
                           <div className="p-4">
                             <h3 className="font-semibold">{image.title}</h3>
                             {image.description && (
