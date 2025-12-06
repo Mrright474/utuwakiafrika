@@ -19,10 +19,10 @@ export const useGalleryManagement = () => {
   const { data: images = [], isLoading } = useQuery({
     queryKey: ['gallery-images'],
     queryFn: async () => {
+      // RLS handles filtering - admins see all, public sees active only
       const { data, error } = await supabase
         .from('gallery_images')
         .select('*')
-        .eq('active', true)
         .order('display_order');
       
       if (error) throw error;

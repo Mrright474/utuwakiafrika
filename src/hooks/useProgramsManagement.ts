@@ -11,6 +11,7 @@ export interface Program {
   icon: string | null;
   color: string | null;
   image: string;
+  active?: boolean;
 }
 
 const uploadImage = async (file: File, folder: string = 'programs'): Promise<string> => {
@@ -37,10 +38,10 @@ export const useProgramsManagement = () => {
   const { data: programs = [], isLoading } = useQuery({
     queryKey: ['programs'],
     queryFn: async () => {
+      // Fetch all programs for admin (RLS will filter based on user role)
       const { data, error } = await (supabase as any)
         .from('programs')
         .select('*')
-        .eq('active', true)
         .order('display_order');
       
       if (error) throw error;
@@ -51,7 +52,8 @@ export const useProgramsManagement = () => {
         category: program.category,
         icon: program.icon,
         color: program.color,
-        image: program.image_url || ''
+        image: program.image_url || '',
+        active: program.active
       }));
     }
   });

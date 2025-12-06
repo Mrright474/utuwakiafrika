@@ -22,10 +22,10 @@ export const useSuccessStoriesManagement = () => {
   const { data: stories = [], isLoading } = useQuery({
     queryKey: ['success-stories'],
     queryFn: async () => {
+      // RLS handles filtering - admins see all, public sees active only
       const { data, error } = await supabase
         .from('success_stories')
         .select('*')
-        .eq('active', true)
         .order('display_order');
       
       if (error) throw error;
