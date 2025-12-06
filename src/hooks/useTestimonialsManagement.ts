@@ -8,6 +8,7 @@ export interface Testimonial {
   role: string;
   quote: string;
   image_url: string | null;
+  active?: boolean;
 }
 
 const uploadImage = async (file: File, folder: string = 'testimonials'): Promise<string> => {
@@ -34,10 +35,10 @@ export const useTestimonialsManagement = () => {
   const { data: testimonials = [], isLoading } = useQuery({
     queryKey: ['testimonials'],
     queryFn: async () => {
+      // RLS handles filtering - admins see all, public sees active only
       const { data, error } = await (supabase as any)
         .from('testimonials')
         .select('*')
-        .eq('active', true)
         .order('display_order');
       
       if (error) throw error;
@@ -46,7 +47,8 @@ export const useTestimonialsManagement = () => {
         name: testimonial.name,
         role: testimonial.role,
         quote: testimonial.quote,
-        image_url: testimonial.image_url
+        image_url: testimonial.image_url,
+        active: testimonial.active
       }));
     }
   });

@@ -8,6 +8,7 @@ export interface SuccessMetric {
   metric_value: string;
   category: string | null;
   icon: string | null;
+  active?: boolean;
 }
 
 export const useMetricsManagement = () => {
@@ -17,10 +18,10 @@ export const useMetricsManagement = () => {
   const { data: metrics = [], isLoading } = useQuery({
     queryKey: ['success-metrics'],
     queryFn: async () => {
+      // RLS handles filtering - admins see all, public sees active only
       const { data, error } = await (supabase as any)
         .from('success_metrics')
         .select('*')
-        .eq('active', true)
         .order('display_order');
       
       if (error) throw error;
@@ -29,7 +30,8 @@ export const useMetricsManagement = () => {
         metric_name: metric.metric_name,
         metric_value: metric.metric_value,
         category: metric.category,
-        icon: metric.icon
+        icon: metric.icon,
+        active: metric.active
       }));
     }
   });
