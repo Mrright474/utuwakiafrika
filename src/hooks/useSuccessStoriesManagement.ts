@@ -168,11 +168,39 @@ export const useSuccessStoriesManagement = () => {
     }
   });
 
+  const toggleActiveMutation = useMutation({
+    mutationFn: async ({ id, active }: { id: string; active: boolean }) => {
+      const { error } = await supabase
+        .from('success_stories')
+        .update({ active })
+        .eq('id', id);
+      
+      if (error) throw error;
+    },
+    onSuccess: (_, { active }) => {
+      queryClient.invalidateQueries({ queryKey: ['success-stories'] });
+      toast({
+        title: "Success",
+        description: `Story ${active ? 'activated' : 'deactivated'} successfully.`,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to update story status.",
+        variant: "destructive",
+      });
+      console.error(error);
+    }
+  });
+
   return {
     stories,
     loading: isLoading,
     addStory: addMutation.mutateAsync,
     updateStory: updateMutation.mutateAsync,
     deleteStory: deleteMutation.mutateAsync,
+    toggleStoryActive: (id: string, active: boolean) => 
+      toggleActiveMutation.mutateAsync({ id, active }),
   };
 };
