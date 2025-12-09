@@ -1,11 +1,12 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Eye, EyeOff, X } from 'lucide-react';
+import { Eye, EyeOff, Trash2, X } from 'lucide-react';
 
 interface BulkActionBarProps {
   selectedCount: number;
   onActivate: () => void;
   onDeactivate: () => void;
+  onDelete?: () => void;
   onClearSelection: () => void;
 }
 
@@ -13,6 +14,7 @@ const BulkActionBar: React.FC<BulkActionBarProps> = ({
   selectedCount,
   onActivate,
   onDeactivate,
+  onDelete,
   onClearSelection,
 }) => {
   if (selectedCount === 0) return null;
@@ -31,6 +33,12 @@ const BulkActionBar: React.FC<BulkActionBarProps> = ({
           <EyeOff className="h-4 w-4 mr-1" />
           Deactivate
         </Button>
+        {onDelete && (
+          <Button size="sm" variant="destructive" onClick={onDelete}>
+            <Trash2 className="h-4 w-4 mr-1" />
+            Delete
+          </Button>
+        )}
         <Button size="sm" variant="ghost" onClick={onClearSelection}>
           <X className="h-4 w-4" />
         </Button>

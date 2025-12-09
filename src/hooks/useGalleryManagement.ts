@@ -251,6 +251,38 @@ export const useGalleryManagement = () => {
     }
   });
 
+  const bulkDeleteMutation = useMutation({
+    mutationFn: async (ids: string[]) => {
+      // Delete associated images first
+      const imagesToDelete = images.filter(i => ids.includes(i.id));
+      for (const image of imagesToDelete) {
+        await deleteImage(image.image_url);
+      }
+      
+      const { error } = await supabase
+        .from('gallery_images')
+        .delete()
+        .in('id', ids);
+      
+      if (error) throw error;
+    },
+    onSuccess: (_, ids) => {
+      queryClient.invalidateQueries({ queryKey: ['gallery-images'] });
+      toast({
+        title: "Success",
+        description: `${ids.length} images deleted successfully.`,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to delete images.",
+        variant: "destructive",
+      });
+      console.error(error);
+    }
+  });
+
   return {
     images,
     loading: isLoading,
@@ -263,5 +295,7 @@ export const useGalleryManagement = () => {
       toggleActiveMutation.mutateAsync({ id, active }),
     bulkToggleImagesActive: (ids: string[], active: boolean) =>
       bulkToggleActiveMutation.mutateAsync({ ids, active }),
+    bulkDeleteImages: (ids: string[]) =>
+      bulkDeleteMutation.mutateAsync(ids),
   };
 };

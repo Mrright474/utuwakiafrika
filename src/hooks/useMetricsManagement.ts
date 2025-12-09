@@ -175,6 +175,32 @@ export const useMetricsManagement = () => {
     }
   });
 
+  const bulkDeleteMutation = useMutation({
+    mutationFn: async (ids: string[]) => {
+      const { error } = await (supabase as any)
+        .from('success_metrics')
+        .delete()
+        .in('id', ids);
+      
+      if (error) throw error;
+    },
+    onSuccess: (_, ids) => {
+      queryClient.invalidateQueries({ queryKey: ['success-metrics'] });
+      toast({
+        title: "Success",
+        description: `${ids.length} metrics deleted successfully.`,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to delete metrics.",
+        variant: "destructive",
+      });
+      console.error(error);
+    }
+  });
+
   return {
     metrics,
     loading: isLoading,
@@ -185,6 +211,8 @@ export const useMetricsManagement = () => {
       toggleActiveMutation.mutateAsync({ id, active }),
     bulkToggleMetricsActive: (ids: string[], active: boolean) =>
       bulkToggleActiveMutation.mutateAsync({ ids, active }),
+    bulkDeleteMetrics: (ids: string[]) =>
+      bulkDeleteMutation.mutateAsync(ids),
     refetch: () => queryClient.invalidateQueries({ queryKey: ['success-metrics'] })
   };
 };

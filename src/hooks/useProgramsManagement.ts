@@ -213,6 +213,32 @@ export const useProgramsManagement = () => {
     }
   });
 
+  const bulkDeleteMutation = useMutation({
+    mutationFn: async (ids: string[]) => {
+      const { error } = await (supabase as any)
+        .from('programs')
+        .delete()
+        .in('id', ids);
+      
+      if (error) throw error;
+    },
+    onSuccess: (_, ids) => {
+      queryClient.invalidateQueries({ queryKey: ['programs'] });
+      toast({
+        title: "Success",
+        description: `${ids.length} programs deleted successfully.`,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to delete programs.",
+        variant: "destructive",
+      });
+      console.error(error);
+    }
+  });
+
   return {
     programs,
     loading: isLoading,
@@ -225,6 +251,8 @@ export const useProgramsManagement = () => {
       toggleActiveMutation.mutateAsync({ id, active }),
     bulkToggleProgramsActive: (ids: string[], active: boolean) =>
       bulkToggleActiveMutation.mutateAsync({ ids, active }),
+    bulkDeletePrograms: (ids: string[]) =>
+      bulkDeleteMutation.mutateAsync(ids),
     refetch: () => queryClient.invalidateQueries({ queryKey: ['programs'] })
   };
 };

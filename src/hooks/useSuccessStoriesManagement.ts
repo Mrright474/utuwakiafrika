@@ -220,6 +220,38 @@ export const useSuccessStoriesManagement = () => {
     }
   });
 
+  const bulkDeleteMutation = useMutation({
+    mutationFn: async (ids: string[]) => {
+      // Delete associated images first
+      const storiesToDelete = stories.filter(s => ids.includes(s.id));
+      for (const story of storiesToDelete) {
+        await deleteImage(story.image_url);
+      }
+      
+      const { error } = await supabase
+        .from('success_stories')
+        .delete()
+        .in('id', ids);
+      
+      if (error) throw error;
+    },
+    onSuccess: (_, ids) => {
+      queryClient.invalidateQueries({ queryKey: ['success-stories'] });
+      toast({
+        title: "Success",
+        description: `${ids.length} stories deleted successfully.`,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to delete stories.",
+        variant: "destructive",
+      });
+      console.error(error);
+    }
+  });
+
   return {
     stories,
     loading: isLoading,
@@ -230,5 +262,7 @@ export const useSuccessStoriesManagement = () => {
       toggleActiveMutation.mutateAsync({ id, active }),
     bulkToggleStoriesActive: (ids: string[], active: boolean) =>
       bulkToggleActiveMutation.mutateAsync({ ids, active }),
+    bulkDeleteStories: (ids: string[]) =>
+      bulkDeleteMutation.mutateAsync(ids),
   };
 };
