@@ -149,6 +149,32 @@ export const useMetricsManagement = () => {
     }
   });
 
+  const bulkToggleActiveMutation = useMutation({
+    mutationFn: async ({ ids, active }: { ids: string[]; active: boolean }) => {
+      const { error } = await (supabase as any)
+        .from('success_metrics')
+        .update({ active })
+        .in('id', ids);
+      
+      if (error) throw error;
+    },
+    onSuccess: (_, { ids, active }) => {
+      queryClient.invalidateQueries({ queryKey: ['success-metrics'] });
+      toast({
+        title: "Success",
+        description: `${ids.length} metrics ${active ? 'activated' : 'deactivated'} successfully.`,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to update metrics status.",
+        variant: "destructive",
+      });
+      console.error(error);
+    }
+  });
+
   return {
     metrics,
     loading: isLoading,
@@ -157,6 +183,8 @@ export const useMetricsManagement = () => {
     deleteMetric: deleteMutation.mutateAsync,
     toggleMetricActive: (id: string, active: boolean) => 
       toggleActiveMutation.mutateAsync({ id, active }),
+    bulkToggleMetricsActive: (ids: string[], active: boolean) =>
+      bulkToggleActiveMutation.mutateAsync({ ids, active }),
     refetch: () => queryClient.invalidateQueries({ queryKey: ['success-metrics'] })
   };
 };

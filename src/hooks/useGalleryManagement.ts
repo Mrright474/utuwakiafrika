@@ -225,6 +225,32 @@ export const useGalleryManagement = () => {
     }
   });
 
+  const bulkToggleActiveMutation = useMutation({
+    mutationFn: async ({ ids, active }: { ids: string[]; active: boolean }) => {
+      const { error } = await supabase
+        .from('gallery_images')
+        .update({ active })
+        .in('id', ids);
+      
+      if (error) throw error;
+    },
+    onSuccess: (_, { ids, active }) => {
+      queryClient.invalidateQueries({ queryKey: ['gallery-images'] });
+      toast({
+        title: "Success",
+        description: `${ids.length} images ${active ? 'activated' : 'deactivated'} successfully.`,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to update images status.",
+        variant: "destructive",
+      });
+      console.error(error);
+    }
+  });
+
   return {
     images,
     loading: isLoading,
@@ -235,5 +261,7 @@ export const useGalleryManagement = () => {
     deleteImage: deleteMutation.mutateAsync,
     toggleImageActive: (id: string, active: boolean) => 
       toggleActiveMutation.mutateAsync({ id, active }),
+    bulkToggleImagesActive: (ids: string[], active: boolean) =>
+      bulkToggleActiveMutation.mutateAsync({ ids, active }),
   };
 };

@@ -8,9 +8,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Loader2, Users, FileText, MessageSquare, BarChart, Plus, Edit, Trash2, LogOut, ArrowLeft, Star, Image as ImageIcon, Images, EyeOff, Eye } from 'lucide-react';
+import { Loader2, Users, FileText, MessageSquare, BarChart, Plus, Edit, Trash2, LogOut, ArrowLeft, Star, Image as ImageIcon, Images, EyeOff, Eye, CheckSquare, Square } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
+import { Checkbox } from '@/components/ui/checkbox';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { useTeamManagement, TeamMember } from '@/hooks/useTeamManagement';
 import { useProgramsManagement } from '@/hooks/useProgramsManagement';
@@ -21,6 +22,7 @@ import { useGalleryManagement } from '@/hooks/useGalleryManagement';
 import ImageUpload from '@/components/home/ImageUpload';
 import BatchImageUpload from '@/components/home/BatchImageUpload';
 import SortableTeamList from '@/components/admin/SortableTeamList';
+import BulkActionBar from '@/components/admin/BulkActionBar';
 
 const ContentManagement = () => {
   const { user, isAdmin, loading: authLoading, signOut } = useAdminAuth();
@@ -31,15 +33,67 @@ const ContentManagement = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>('');
 
+  // Bulk selection state
+  const [selectedPrograms, setSelectedPrograms] = useState<Set<string>>(new Set());
+  const [selectedTestimonials, setSelectedTestimonials] = useState<Set<string>>(new Set());
+  const [selectedMetrics, setSelectedMetrics] = useState<Set<string>>(new Set());
+  const [selectedStories, setSelectedStories] = useState<Set<string>>(new Set());
+  const [selectedImages, setSelectedImages] = useState<Set<string>>(new Set());
+
   // Management hooks
   const { teamMembers, loading: teamLoading, addTeamMember, updateTeamMember, deleteTeamMember, reorderTeamMembers } = useTeamManagement();
-  const { programs, loading: programsLoading, addProgram, updateProgram, deleteProgram, toggleProgramActive } = useProgramsManagement();
-  const { testimonials, loading: testimonialsLoading, addTestimonial, updateTestimonial, deleteTestimonial, toggleTestimonialActive } = useTestimonialsManagement();
-  const { metrics, loading: metricsLoading, addMetric, updateMetric, deleteMetric, toggleMetricActive } = useMetricsManagement();
-  const { stories, loading: storiesLoading, addStory, updateStory, deleteStory, toggleStoryActive } = useSuccessStoriesManagement();
-  const { images, loading: galleryLoading, addImage, batchAddImages, isBatchUploading, updateImage, deleteImage, toggleImageActive } = useGalleryManagement();
+  const { programs, loading: programsLoading, addProgram, updateProgram, deleteProgram, toggleProgramActive, bulkToggleProgramsActive } = useProgramsManagement();
+  const { testimonials, loading: testimonialsLoading, addTestimonial, updateTestimonial, deleteTestimonial, toggleTestimonialActive, bulkToggleTestimonialsActive } = useTestimonialsManagement();
+  const { metrics, loading: metricsLoading, addMetric, updateMetric, deleteMetric, toggleMetricActive, bulkToggleMetricsActive } = useMetricsManagement();
+  const { stories, loading: storiesLoading, addStory, updateStory, deleteStory, toggleStoryActive, bulkToggleStoriesActive } = useSuccessStoriesManagement();
+  const { images, loading: galleryLoading, addImage, batchAddImages, isBatchUploading, updateImage, deleteImage, toggleImageActive, bulkToggleImagesActive } = useGalleryManagement();
   const [batchDialogOpen, setBatchDialogOpen] = useState(false);
   const [batchCategory, setBatchCategory] = useState('');
+
+  // Bulk selection helpers
+  const toggleSelection = (id: string, selected: Set<string>, setSelected: React.Dispatch<React.SetStateAction<Set<string>>>) => {
+    const newSelected = new Set(selected);
+    if (newSelected.has(id)) {
+      newSelected.delete(id);
+    } else {
+      newSelected.add(id);
+    }
+    setSelected(newSelected);
+  };
+
+  const selectAll = (items: any[], selected: Set<string>, setSelected: React.Dispatch<React.SetStateAction<Set<string>>>) => {
+    if (selected.size === items.length) {
+      setSelected(new Set());
+    } else {
+      setSelected(new Set(items.map(item => item.id)));
+    }
+  };
+
+  const handleBulkActivate = async (type: string, ids: Set<string>, active: boolean) => {
+    const idArray = Array.from(ids);
+    if (idArray.length === 0) return;
+    
+    try {
+      if (type === 'programs') {
+        await bulkToggleProgramsActive(idArray, active);
+        setSelectedPrograms(new Set());
+      } else if (type === 'testimonials') {
+        await bulkToggleTestimonialsActive(idArray, active);
+        setSelectedTestimonials(new Set());
+      } else if (type === 'metrics') {
+        await bulkToggleMetricsActive(idArray, active);
+        setSelectedMetrics(new Set());
+      } else if (type === 'stories') {
+        await bulkToggleStoriesActive(idArray, active);
+        setSelectedStories(new Set());
+      } else if (type === 'gallery') {
+        await bulkToggleImagesActive(idArray, active);
+        setSelectedImages(new Set());
+      }
+    } catch (error) {
+      console.error('Bulk action failed:', error);
+    }
+  };
 
   if (!authLoading && (!user || !isAdmin)) {
     return <Navigate to="/admin/auth" replace />;
@@ -290,54 +344,76 @@ const ContentManagement = () => {
                       <Loader2 className="h-8 w-8 animate-spin" />
                     </div>
                   ) : (
-                    <div className="space-y-4">
-                      {programs.map((program: any) => (
-                        <div key={program.id} className={`border rounded-lg p-4 flex justify-between items-start ${program.active === false ? 'opacity-60 bg-muted/50' : ''}`}>
-                          <div className="flex gap-4 flex-1">
-                            {program.image ? (
-                              <img src={program.image} alt={program.title} className={`w-20 h-20 rounded object-cover ${program.active === false ? 'grayscale' : ''}`} />
-                            ) : (
-                              <div className="w-20 h-20 rounded bg-muted flex items-center justify-center">
-                                <FileText className="h-8 w-8 text-muted-foreground" />
-                              </div>
-                            )}
-                            <div>
-                              <div className="flex items-center gap-2">
-                                <h3 className="font-semibold">{program.title}</h3>
-                                {program.active === false && (
-                                  <Badge variant="secondary" className="text-xs">
-                                    <EyeOff className="h-3 w-3 mr-1" />
-                                    Inactive
-                                  </Badge>
-                                )}
-                              </div>
-                              <p className="text-sm text-gray-600 mt-1">{program.description}</p>
-                              <p className="text-xs text-gray-500 mt-1">Category: {program.category || 'None'}</p>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <div className="flex items-center gap-1">
-                              <Switch
-                                checked={program.active !== false}
-                                onCheckedChange={(checked) => toggleProgramActive(program.id, checked)}
-                              />
-                              <span className="text-xs text-muted-foreground">{program.active !== false ? 'Active' : 'Hidden'}</span>
-                            </div>
-                            <Button size="sm" variant="outline" onClick={() => handleEdit(program, 'programs')}>
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button size="sm" variant="destructive" onClick={() => handleDelete(program.id, 'programs')}>
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                      {programs.length === 0 && (
-                        <div className="text-center py-8 text-gray-500">
-                          No programs yet. Click "Add Program" to get started.
+                    <>
+                      <BulkActionBar
+                        selectedCount={selectedPrograms.size}
+                        onActivate={() => handleBulkActivate('programs', selectedPrograms, true)}
+                        onDeactivate={() => handleBulkActivate('programs', selectedPrograms, false)}
+                        onClearSelection={() => setSelectedPrograms(new Set())}
+                      />
+                      {programs.length > 0 && (
+                        <div className="flex items-center gap-2 mb-4">
+                          <Checkbox
+                            checked={selectedPrograms.size === programs.length && programs.length > 0}
+                            onCheckedChange={() => selectAll(programs, selectedPrograms, setSelectedPrograms)}
+                          />
+                          <span className="text-sm text-muted-foreground">Select all</span>
                         </div>
                       )}
-                    </div>
+                      <div className="space-y-4">
+                        {programs.map((program: any) => (
+                          <div key={program.id} className={`border rounded-lg p-4 flex justify-between items-start ${program.active === false ? 'opacity-60 bg-muted/50' : ''}`}>
+                            <div className="flex gap-4 flex-1">
+                              <Checkbox
+                                checked={selectedPrograms.has(program.id)}
+                                onCheckedChange={() => toggleSelection(program.id, selectedPrograms, setSelectedPrograms)}
+                                className="mt-1"
+                              />
+                              {program.image ? (
+                                <img src={program.image} alt={program.title} className={`w-20 h-20 rounded object-cover ${program.active === false ? 'grayscale' : ''}`} />
+                              ) : (
+                                <div className="w-20 h-20 rounded bg-muted flex items-center justify-center">
+                                  <FileText className="h-8 w-8 text-muted-foreground" />
+                                </div>
+                              )}
+                              <div>
+                                <div className="flex items-center gap-2">
+                                  <h3 className="font-semibold">{program.title}</h3>
+                                  {program.active === false && (
+                                    <Badge variant="secondary" className="text-xs">
+                                      <EyeOff className="h-3 w-3 mr-1" />
+                                      Inactive
+                                    </Badge>
+                                  )}
+                                </div>
+                                <p className="text-sm text-gray-600 mt-1">{program.description}</p>
+                                <p className="text-xs text-gray-500 mt-1">Category: {program.category || 'None'}</p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <div className="flex items-center gap-1">
+                                <Switch
+                                  checked={program.active !== false}
+                                  onCheckedChange={(checked) => toggleProgramActive(program.id, checked)}
+                                />
+                                <span className="text-xs text-muted-foreground">{program.active !== false ? 'Active' : 'Hidden'}</span>
+                              </div>
+                              <Button size="sm" variant="outline" onClick={() => handleEdit(program, 'programs')}>
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button size="sm" variant="destructive" onClick={() => handleDelete(program.id, 'programs')}>
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        ))}
+                        {programs.length === 0 && (
+                          <div className="text-center py-8 text-gray-500">
+                            No programs yet. Click "Add Program" to get started.
+                          </div>
+                        )}
+                      </div>
+                    </>
                   )}
                 </CardContent>
               </Card>
@@ -364,54 +440,76 @@ const ContentManagement = () => {
                       <Loader2 className="h-8 w-8 animate-spin" />
                     </div>
                   ) : (
-                    <div className="space-y-4">
-                      {testimonials.map((testimonial: any) => (
-                        <div key={testimonial.id} className={`border rounded-lg p-4 flex justify-between items-start ${testimonial.active === false ? 'opacity-60 bg-muted/50' : ''}`}>
-                          <div className="flex items-start gap-4">
-                            {testimonial.image_url ? (
-                              <img src={testimonial.image_url} alt={testimonial.name} className={`w-12 h-12 rounded-full object-cover ${testimonial.active === false ? 'grayscale' : ''}`} />
-                            ) : (
-                              <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
-                                <MessageSquare className="h-6 w-6 text-muted-foreground" />
-                              </div>
-                            )}
-                            <div>
-                              <div className="flex items-center gap-2">
-                                <h3 className="font-semibold">{testimonial.name}</h3>
-                                {testimonial.active === false && (
-                                  <Badge variant="secondary" className="text-xs">
-                                    <EyeOff className="h-3 w-3 mr-1" />
-                                    Inactive
-                                  </Badge>
-                                )}
-                              </div>
-                              <p className="text-sm text-muted-foreground">{testimonial.role}</p>
-                              <p className="text-sm mt-2 italic line-clamp-2">"{testimonial.quote}"</p>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <div className="flex items-center gap-1">
-                              <Switch
-                                checked={testimonial.active !== false}
-                                onCheckedChange={(checked) => toggleTestimonialActive(testimonial.id, checked)}
-                              />
-                              <span className="text-xs text-muted-foreground">{testimonial.active !== false ? 'Active' : 'Hidden'}</span>
-                            </div>
-                            <Button size="sm" variant="outline" onClick={() => handleEdit(testimonial, 'testimonials')}>
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button size="sm" variant="destructive" onClick={() => handleDelete(testimonial.id, 'testimonials')}>
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                      {testimonials.length === 0 && (
-                        <div className="text-center py-8 text-gray-500">
-                          No testimonials yet. Click "Add Testimonial" to get started.
+                    <>
+                      <BulkActionBar
+                        selectedCount={selectedTestimonials.size}
+                        onActivate={() => handleBulkActivate('testimonials', selectedTestimonials, true)}
+                        onDeactivate={() => handleBulkActivate('testimonials', selectedTestimonials, false)}
+                        onClearSelection={() => setSelectedTestimonials(new Set())}
+                      />
+                      {testimonials.length > 0 && (
+                        <div className="flex items-center gap-2 mb-4">
+                          <Checkbox
+                            checked={selectedTestimonials.size === testimonials.length && testimonials.length > 0}
+                            onCheckedChange={() => selectAll(testimonials, selectedTestimonials, setSelectedTestimonials)}
+                          />
+                          <span className="text-sm text-muted-foreground">Select all</span>
                         </div>
                       )}
-                    </div>
+                      <div className="space-y-4">
+                        {testimonials.map((testimonial: any) => (
+                          <div key={testimonial.id} className={`border rounded-lg p-4 flex justify-between items-start ${testimonial.active === false ? 'opacity-60 bg-muted/50' : ''}`}>
+                            <div className="flex items-start gap-4">
+                              <Checkbox
+                                checked={selectedTestimonials.has(testimonial.id)}
+                                onCheckedChange={() => toggleSelection(testimonial.id, selectedTestimonials, setSelectedTestimonials)}
+                                className="mt-1"
+                              />
+                              {testimonial.image_url ? (
+                                <img src={testimonial.image_url} alt={testimonial.name} className={`w-12 h-12 rounded-full object-cover ${testimonial.active === false ? 'grayscale' : ''}`} />
+                              ) : (
+                                <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
+                                  <MessageSquare className="h-6 w-6 text-muted-foreground" />
+                                </div>
+                              )}
+                              <div>
+                                <div className="flex items-center gap-2">
+                                  <h3 className="font-semibold">{testimonial.name}</h3>
+                                  {testimonial.active === false && (
+                                    <Badge variant="secondary" className="text-xs">
+                                      <EyeOff className="h-3 w-3 mr-1" />
+                                      Inactive
+                                    </Badge>
+                                  )}
+                                </div>
+                                <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                                <p className="text-sm mt-2 italic line-clamp-2">"{testimonial.quote}"</p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <div className="flex items-center gap-1">
+                                <Switch
+                                  checked={testimonial.active !== false}
+                                  onCheckedChange={(checked) => toggleTestimonialActive(testimonial.id, checked)}
+                                />
+                                <span className="text-xs text-muted-foreground">{testimonial.active !== false ? 'Active' : 'Hidden'}</span>
+                              </div>
+                              <Button size="sm" variant="outline" onClick={() => handleEdit(testimonial, 'testimonials')}>
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button size="sm" variant="destructive" onClick={() => handleDelete(testimonial.id, 'testimonials')}>
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        ))}
+                        {testimonials.length === 0 && (
+                          <div className="text-center py-8 text-gray-500">
+                            No testimonials yet. Click "Add Testimonial" to get started.
+                          </div>
+                        )}
+                      </div>
+                    </>
                   )}
                 </CardContent>
               </Card>
@@ -438,45 +536,54 @@ const ContentManagement = () => {
                       <Loader2 className="h-8 w-8 animate-spin" />
                     </div>
                   ) : (
-                    <div className="space-y-4">
-                      {metrics.map((metric: any) => (
-                        <div key={metric.id} className={`border rounded-lg p-4 flex justify-between items-center ${metric.active === false ? 'opacity-60 bg-muted/50' : ''}`}>
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <h3 className="font-semibold text-2xl">{metric.metric_value}</h3>
-                              {metric.active === false && (
-                                <Badge variant="secondary" className="text-xs">
-                                  <EyeOff className="h-3 w-3 mr-1" />
-                                  Inactive
-                                </Badge>
-                              )}
-                            </div>
-                            <p className="text-sm text-gray-600">{metric.metric_name}</p>
-                            <p className="text-xs text-gray-500">Category: {metric.category || 'None'}</p>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <div className="flex items-center gap-1">
-                              <Switch
-                                checked={metric.active !== false}
-                                onCheckedChange={(checked) => toggleMetricActive(metric.id, checked)}
-                              />
-                              <span className="text-xs text-muted-foreground">{metric.active !== false ? 'Active' : 'Hidden'}</span>
-                            </div>
-                            <Button size="sm" variant="outline" onClick={() => handleEdit(metric, 'metrics')}>
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button size="sm" variant="destructive" onClick={() => handleDelete(metric.id, 'metrics')}>
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                      {metrics.length === 0 && (
-                        <div className="text-center py-8 text-gray-500">
-                          No metrics yet. Click "Add Metric" to get started.
+                    <>
+                      <BulkActionBar
+                        selectedCount={selectedMetrics.size}
+                        onActivate={() => handleBulkActivate('metrics', selectedMetrics, true)}
+                        onDeactivate={() => handleBulkActivate('metrics', selectedMetrics, false)}
+                        onClearSelection={() => setSelectedMetrics(new Set())}
+                      />
+                      {metrics.length > 0 && (
+                        <div className="flex items-center gap-2 mb-4">
+                          <Checkbox
+                            checked={selectedMetrics.size === metrics.length}
+                            onCheckedChange={() => selectAll(metrics, selectedMetrics, setSelectedMetrics)}
+                          />
+                          <span className="text-sm text-muted-foreground">Select all</span>
                         </div>
                       )}
-                    </div>
+                      <div className="space-y-4">
+                        {metrics.map((metric: any) => (
+                          <div key={metric.id} className={`border rounded-lg p-4 flex justify-between items-center ${metric.active === false ? 'opacity-60 bg-muted/50' : ''}`}>
+                            <div className="flex items-center gap-4">
+                              <Checkbox
+                                checked={selectedMetrics.has(metric.id)}
+                                onCheckedChange={() => toggleSelection(metric.id, selectedMetrics, setSelectedMetrics)}
+                              />
+                              <div>
+                                <div className="flex items-center gap-2">
+                                  <h3 className="font-semibold text-2xl">{metric.metric_value}</h3>
+                                  {metric.active === false && (
+                                    <Badge variant="secondary" className="text-xs">
+                                      <EyeOff className="h-3 w-3 mr-1" />
+                                      Inactive
+                                    </Badge>
+                                  )}
+                                </div>
+                                <p className="text-sm text-gray-600">{metric.metric_name}</p>
+                                <p className="text-xs text-gray-500">Category: {metric.category || 'None'}</p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Switch checked={metric.active !== false} onCheckedChange={(checked) => toggleMetricActive(metric.id, checked)} />
+                              <Button size="sm" variant="outline" onClick={() => handleEdit(metric, 'metrics')}><Edit className="h-4 w-4" /></Button>
+                              <Button size="sm" variant="destructive" onClick={() => handleDelete(metric.id, 'metrics')}><Trash2 className="h-4 w-4" /></Button>
+                            </div>
+                          </div>
+                        ))}
+                        {metrics.length === 0 && <div className="text-center py-8 text-gray-500">No metrics yet.</div>}
+                      </div>
+                    </>
                   )}
                 </CardContent>
               </Card>
@@ -489,78 +596,50 @@ const ContentManagement = () => {
                   <div className="flex justify-between items-center">
                     <div>
                       <CardTitle>Success Stories</CardTitle>
-                      <CardDescription>Manage inspiring success stories with view analytics</CardDescription>
+                      <CardDescription>Manage inspiring success stories</CardDescription>
                     </div>
-                    <Button onClick={() => handleAdd('stories')}>
-                      <Plus className="mr-2 h-4 w-4" />
-                      Add Story
-                    </Button>
+                    <Button onClick={() => handleAdd('stories')}><Plus className="mr-2 h-4 w-4" />Add Story</Button>
                   </div>
                 </CardHeader>
                 <CardContent>
                   {storiesLoading ? (
-                    <div className="flex justify-center py-8">
-                      <Loader2 className="h-8 w-8 animate-spin" />
-                    </div>
+                    <div className="flex justify-center py-8"><Loader2 className="h-8 w-8 animate-spin" /></div>
                   ) : (
-                    <div className="space-y-4">
-                      {[...stories].sort((a: any, b: any) => (b.view_count || 0) - (a.view_count || 0)).map((story: any) => (
-                        <div key={story.id} className={`border rounded-lg p-4 flex justify-between items-start ${story.active === false ? 'opacity-60 bg-muted/50' : ''}`}>
-                          <div className="flex gap-4 flex-1">
-                            {story.image_url ? (
-                              <img src={story.image_url} alt={story.title} className={`w-20 h-20 rounded object-cover ${story.active === false ? 'grayscale' : ''}`} />
-                            ) : (
-                              <div className="w-20 h-20 rounded bg-muted flex items-center justify-center">
-                                <Star className="h-8 w-8 text-muted-foreground" />
-                              </div>
-                            )}
-                            <div className="flex-1">
-                              <div className="flex items-start justify-between gap-4">
-                                <div>
-                                  <div className="flex items-center gap-2">
-                                    <h3 className="font-semibold">{story.title}</h3>
-                                    {story.active === false && (
-                                      <Badge variant="secondary" className="text-xs">
-                                        <EyeOff className="h-3 w-3 mr-1" />
-                                        Inactive
-                                      </Badge>
-                                    )}
-                                  </div>
-                                  <p className="text-sm text-gray-600 mt-1 line-clamp-2">{story.description}</p>
-                                  <div className="flex items-center gap-3 mt-2">
-                                    <p className="text-xs text-gray-500">Category: {story.category || 'None'}</p>
-                                    <div className="flex items-center gap-1 text-xs font-medium text-utu-red">
-                                      <BarChart className="h-3 w-3" />
-                                      <span>{story.view_count || 0} views</span>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <div className="flex items-center gap-1">
-                              <Switch
-                                checked={story.active !== false}
-                                onCheckedChange={(checked) => toggleStoryActive(story.id, checked)}
-                              />
-                              <span className="text-xs text-muted-foreground">{story.active !== false ? 'Active' : 'Hidden'}</span>
-                            </div>
-                            <Button size="sm" variant="outline" onClick={() => handleEdit(story, 'stories')}>
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button size="sm" variant="destructive" onClick={() => handleDelete(story.id, 'stories')}>
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                      {stories.length === 0 && (
-                        <div className="text-center py-8 text-gray-500">
-                          No success stories yet. Click "Add Story" to get started.
+                    <>
+                      <BulkActionBar
+                        selectedCount={selectedStories.size}
+                        onActivate={() => handleBulkActivate('stories', selectedStories, true)}
+                        onDeactivate={() => handleBulkActivate('stories', selectedStories, false)}
+                        onClearSelection={() => setSelectedStories(new Set())}
+                      />
+                      {stories.length > 0 && (
+                        <div className="flex items-center gap-2 mb-4">
+                          <Checkbox checked={selectedStories.size === stories.length} onCheckedChange={() => selectAll(stories, selectedStories, setSelectedStories)} />
+                          <span className="text-sm text-muted-foreground">Select all</span>
                         </div>
                       )}
-                    </div>
+                      <div className="space-y-4">
+                        {[...stories].sort((a: any, b: any) => (b.view_count || 0) - (a.view_count || 0)).map((story: any) => (
+                          <div key={story.id} className={`border rounded-lg p-4 flex justify-between items-start ${story.active === false ? 'opacity-60 bg-muted/50' : ''}`}>
+                            <div className="flex gap-4 flex-1">
+                              <Checkbox checked={selectedStories.has(story.id)} onCheckedChange={() => toggleSelection(story.id, selectedStories, setSelectedStories)} className="mt-1" />
+                              {story.image_url ? <img src={story.image_url} alt={story.title} className={`w-20 h-20 rounded object-cover ${story.active === false ? 'grayscale' : ''}`} /> : <div className="w-20 h-20 rounded bg-muted flex items-center justify-center"><Star className="h-8 w-8 text-muted-foreground" /></div>}
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2"><h3 className="font-semibold">{story.title}</h3>{story.active === false && <Badge variant="secondary" className="text-xs"><EyeOff className="h-3 w-3 mr-1" />Inactive</Badge>}</div>
+                                <p className="text-sm text-gray-600 mt-1 line-clamp-2">{story.description}</p>
+                                <div className="flex items-center gap-3 mt-2"><p className="text-xs text-gray-500">Category: {story.category || 'None'}</p><div className="flex items-center gap-1 text-xs font-medium text-utu-red"><BarChart className="h-3 w-3" /><span>{story.view_count || 0} views</span></div></div>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Switch checked={story.active !== false} onCheckedChange={(checked) => toggleStoryActive(story.id, checked)} />
+                              <Button size="sm" variant="outline" onClick={() => handleEdit(story, 'stories')}><Edit className="h-4 w-4" /></Button>
+                              <Button size="sm" variant="destructive" onClick={() => handleDelete(story.id, 'stories')}><Trash2 className="h-4 w-4" /></Button>
+                            </div>
+                          </div>
+                        ))}
+                        {stories.length === 0 && <div className="text-center py-8 text-gray-500">No success stories yet.</div>}
+                      </div>
+                    </>
                   )}
                 </CardContent>
               </Card>
@@ -571,72 +650,55 @@ const ContentManagement = () => {
               <Card>
                 <CardHeader>
                   <div className="flex justify-between items-center">
-                    <div>
-                      <CardTitle>Gallery</CardTitle>
-                      <CardDescription>Manage gallery images</CardDescription>
-                    </div>
+                    <div><CardTitle>Gallery</CardTitle><CardDescription>Manage gallery images</CardDescription></div>
                     <div className="flex gap-2">
-                      <Button variant="outline" onClick={() => setBatchDialogOpen(true)}>
-                        <Images className="mr-2 h-4 w-4" />
-                        Batch Upload
-                      </Button>
-                      <Button onClick={() => handleAdd('gallery')}>
-                        <Plus className="mr-2 h-4 w-4" />
-                        Add Image
-                      </Button>
+                      <Button variant="outline" onClick={() => setBatchDialogOpen(true)}><Images className="mr-2 h-4 w-4" />Batch Upload</Button>
+                      <Button onClick={() => handleAdd('gallery')}><Plus className="mr-2 h-4 w-4" />Add Image</Button>
                     </div>
                   </div>
                 </CardHeader>
                 <CardContent>
                   {galleryLoading ? (
-                    <div className="flex justify-center py-8">
-                      <Loader2 className="h-8 w-8 animate-spin" />
-                    </div>
+                    <div className="flex justify-center py-8"><Loader2 className="h-8 w-8 animate-spin" /></div>
                   ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {images.map((image: any) => (
-                        <div key={image.id} className={`border rounded-lg overflow-hidden ${image.active === false ? 'opacity-60 bg-muted/50' : ''}`}>
-                          <div className="relative">
-                            <img src={image.image_url} alt={image.title} className={`w-full h-48 object-cover ${image.active === false ? 'grayscale' : ''}`} />
-                            {image.active === false && (
-                              <Badge variant="secondary" className="absolute top-2 right-2 text-xs">
-                                <EyeOff className="h-3 w-3 mr-1" />
-                                Inactive
-                              </Badge>
-                            )}
-                          </div>
-                          <div className="p-4">
-                            <h3 className="font-semibold">{image.title}</h3>
-                            {image.description && (
-                              <p className="text-sm text-gray-600 mt-1">{image.description}</p>
-                            )}
-                            <p className="text-xs text-gray-500 mt-1">Category: {image.category || 'None'}</p>
-                            <div className="flex items-center justify-between gap-2 mt-3">
-                              <div className="flex items-center gap-1">
-                                <Switch
-                                  checked={image.active !== false}
-                                  onCheckedChange={(checked) => toggleImageActive(image.id, checked)}
-                                />
-                                <span className="text-xs text-muted-foreground">{image.active !== false ? 'Active' : 'Hidden'}</span>
-                              </div>
-                              <div className="flex gap-2">
-                                <Button size="sm" variant="outline" onClick={() => handleEdit(image, 'gallery')}>
-                                  <Edit className="h-4 w-4" />
-                                </Button>
-                                <Button size="sm" variant="destructive" onClick={() => handleDelete(image.id, 'gallery')}>
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
+                    <>
+                      <BulkActionBar
+                        selectedCount={selectedImages.size}
+                        onActivate={() => handleBulkActivate('gallery', selectedImages, true)}
+                        onDeactivate={() => handleBulkActivate('gallery', selectedImages, false)}
+                        onClearSelection={() => setSelectedImages(new Set())}
+                      />
+                      {images.length > 0 && (
+                        <div className="flex items-center gap-2 mb-4">
+                          <Checkbox checked={selectedImages.size === images.length} onCheckedChange={() => selectAll(images, selectedImages, setSelectedImages)} />
+                          <span className="text-sm text-muted-foreground">Select all</span>
+                        </div>
+                      )}
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {images.map((image: any) => (
+                          <div key={image.id} className={`border rounded-lg overflow-hidden ${image.active === false ? 'opacity-60 bg-muted/50' : ''}`}>
+                            <div className="relative">
+                              <Checkbox checked={selectedImages.has(image.id)} onCheckedChange={() => toggleSelection(image.id, selectedImages, setSelectedImages)} className="absolute top-2 left-2 z-10 bg-background" />
+                              <img src={image.image_url} alt={image.title} className={`w-full h-48 object-cover ${image.active === false ? 'grayscale' : ''}`} />
+                              {image.active === false && <Badge variant="secondary" className="absolute top-2 right-2 text-xs"><EyeOff className="h-3 w-3 mr-1" />Inactive</Badge>}
+                            </div>
+                            <div className="p-4">
+                              <h3 className="font-semibold">{image.title}</h3>
+                              {image.description && <p className="text-sm text-gray-600 mt-1">{image.description}</p>}
+                              <p className="text-xs text-gray-500 mt-1">Category: {image.category || 'None'}</p>
+                              <div className="flex items-center justify-between gap-2 mt-3">
+                                <Switch checked={image.active !== false} onCheckedChange={(checked) => toggleImageActive(image.id, checked)} />
+                                <div className="flex gap-2">
+                                  <Button size="sm" variant="outline" onClick={() => handleEdit(image, 'gallery')}><Edit className="h-4 w-4" /></Button>
+                                  <Button size="sm" variant="destructive" onClick={() => handleDelete(image.id, 'gallery')}><Trash2 className="h-4 w-4" /></Button>
+                                </div>
                               </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
-                      {images.length === 0 && (
-                        <div className="col-span-full text-center py-8 text-gray-500">
-                          No gallery images yet. Click "Add Image" to get started.
-                        </div>
-                      )}
-                    </div>
+                        ))}
+                        {images.length === 0 && <div className="col-span-full text-center py-8 text-gray-500">No gallery images yet.</div>}
+                      </div>
+                    </>
                   )}
                 </CardContent>
               </Card>

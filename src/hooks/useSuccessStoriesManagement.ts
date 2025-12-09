@@ -194,6 +194,32 @@ export const useSuccessStoriesManagement = () => {
     }
   });
 
+  const bulkToggleActiveMutation = useMutation({
+    mutationFn: async ({ ids, active }: { ids: string[]; active: boolean }) => {
+      const { error } = await supabase
+        .from('success_stories')
+        .update({ active })
+        .in('id', ids);
+      
+      if (error) throw error;
+    },
+    onSuccess: (_, { ids, active }) => {
+      queryClient.invalidateQueries({ queryKey: ['success-stories'] });
+      toast({
+        title: "Success",
+        description: `${ids.length} stories ${active ? 'activated' : 'deactivated'} successfully.`,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to update stories status.",
+        variant: "destructive",
+      });
+      console.error(error);
+    }
+  });
+
   return {
     stories,
     loading: isLoading,
@@ -202,5 +228,7 @@ export const useSuccessStoriesManagement = () => {
     deleteStory: deleteMutation.mutateAsync,
     toggleStoryActive: (id: string, active: boolean) => 
       toggleActiveMutation.mutateAsync({ id, active }),
+    bulkToggleStoriesActive: (ids: string[], active: boolean) =>
+      bulkToggleActiveMutation.mutateAsync({ ids, active }),
   };
 };
