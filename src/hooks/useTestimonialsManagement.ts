@@ -204,6 +204,32 @@ export const useTestimonialsManagement = () => {
     }
   });
 
+  const bulkDeleteMutation = useMutation({
+    mutationFn: async (ids: string[]) => {
+      const { error } = await (supabase as any)
+        .from('testimonials')
+        .delete()
+        .in('id', ids);
+      
+      if (error) throw error;
+    },
+    onSuccess: (_, ids) => {
+      queryClient.invalidateQueries({ queryKey: ['testimonials'] });
+      toast({
+        title: "Success",
+        description: `${ids.length} testimonials deleted successfully.`,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to delete testimonials.",
+        variant: "destructive",
+      });
+      console.error(error);
+    }
+  });
+
   return {
     testimonials,
     loading: isLoading,
@@ -216,6 +242,8 @@ export const useTestimonialsManagement = () => {
       toggleActiveMutation.mutateAsync({ id, active }),
     bulkToggleTestimonialsActive: (ids: string[], active: boolean) =>
       bulkToggleActiveMutation.mutateAsync({ ids, active }),
+    bulkDeleteTestimonials: (ids: string[]) =>
+      bulkDeleteMutation.mutateAsync(ids),
     refetch: () => queryClient.invalidateQueries({ queryKey: ['testimonials'] })
   };
 };

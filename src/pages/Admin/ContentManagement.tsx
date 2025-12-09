@@ -42,11 +42,11 @@ const ContentManagement = () => {
 
   // Management hooks
   const { teamMembers, loading: teamLoading, addTeamMember, updateTeamMember, deleteTeamMember, reorderTeamMembers } = useTeamManagement();
-  const { programs, loading: programsLoading, addProgram, updateProgram, deleteProgram, toggleProgramActive, bulkToggleProgramsActive } = useProgramsManagement();
-  const { testimonials, loading: testimonialsLoading, addTestimonial, updateTestimonial, deleteTestimonial, toggleTestimonialActive, bulkToggleTestimonialsActive } = useTestimonialsManagement();
-  const { metrics, loading: metricsLoading, addMetric, updateMetric, deleteMetric, toggleMetricActive, bulkToggleMetricsActive } = useMetricsManagement();
-  const { stories, loading: storiesLoading, addStory, updateStory, deleteStory, toggleStoryActive, bulkToggleStoriesActive } = useSuccessStoriesManagement();
-  const { images, loading: galleryLoading, addImage, batchAddImages, isBatchUploading, updateImage, deleteImage, toggleImageActive, bulkToggleImagesActive } = useGalleryManagement();
+  const { programs, loading: programsLoading, addProgram, updateProgram, deleteProgram, toggleProgramActive, bulkToggleProgramsActive, bulkDeletePrograms } = useProgramsManagement();
+  const { testimonials, loading: testimonialsLoading, addTestimonial, updateTestimonial, deleteTestimonial, toggleTestimonialActive, bulkToggleTestimonialsActive, bulkDeleteTestimonials } = useTestimonialsManagement();
+  const { metrics, loading: metricsLoading, addMetric, updateMetric, deleteMetric, toggleMetricActive, bulkToggleMetricsActive, bulkDeleteMetrics } = useMetricsManagement();
+  const { stories, loading: storiesLoading, addStory, updateStory, deleteStory, toggleStoryActive, bulkToggleStoriesActive, bulkDeleteStories } = useSuccessStoriesManagement();
+  const { images, loading: galleryLoading, addImage, batchAddImages, isBatchUploading, updateImage, deleteImage, toggleImageActive, bulkToggleImagesActive, bulkDeleteImages } = useGalleryManagement();
   const [batchDialogOpen, setBatchDialogOpen] = useState(false);
   const [batchCategory, setBatchCategory] = useState('');
 
@@ -92,6 +92,34 @@ const ContentManagement = () => {
       }
     } catch (error) {
       console.error('Bulk action failed:', error);
+    }
+  };
+
+  const handleBulkDelete = async (type: string, ids: Set<string>) => {
+    const idArray = Array.from(ids);
+    if (idArray.length === 0) return;
+    
+    if (!confirm(`Are you sure you want to permanently delete ${idArray.length} item(s)? This cannot be undone.`)) return;
+    
+    try {
+      if (type === 'programs') {
+        await bulkDeletePrograms(idArray);
+        setSelectedPrograms(new Set());
+      } else if (type === 'testimonials') {
+        await bulkDeleteTestimonials(idArray);
+        setSelectedTestimonials(new Set());
+      } else if (type === 'metrics') {
+        await bulkDeleteMetrics(idArray);
+        setSelectedMetrics(new Set());
+      } else if (type === 'stories') {
+        await bulkDeleteStories(idArray);
+        setSelectedStories(new Set());
+      } else if (type === 'gallery') {
+        await bulkDeleteImages(idArray);
+        setSelectedImages(new Set());
+      }
+    } catch (error) {
+      console.error('Bulk delete failed:', error);
     }
   };
 
@@ -349,6 +377,7 @@ const ContentManagement = () => {
                         selectedCount={selectedPrograms.size}
                         onActivate={() => handleBulkActivate('programs', selectedPrograms, true)}
                         onDeactivate={() => handleBulkActivate('programs', selectedPrograms, false)}
+                        onDelete={() => handleBulkDelete('programs', selectedPrograms)}
                         onClearSelection={() => setSelectedPrograms(new Set())}
                       />
                       {programs.length > 0 && (
@@ -445,6 +474,7 @@ const ContentManagement = () => {
                         selectedCount={selectedTestimonials.size}
                         onActivate={() => handleBulkActivate('testimonials', selectedTestimonials, true)}
                         onDeactivate={() => handleBulkActivate('testimonials', selectedTestimonials, false)}
+                        onDelete={() => handleBulkDelete('testimonials', selectedTestimonials)}
                         onClearSelection={() => setSelectedTestimonials(new Set())}
                       />
                       {testimonials.length > 0 && (
@@ -541,6 +571,7 @@ const ContentManagement = () => {
                         selectedCount={selectedMetrics.size}
                         onActivate={() => handleBulkActivate('metrics', selectedMetrics, true)}
                         onDeactivate={() => handleBulkActivate('metrics', selectedMetrics, false)}
+                        onDelete={() => handleBulkDelete('metrics', selectedMetrics)}
                         onClearSelection={() => setSelectedMetrics(new Set())}
                       />
                       {metrics.length > 0 && (
@@ -610,6 +641,7 @@ const ContentManagement = () => {
                         selectedCount={selectedStories.size}
                         onActivate={() => handleBulkActivate('stories', selectedStories, true)}
                         onDeactivate={() => handleBulkActivate('stories', selectedStories, false)}
+                        onDelete={() => handleBulkDelete('stories', selectedStories)}
                         onClearSelection={() => setSelectedStories(new Set())}
                       />
                       {stories.length > 0 && (
@@ -666,6 +698,7 @@ const ContentManagement = () => {
                         selectedCount={selectedImages.size}
                         onActivate={() => handleBulkActivate('gallery', selectedImages, true)}
                         onDeactivate={() => handleBulkActivate('gallery', selectedImages, false)}
+                        onDelete={() => handleBulkDelete('gallery', selectedImages)}
                         onClearSelection={() => setSelectedImages(new Set())}
                       />
                       {images.length > 0 && (
