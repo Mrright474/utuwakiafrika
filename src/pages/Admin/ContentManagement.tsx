@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Navigate, Link } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,10 +8,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Loader2, Users, FileText, MessageSquare, BarChart, Plus, Edit, Trash2, LogOut, ArrowLeft, Star, Image as ImageIcon, Images, EyeOff, Eye, CheckSquare, Square } from 'lucide-react';
+import { Loader2, Users, FileText, MessageSquare, BarChart, Plus, Edit, Trash2, LogOut, ArrowLeft, Star, Image as ImageIcon, Images, EyeOff, Eye, CheckSquare, Square, Filter } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { useTeamManagement, TeamMember } from '@/hooks/useTeamManagement';
 import { useProgramsManagement } from '@/hooks/useProgramsManagement';
@@ -24,6 +25,8 @@ import BatchImageUpload from '@/components/home/BatchImageUpload';
 import SortableTeamList from '@/components/admin/SortableTeamList';
 import BulkActionBar from '@/components/admin/BulkActionBar';
 
+type StatusFilter = 'all' | 'active' | 'inactive';
+
 const ContentManagement = () => {
   const { user, isAdmin, loading: authLoading, signOut } = useAdminAuth();
   const [activeTab, setActiveTab] = useState('team');
@@ -32,6 +35,13 @@ const ContentManagement = () => {
   const [editingItem, setEditingItem] = useState<any>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>('');
+
+  // Status filter state for each tab
+  const [programsFilter, setProgramsFilter] = useState<StatusFilter>('all');
+  const [testimonialsFilter, setTestimonialsFilter] = useState<StatusFilter>('all');
+  const [metricsFilter, setMetricsFilter] = useState<StatusFilter>('all');
+  const [storiesFilter, setStoriesFilter] = useState<StatusFilter>('all');
+  const [galleryFilter, setGalleryFilter] = useState<StatusFilter>('all');
 
   // Bulk selection state
   const [selectedPrograms, setSelectedPrograms] = useState<Set<string>>(new Set());
@@ -49,6 +59,20 @@ const ContentManagement = () => {
   const { images, loading: galleryLoading, addImage, batchAddImages, isBatchUploading, updateImage, deleteImage, toggleImageActive, bulkToggleImagesActive, bulkDeleteImages } = useGalleryManagement();
   const [batchDialogOpen, setBatchDialogOpen] = useState(false);
   const [batchCategory, setBatchCategory] = useState('');
+
+  // Filter helper function
+  const filterByStatus = <T extends { active?: boolean }>(items: T[], filter: StatusFilter): T[] => {
+    if (filter === 'all') return items;
+    if (filter === 'active') return items.filter(item => item.active !== false);
+    return items.filter(item => item.active === false);
+  };
+
+  // Filtered data
+  const filteredPrograms = useMemo(() => filterByStatus(programs, programsFilter), [programs, programsFilter]);
+  const filteredTestimonials = useMemo(() => filterByStatus(testimonials, testimonialsFilter), [testimonials, testimonialsFilter]);
+  const filteredMetrics = useMemo(() => filterByStatus(metrics, metricsFilter), [metrics, metricsFilter]);
+  const filteredStories = useMemo(() => filterByStatus(stories, storiesFilter), [stories, storiesFilter]);
+  const filteredImages = useMemo(() => filterByStatus(images, galleryFilter), [images, galleryFilter]);
 
   // Bulk selection helpers
   const toggleSelection = (id: string, selected: Set<string>, setSelected: React.Dispatch<React.SetStateAction<Set<string>>>) => {
@@ -373,6 +397,21 @@ const ContentManagement = () => {
                     </div>
                   ) : (
                     <>
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-2">
+                          <Filter className="h-4 w-4 text-muted-foreground" />
+                          <Select value={programsFilter} onValueChange={(value: StatusFilter) => setProgramsFilter(value)}>
+                            <SelectTrigger className="w-[140px]">
+                              <SelectValue placeholder="Filter by status" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all">All ({programs.length})</SelectItem>
+                              <SelectItem value="active">Active ({programs.filter(p => p.active !== false).length})</SelectItem>
+                              <SelectItem value="inactive">Inactive ({programs.filter(p => p.active === false).length})</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
                       <BulkActionBar
                         selectedCount={selectedPrograms.size}
                         onActivate={() => handleBulkActivate('programs', selectedPrograms, true)}
@@ -380,17 +419,17 @@ const ContentManagement = () => {
                         onDelete={() => handleBulkDelete('programs', selectedPrograms)}
                         onClearSelection={() => setSelectedPrograms(new Set())}
                       />
-                      {programs.length > 0 && (
+                      {filteredPrograms.length > 0 && (
                         <div className="flex items-center gap-2 mb-4">
                           <Checkbox
-                            checked={selectedPrograms.size === programs.length && programs.length > 0}
-                            onCheckedChange={() => selectAll(programs, selectedPrograms, setSelectedPrograms)}
+                            checked={selectedPrograms.size === filteredPrograms.length && filteredPrograms.length > 0}
+                            onCheckedChange={() => selectAll(filteredPrograms, selectedPrograms, setSelectedPrograms)}
                           />
-                          <span className="text-sm text-muted-foreground">Select all</span>
+                          <span className="text-sm text-muted-foreground">Select all ({filteredPrograms.length})</span>
                         </div>
                       )}
                       <div className="space-y-4">
-                        {programs.map((program: any) => (
+                        {filteredPrograms.map((program: any) => (
                           <div key={program.id} className={`border rounded-lg p-4 flex justify-between items-start ${program.active === false ? 'opacity-60 bg-muted/50' : ''}`}>
                             <div className="flex gap-4 flex-1">
                               <Checkbox
@@ -436,9 +475,9 @@ const ContentManagement = () => {
                             </div>
                           </div>
                         ))}
-                        {programs.length === 0 && (
+                        {filteredPrograms.length === 0 && (
                           <div className="text-center py-8 text-gray-500">
-                            No programs yet. Click "Add Program" to get started.
+                            {programs.length === 0 ? "No programs yet. Click \"Add Program\" to get started." : "No programs match the current filter."}
                           </div>
                         )}
                       </div>
@@ -470,6 +509,21 @@ const ContentManagement = () => {
                     </div>
                   ) : (
                     <>
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-2">
+                          <Filter className="h-4 w-4 text-muted-foreground" />
+                          <Select value={testimonialsFilter} onValueChange={(value: StatusFilter) => setTestimonialsFilter(value)}>
+                            <SelectTrigger className="w-[140px]">
+                              <SelectValue placeholder="Filter by status" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all">All ({testimonials.length})</SelectItem>
+                              <SelectItem value="active">Active ({testimonials.filter(t => t.active !== false).length})</SelectItem>
+                              <SelectItem value="inactive">Inactive ({testimonials.filter(t => t.active === false).length})</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
                       <BulkActionBar
                         selectedCount={selectedTestimonials.size}
                         onActivate={() => handleBulkActivate('testimonials', selectedTestimonials, true)}
@@ -477,17 +531,17 @@ const ContentManagement = () => {
                         onDelete={() => handleBulkDelete('testimonials', selectedTestimonials)}
                         onClearSelection={() => setSelectedTestimonials(new Set())}
                       />
-                      {testimonials.length > 0 && (
+                      {filteredTestimonials.length > 0 && (
                         <div className="flex items-center gap-2 mb-4">
                           <Checkbox
-                            checked={selectedTestimonials.size === testimonials.length && testimonials.length > 0}
-                            onCheckedChange={() => selectAll(testimonials, selectedTestimonials, setSelectedTestimonials)}
+                            checked={selectedTestimonials.size === filteredTestimonials.length && filteredTestimonials.length > 0}
+                            onCheckedChange={() => selectAll(filteredTestimonials, selectedTestimonials, setSelectedTestimonials)}
                           />
-                          <span className="text-sm text-muted-foreground">Select all</span>
+                          <span className="text-sm text-muted-foreground">Select all ({filteredTestimonials.length})</span>
                         </div>
                       )}
                       <div className="space-y-4">
-                        {testimonials.map((testimonial: any) => (
+                        {filteredTestimonials.map((testimonial: any) => (
                           <div key={testimonial.id} className={`border rounded-lg p-4 flex justify-between items-start ${testimonial.active === false ? 'opacity-60 bg-muted/50' : ''}`}>
                             <div className="flex items-start gap-4">
                               <Checkbox
@@ -533,9 +587,9 @@ const ContentManagement = () => {
                             </div>
                           </div>
                         ))}
-                        {testimonials.length === 0 && (
+                        {filteredTestimonials.length === 0 && (
                           <div className="text-center py-8 text-gray-500">
-                            No testimonials yet. Click "Add Testimonial" to get started.
+                            {testimonials.length === 0 ? "No testimonials yet. Click \"Add Testimonial\" to get started." : "No testimonials match the current filter."}
                           </div>
                         )}
                       </div>
@@ -567,6 +621,21 @@ const ContentManagement = () => {
                     </div>
                   ) : (
                     <>
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-2">
+                          <Filter className="h-4 w-4 text-muted-foreground" />
+                          <Select value={metricsFilter} onValueChange={(value: StatusFilter) => setMetricsFilter(value)}>
+                            <SelectTrigger className="w-[140px]">
+                              <SelectValue placeholder="Filter by status" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all">All ({metrics.length})</SelectItem>
+                              <SelectItem value="active">Active ({metrics.filter(m => m.active !== false).length})</SelectItem>
+                              <SelectItem value="inactive">Inactive ({metrics.filter(m => m.active === false).length})</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
                       <BulkActionBar
                         selectedCount={selectedMetrics.size}
                         onActivate={() => handleBulkActivate('metrics', selectedMetrics, true)}
@@ -574,17 +643,17 @@ const ContentManagement = () => {
                         onDelete={() => handleBulkDelete('metrics', selectedMetrics)}
                         onClearSelection={() => setSelectedMetrics(new Set())}
                       />
-                      {metrics.length > 0 && (
+                      {filteredMetrics.length > 0 && (
                         <div className="flex items-center gap-2 mb-4">
                           <Checkbox
-                            checked={selectedMetrics.size === metrics.length}
-                            onCheckedChange={() => selectAll(metrics, selectedMetrics, setSelectedMetrics)}
+                            checked={selectedMetrics.size === filteredMetrics.length && filteredMetrics.length > 0}
+                            onCheckedChange={() => selectAll(filteredMetrics, selectedMetrics, setSelectedMetrics)}
                           />
-                          <span className="text-sm text-muted-foreground">Select all</span>
+                          <span className="text-sm text-muted-foreground">Select all ({filteredMetrics.length})</span>
                         </div>
                       )}
                       <div className="space-y-4">
-                        {metrics.map((metric: any) => (
+                        {filteredMetrics.map((metric: any) => (
                           <div key={metric.id} className={`border rounded-lg p-4 flex justify-between items-center ${metric.active === false ? 'opacity-60 bg-muted/50' : ''}`}>
                             <div className="flex items-center gap-4">
                               <Checkbox
@@ -612,7 +681,7 @@ const ContentManagement = () => {
                             </div>
                           </div>
                         ))}
-                        {metrics.length === 0 && <div className="text-center py-8 text-gray-500">No metrics yet.</div>}
+                        {filteredMetrics.length === 0 && <div className="text-center py-8 text-gray-500">{metrics.length === 0 ? "No metrics yet." : "No metrics match the current filter."}</div>}
                       </div>
                     </>
                   )}
@@ -637,6 +706,21 @@ const ContentManagement = () => {
                     <div className="flex justify-center py-8"><Loader2 className="h-8 w-8 animate-spin" /></div>
                   ) : (
                     <>
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-2">
+                          <Filter className="h-4 w-4 text-muted-foreground" />
+                          <Select value={storiesFilter} onValueChange={(value: StatusFilter) => setStoriesFilter(value)}>
+                            <SelectTrigger className="w-[140px]">
+                              <SelectValue placeholder="Filter by status" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all">All ({stories.length})</SelectItem>
+                              <SelectItem value="active">Active ({stories.filter(s => s.active !== false).length})</SelectItem>
+                              <SelectItem value="inactive">Inactive ({stories.filter(s => s.active === false).length})</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
                       <BulkActionBar
                         selectedCount={selectedStories.size}
                         onActivate={() => handleBulkActivate('stories', selectedStories, true)}
@@ -644,14 +728,14 @@ const ContentManagement = () => {
                         onDelete={() => handleBulkDelete('stories', selectedStories)}
                         onClearSelection={() => setSelectedStories(new Set())}
                       />
-                      {stories.length > 0 && (
+                      {filteredStories.length > 0 && (
                         <div className="flex items-center gap-2 mb-4">
-                          <Checkbox checked={selectedStories.size === stories.length} onCheckedChange={() => selectAll(stories, selectedStories, setSelectedStories)} />
-                          <span className="text-sm text-muted-foreground">Select all</span>
+                          <Checkbox checked={selectedStories.size === filteredStories.length && filteredStories.length > 0} onCheckedChange={() => selectAll(filteredStories, selectedStories, setSelectedStories)} />
+                          <span className="text-sm text-muted-foreground">Select all ({filteredStories.length})</span>
                         </div>
                       )}
                       <div className="space-y-4">
-                        {[...stories].sort((a: any, b: any) => (b.view_count || 0) - (a.view_count || 0)).map((story: any) => (
+                        {[...filteredStories].sort((a: any, b: any) => (b.view_count || 0) - (a.view_count || 0)).map((story: any) => (
                           <div key={story.id} className={`border rounded-lg p-4 flex justify-between items-start ${story.active === false ? 'opacity-60 bg-muted/50' : ''}`}>
                             <div className="flex gap-4 flex-1">
                               <Checkbox checked={selectedStories.has(story.id)} onCheckedChange={() => toggleSelection(story.id, selectedStories, setSelectedStories)} className="mt-1" />
@@ -669,7 +753,7 @@ const ContentManagement = () => {
                             </div>
                           </div>
                         ))}
-                        {stories.length === 0 && <div className="text-center py-8 text-gray-500">No success stories yet.</div>}
+                        {filteredStories.length === 0 && <div className="text-center py-8 text-gray-500">{stories.length === 0 ? "No success stories yet." : "No stories match the current filter."}</div>}
                       </div>
                     </>
                   )}
@@ -694,6 +778,21 @@ const ContentManagement = () => {
                     <div className="flex justify-center py-8"><Loader2 className="h-8 w-8 animate-spin" /></div>
                   ) : (
                     <>
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-2">
+                          <Filter className="h-4 w-4 text-muted-foreground" />
+                          <Select value={galleryFilter} onValueChange={(value: StatusFilter) => setGalleryFilter(value)}>
+                            <SelectTrigger className="w-[140px]">
+                              <SelectValue placeholder="Filter by status" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all">All ({images.length})</SelectItem>
+                              <SelectItem value="active">Active ({images.filter(i => i.active !== false).length})</SelectItem>
+                              <SelectItem value="inactive">Inactive ({images.filter(i => i.active === false).length})</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
                       <BulkActionBar
                         selectedCount={selectedImages.size}
                         onActivate={() => handleBulkActivate('gallery', selectedImages, true)}
@@ -701,14 +800,14 @@ const ContentManagement = () => {
                         onDelete={() => handleBulkDelete('gallery', selectedImages)}
                         onClearSelection={() => setSelectedImages(new Set())}
                       />
-                      {images.length > 0 && (
+                      {filteredImages.length > 0 && (
                         <div className="flex items-center gap-2 mb-4">
-                          <Checkbox checked={selectedImages.size === images.length} onCheckedChange={() => selectAll(images, selectedImages, setSelectedImages)} />
-                          <span className="text-sm text-muted-foreground">Select all</span>
+                          <Checkbox checked={selectedImages.size === filteredImages.length && filteredImages.length > 0} onCheckedChange={() => selectAll(filteredImages, selectedImages, setSelectedImages)} />
+                          <span className="text-sm text-muted-foreground">Select all ({filteredImages.length})</span>
                         </div>
                       )}
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {images.map((image: any) => (
+                        {filteredImages.map((image: any) => (
                           <div key={image.id} className={`border rounded-lg overflow-hidden ${image.active === false ? 'opacity-60 bg-muted/50' : ''}`}>
                             <div className="relative">
                               <Checkbox checked={selectedImages.has(image.id)} onCheckedChange={() => toggleSelection(image.id, selectedImages, setSelectedImages)} className="absolute top-2 left-2 z-10 bg-background" />
@@ -729,7 +828,7 @@ const ContentManagement = () => {
                             </div>
                           </div>
                         ))}
-                        {images.length === 0 && <div className="col-span-full text-center py-8 text-gray-500">No gallery images yet.</div>}
+                        {filteredImages.length === 0 && <div className="col-span-full text-center py-8 text-gray-500">{images.length === 0 ? "No gallery images yet." : "No images match the current filter."}</div>}
                       </div>
                     </>
                   )}
