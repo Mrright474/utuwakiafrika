@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Loader2, Users, FileText, MessageSquare, BarChart, Plus, Edit, Trash2, LogOut, ArrowLeft, Star, Image as ImageIcon, Images, EyeOff, Eye, CheckSquare, Square, Filter } from 'lucide-react';
+import { Loader2, Users, FileText, MessageSquare, BarChart, Plus, Edit, Trash2, LogOut, ArrowLeft, Star, Image as ImageIcon, Images, EyeOff, Eye, CheckSquare, Square, Filter, Search, X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -43,6 +43,14 @@ const ContentManagement = () => {
   const [storiesFilter, setStoriesFilter] = useState<StatusFilter>('all');
   const [galleryFilter, setGalleryFilter] = useState<StatusFilter>('all');
 
+  // Search state for each tab
+  const [teamSearch, setTeamSearch] = useState('');
+  const [programsSearch, setProgramsSearch] = useState('');
+  const [testimonialsSearch, setTestimonialsSearch] = useState('');
+  const [metricsSearch, setMetricsSearch] = useState('');
+  const [storiesSearch, setStoriesSearch] = useState('');
+  const [gallerySearch, setGallerySearch] = useState('');
+
   // Bulk selection state
   const [selectedPrograms, setSelectedPrograms] = useState<Set<string>>(new Set());
   const [selectedTestimonials, setSelectedTestimonials] = useState<Set<string>>(new Set());
@@ -67,12 +75,81 @@ const ContentManagement = () => {
     return items.filter(item => item.active === false);
   };
 
-  // Filtered data
-  const filteredPrograms = useMemo(() => filterByStatus(programs, programsFilter), [programs, programsFilter]);
-  const filteredTestimonials = useMemo(() => filterByStatus(testimonials, testimonialsFilter), [testimonials, testimonialsFilter]);
-  const filteredMetrics = useMemo(() => filterByStatus(metrics, metricsFilter), [metrics, metricsFilter]);
-  const filteredStories = useMemo(() => filterByStatus(stories, storiesFilter), [stories, storiesFilter]);
-  const filteredImages = useMemo(() => filterByStatus(images, galleryFilter), [images, galleryFilter]);
+  // Filtered and searched data
+  const filteredTeamMembers = useMemo(() => {
+    if (!teamSearch.trim()) return teamMembers;
+    const search = teamSearch.toLowerCase();
+    return teamMembers.filter(m => 
+      m.name.toLowerCase().includes(search) || 
+      m.position.toLowerCase().includes(search) || 
+      m.role.toLowerCase().includes(search)
+    );
+  }, [teamMembers, teamSearch]);
+
+  const filteredPrograms = useMemo(() => {
+    let items = filterByStatus(programs, programsFilter);
+    if (programsSearch.trim()) {
+      const search = programsSearch.toLowerCase();
+      items = items.filter(p => 
+        p.title.toLowerCase().includes(search) || 
+        p.description.toLowerCase().includes(search) ||
+        (p.category?.toLowerCase().includes(search) ?? false)
+      );
+    }
+    return items;
+  }, [programs, programsFilter, programsSearch]);
+
+  const filteredTestimonials = useMemo(() => {
+    let items = filterByStatus(testimonials, testimonialsFilter);
+    if (testimonialsSearch.trim()) {
+      const search = testimonialsSearch.toLowerCase();
+      items = items.filter(t => 
+        t.name.toLowerCase().includes(search) || 
+        t.quote.toLowerCase().includes(search) ||
+        (t.role?.toLowerCase().includes(search) ?? false)
+      );
+    }
+    return items;
+  }, [testimonials, testimonialsFilter, testimonialsSearch]);
+
+  const filteredMetrics = useMemo(() => {
+    let items = filterByStatus(metrics, metricsFilter);
+    if (metricsSearch.trim()) {
+      const search = metricsSearch.toLowerCase();
+      items = items.filter(m => 
+        m.metric_name.toLowerCase().includes(search) || 
+        m.metric_value.toLowerCase().includes(search) ||
+        (m.category?.toLowerCase().includes(search) ?? false)
+      );
+    }
+    return items;
+  }, [metrics, metricsFilter, metricsSearch]);
+
+  const filteredStories = useMemo(() => {
+    let items = filterByStatus(stories, storiesFilter);
+    if (storiesSearch.trim()) {
+      const search = storiesSearch.toLowerCase();
+      items = items.filter(s => 
+        s.title.toLowerCase().includes(search) || 
+        s.description.toLowerCase().includes(search) ||
+        (s.category?.toLowerCase().includes(search) ?? false)
+      );
+    }
+    return items;
+  }, [stories, storiesFilter, storiesSearch]);
+
+  const filteredImages = useMemo(() => {
+    let items = filterByStatus(images, galleryFilter);
+    if (gallerySearch.trim()) {
+      const search = gallerySearch.toLowerCase();
+      items = items.filter(i => 
+        i.title.toLowerCase().includes(search) || 
+        (i.description?.toLowerCase().includes(search) ?? false) ||
+        (i.category?.toLowerCase().includes(search) ?? false)
+      );
+    }
+    return items;
+  }, [images, galleryFilter, gallerySearch]);
 
   // Bulk selection helpers
   const toggleSelection = (id: string, selected: Set<string>, setSelected: React.Dispatch<React.SetStateAction<Set<string>>>) => {
@@ -359,17 +436,37 @@ const ContentManagement = () => {
                     <div className="flex justify-center py-8">
                       <Loader2 className="h-8 w-8 animate-spin" />
                     </div>
-                  ) : teamMembers.length === 0 ? (
-                    <div className="text-center py-8 text-gray-500">
-                      No team members yet. Click "Add Member" to get started.
-                    </div>
                   ) : (
-                    <SortableTeamList
-                      members={teamMembers}
-                      onReorder={reorderTeamMembers}
-                      onEdit={(member) => handleEdit(member, 'team')}
-                      onDelete={(id) => handleDelete(id, 'team')}
-                    />
+                    <>
+                      <div className="flex items-center gap-4 mb-4">
+                        <div className="relative flex-1 max-w-sm">
+                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Input
+                            placeholder="Search team members..."
+                            value={teamSearch}
+                            onChange={(e) => setTeamSearch(e.target.value)}
+                            className="pl-9 pr-9"
+                          />
+                          {teamSearch && (
+                            <button onClick={() => setTeamSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2">
+                              <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                      {filteredTeamMembers.length === 0 ? (
+                        <div className="text-center py-8 text-gray-500">
+                          {teamMembers.length === 0 ? "No team members yet. Click \"Add Member\" to get started." : "No team members match your search."}
+                        </div>
+                      ) : (
+                        <SortableTeamList
+                          members={filteredTeamMembers}
+                          onReorder={reorderTeamMembers}
+                          onEdit={(member) => handleEdit(member, 'team')}
+                          onDelete={(id) => handleDelete(id, 'team')}
+                        />
+                      )}
+                    </>
                   )}
                 </CardContent>
               </Card>
@@ -397,7 +494,21 @@ const ContentManagement = () => {
                     </div>
                   ) : (
                     <>
-                      <div className="flex items-center justify-between mb-4">
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-4">
+                        <div className="relative flex-1 max-w-sm">
+                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Input
+                            placeholder="Search programs..."
+                            value={programsSearch}
+                            onChange={(e) => setProgramsSearch(e.target.value)}
+                            className="pl-9 pr-9"
+                          />
+                          {programsSearch && (
+                            <button onClick={() => setProgramsSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2">
+                              <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+                            </button>
+                          )}
+                        </div>
                         <div className="flex items-center gap-2">
                           <Filter className="h-4 w-4 text-muted-foreground" />
                           <Select value={programsFilter} onValueChange={(value: StatusFilter) => setProgramsFilter(value)}>
@@ -509,7 +620,21 @@ const ContentManagement = () => {
                     </div>
                   ) : (
                     <>
-                      <div className="flex items-center justify-between mb-4">
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-4">
+                        <div className="relative flex-1 max-w-sm">
+                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Input
+                            placeholder="Search testimonials..."
+                            value={testimonialsSearch}
+                            onChange={(e) => setTestimonialsSearch(e.target.value)}
+                            className="pl-9 pr-9"
+                          />
+                          {testimonialsSearch && (
+                            <button onClick={() => setTestimonialsSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2">
+                              <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+                            </button>
+                          )}
+                        </div>
                         <div className="flex items-center gap-2">
                           <Filter className="h-4 w-4 text-muted-foreground" />
                           <Select value={testimonialsFilter} onValueChange={(value: StatusFilter) => setTestimonialsFilter(value)}>
@@ -621,7 +746,21 @@ const ContentManagement = () => {
                     </div>
                   ) : (
                     <>
-                      <div className="flex items-center justify-between mb-4">
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-4">
+                        <div className="relative flex-1 max-w-sm">
+                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Input
+                            placeholder="Search metrics..."
+                            value={metricsSearch}
+                            onChange={(e) => setMetricsSearch(e.target.value)}
+                            className="pl-9 pr-9"
+                          />
+                          {metricsSearch && (
+                            <button onClick={() => setMetricsSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2">
+                              <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+                            </button>
+                          )}
+                        </div>
                         <div className="flex items-center gap-2">
                           <Filter className="h-4 w-4 text-muted-foreground" />
                           <Select value={metricsFilter} onValueChange={(value: StatusFilter) => setMetricsFilter(value)}>
@@ -706,7 +845,21 @@ const ContentManagement = () => {
                     <div className="flex justify-center py-8"><Loader2 className="h-8 w-8 animate-spin" /></div>
                   ) : (
                     <>
-                      <div className="flex items-center justify-between mb-4">
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-4">
+                        <div className="relative flex-1 max-w-sm">
+                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Input
+                            placeholder="Search stories..."
+                            value={storiesSearch}
+                            onChange={(e) => setStoriesSearch(e.target.value)}
+                            className="pl-9 pr-9"
+                          />
+                          {storiesSearch && (
+                            <button onClick={() => setStoriesSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2">
+                              <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+                            </button>
+                          )}
+                        </div>
                         <div className="flex items-center gap-2">
                           <Filter className="h-4 w-4 text-muted-foreground" />
                           <Select value={storiesFilter} onValueChange={(value: StatusFilter) => setStoriesFilter(value)}>
@@ -778,7 +931,21 @@ const ContentManagement = () => {
                     <div className="flex justify-center py-8"><Loader2 className="h-8 w-8 animate-spin" /></div>
                   ) : (
                     <>
-                      <div className="flex items-center justify-between mb-4">
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-4">
+                        <div className="relative flex-1 max-w-sm">
+                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Input
+                            placeholder="Search gallery..."
+                            value={gallerySearch}
+                            onChange={(e) => setGallerySearch(e.target.value)}
+                            className="pl-9 pr-9"
+                          />
+                          {gallerySearch && (
+                            <button onClick={() => setGallerySearch('')} className="absolute right-3 top-1/2 -translate-y-1/2">
+                              <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+                            </button>
+                          )}
+                        </div>
                         <div className="flex items-center gap-2">
                           <Filter className="h-4 w-4 text-muted-foreground" />
                           <Select value={galleryFilter} onValueChange={(value: StatusFilter) => setGalleryFilter(value)}>
