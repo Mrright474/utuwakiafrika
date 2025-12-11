@@ -24,6 +24,8 @@ import ImageUpload from '@/components/home/ImageUpload';
 import BatchImageUpload from '@/components/home/BatchImageUpload';
 import SortableTeamList from '@/components/admin/SortableTeamList';
 import BulkActionBar from '@/components/admin/BulkActionBar';
+import ExportButton from '@/components/admin/ExportButton';
+import { exportColumns } from '@/utils/exportData';
 
 type StatusFilter = 'all' | 'active' | 'inactive';
 
@@ -425,10 +427,17 @@ const ContentManagement = () => {
                       <CardTitle>Team Members</CardTitle>
                       <CardDescription>Manage your organization's team members. Drag to reorder.</CardDescription>
                     </div>
-                    <Button onClick={() => handleAdd('team')}>
-                      <Plus className="mr-2 h-4 w-4" />
-                      Add Member
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      <ExportButton
+                        data={filteredTeamMembers}
+                        columns={exportColumns.team}
+                        filename={`team-members-${new Date().toISOString().split('T')[0]}`}
+                      />
+                      <Button onClick={() => handleAdd('team')}>
+                        <Plus className="mr-2 h-4 w-4" />
+                        Add Member
+                      </Button>
+                    </div>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -481,10 +490,17 @@ const ContentManagement = () => {
                       <CardTitle>Programs</CardTitle>
                       <CardDescription>Manage your organization's programs</CardDescription>
                     </div>
-                    <Button onClick={() => handleAdd('programs')}>
-                      <Plus className="mr-2 h-4 w-4" />
-                      Add Program
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      <ExportButton
+                        data={filteredPrograms}
+                        columns={exportColumns.programs}
+                        filename={`programs-${new Date().toISOString().split('T')[0]}`}
+                      />
+                      <Button onClick={() => handleAdd('programs')}>
+                        <Plus className="mr-2 h-4 w-4" />
+                        Add Program
+                      </Button>
+                    </div>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -607,10 +623,17 @@ const ContentManagement = () => {
                       <CardTitle>Testimonials</CardTitle>
                       <CardDescription>Manage testimonials from beneficiaries</CardDescription>
                     </div>
-                    <Button onClick={() => handleAdd('testimonials')}>
-                      <Plus className="mr-2 h-4 w-4" />
-                      Add Testimonial
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      <ExportButton
+                        data={filteredTestimonials}
+                        columns={exportColumns.testimonials}
+                        filename={`testimonials-${new Date().toISOString().split('T')[0]}`}
+                      />
+                      <Button onClick={() => handleAdd('testimonials')}>
+                        <Plus className="mr-2 h-4 w-4" />
+                        Add Testimonial
+                      </Button>
+                    </div>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -733,10 +756,17 @@ const ContentManagement = () => {
                       <CardTitle>Success Metrics</CardTitle>
                       <CardDescription>Manage impact statistics and metrics</CardDescription>
                     </div>
-                    <Button onClick={() => handleAdd('metrics')}>
-                      <Plus className="mr-2 h-4 w-4" />
-                      Add Metric
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      <ExportButton
+                        data={filteredMetrics}
+                        columns={exportColumns.metrics}
+                        filename={`metrics-${new Date().toISOString().split('T')[0]}`}
+                      />
+                      <Button onClick={() => handleAdd('metrics')}>
+                        <Plus className="mr-2 h-4 w-4" />
+                        Add Metric
+                      </Button>
+                    </div>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -837,7 +867,14 @@ const ContentManagement = () => {
                       <CardTitle>Success Stories</CardTitle>
                       <CardDescription>Manage inspiring success stories</CardDescription>
                     </div>
-                    <Button onClick={() => handleAdd('stories')}><Plus className="mr-2 h-4 w-4" />Add Story</Button>
+                    <div className="flex items-center gap-2">
+                      <ExportButton
+                        data={filteredStories}
+                        columns={exportColumns.stories}
+                        filename={`success-stories-${new Date().toISOString().split('T')[0]}`}
+                      />
+                      <Button onClick={() => handleAdd('stories')}><Plus className="mr-2 h-4 w-4" />Add Story</Button>
+                    </div>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -921,6 +958,11 @@ const ContentManagement = () => {
                   <div className="flex justify-between items-center">
                     <div><CardTitle>Gallery</CardTitle><CardDescription>Manage gallery images</CardDescription></div>
                     <div className="flex gap-2">
+                      <ExportButton
+                        data={filteredImages}
+                        columns={exportColumns.gallery}
+                        filename={`gallery-${new Date().toISOString().split('T')[0]}`}
+                      />
                       <Button variant="outline" onClick={() => setBatchDialogOpen(true)}><Images className="mr-2 h-4 w-4" />Batch Upload</Button>
                       <Button onClick={() => handleAdd('gallery')}><Plus className="mr-2 h-4 w-4" />Add Image</Button>
                     </div>
