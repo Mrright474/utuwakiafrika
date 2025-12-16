@@ -25,7 +25,9 @@ import BatchImageUpload from '@/components/home/BatchImageUpload';
 import SortableTeamList from '@/components/admin/SortableTeamList';
 import BulkActionBar from '@/components/admin/BulkActionBar';
 import ExportButton from '@/components/admin/ExportButton';
+import { ImportButton } from '@/components/admin/ImportButton';
 import { exportColumns } from '@/utils/exportData';
+import { toast } from 'sonner';
 
 type StatusFilter = 'all' | 'active' | 'inactive';
 
@@ -363,6 +365,109 @@ const ContentManagement = () => {
     setEditingItem((prev: any) => ({ ...prev, [field]: value }));
   };
 
+  // Import handlers
+  const handleImportTeam = async (data: Record<string, string>[]) => {
+    let successCount = 0;
+    for (const row of data) {
+      try {
+        await addTeamMember({
+          name: row.name,
+          position: row.position,
+          role: row.role,
+          bio: row.bio,
+          image: '',
+        });
+        successCount++;
+      } catch (error) {
+        console.error('Failed to import team member:', row, error);
+      }
+    }
+    toast.success(`Imported ${successCount} of ${data.length} team members`);
+  };
+
+  const handleImportPrograms = async (data: Record<string, string>[]) => {
+    let successCount = 0;
+    for (const row of data) {
+      try {
+        await addProgram({
+          title: row.title,
+          description: row.description,
+          category: row.category || '',
+          icon: row.icon || '',
+          color: '',
+          image: '',
+        });
+        successCount++;
+      } catch (error) {
+        console.error('Failed to import program:', row, error);
+      }
+    }
+    toast.success(`Imported ${successCount} of ${data.length} programs`);
+  };
+
+  const handleImportTestimonials = async (data: Record<string, string>[]) => {
+    let successCount = 0;
+    for (const row of data) {
+      try {
+        await addTestimonial({
+          name: row.name,
+          role: row.role || '',
+          quote: row.quote,
+          image_url: '',
+        });
+        successCount++;
+      } catch (error) {
+        console.error('Failed to import testimonial:', row, error);
+      }
+    }
+    toast.success(`Imported ${successCount} of ${data.length} testimonials`);
+  };
+
+  const handleImportMetrics = async (data: Record<string, string>[]) => {
+    let successCount = 0;
+    for (const row of data) {
+      try {
+        await addMetric({
+          metric_name: row.metric_name,
+          metric_value: row.metric_value,
+          category: row.category || '',
+          icon: row.icon || '',
+        });
+        successCount++;
+      } catch (error) {
+        console.error('Failed to import metric:', row, error);
+      }
+    }
+    toast.success(`Imported ${successCount} of ${data.length} metrics`);
+  };
+
+  const handleImportStories = async (data: Record<string, string>[]) => {
+    let successCount = 0;
+    for (const row of data) {
+      try {
+        await addStory({
+          story: {
+            title: row.title,
+            description: row.description,
+            category: row.category || '',
+            image_url: '',
+            display_order: 0,
+            active: true,
+          },
+          imageFile: null,
+        });
+        successCount++;
+      } catch (error) {
+        console.error('Failed to import story:', row, error);
+      }
+    }
+    toast.success(`Imported ${successCount} of ${data.length} stories`);
+  };
+
+  const handleImportGallery = async (data: Record<string, string>[]) => {
+    toast.info('Gallery import requires images. Use batch upload instead.');
+  };
+
   return (
     <Layout>
       <div className="bg-utu-light-gray py-8 min-h-screen">
@@ -428,6 +533,7 @@ const ContentManagement = () => {
                       <CardDescription>Manage your organization's team members. Drag to reorder.</CardDescription>
                     </div>
                     <div className="flex items-center gap-2">
+                      <ImportButton dataType="team" onImport={handleImportTeam} />
                       <ExportButton
                         data={filteredTeamMembers}
                         columns={exportColumns.team}
@@ -491,6 +597,7 @@ const ContentManagement = () => {
                       <CardDescription>Manage your organization's programs</CardDescription>
                     </div>
                     <div className="flex items-center gap-2">
+                      <ImportButton dataType="programs" onImport={handleImportPrograms} />
                       <ExportButton
                         data={filteredPrograms}
                         columns={exportColumns.programs}
@@ -624,6 +731,7 @@ const ContentManagement = () => {
                       <CardDescription>Manage testimonials from beneficiaries</CardDescription>
                     </div>
                     <div className="flex items-center gap-2">
+                      <ImportButton dataType="testimonials" onImport={handleImportTestimonials} />
                       <ExportButton
                         data={filteredTestimonials}
                         columns={exportColumns.testimonials}
@@ -757,6 +865,7 @@ const ContentManagement = () => {
                       <CardDescription>Manage impact statistics and metrics</CardDescription>
                     </div>
                     <div className="flex items-center gap-2">
+                      <ImportButton dataType="metrics" onImport={handleImportMetrics} />
                       <ExportButton
                         data={filteredMetrics}
                         columns={exportColumns.metrics}
@@ -868,6 +977,7 @@ const ContentManagement = () => {
                       <CardDescription>Manage inspiring success stories</CardDescription>
                     </div>
                     <div className="flex items-center gap-2">
+                      <ImportButton dataType="stories" onImport={handleImportStories} />
                       <ExportButton
                         data={filteredStories}
                         columns={exportColumns.stories}
@@ -958,6 +1068,7 @@ const ContentManagement = () => {
                   <div className="flex justify-between items-center">
                     <div><CardTitle>Gallery</CardTitle><CardDescription>Manage gallery images</CardDescription></div>
                     <div className="flex gap-2">
+                      <ImportButton dataType="gallery" onImport={handleImportGallery} />
                       <ExportButton
                         data={filteredImages}
                         columns={exportColumns.gallery}
