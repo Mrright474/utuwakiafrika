@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -52,6 +53,28 @@ export const useTestimonialsManagement = () => {
       }));
     }
   });
+
+  // Real-time subscription for instant updates
+  useEffect(() => {
+    const channel = supabase
+      .channel('testimonials_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'testimonials'
+        },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ['testimonials'] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
 
   const updateMutation = useMutation({
     mutationFn: async ({ testimonial, file }: { testimonial: Testimonial; file?: File }) => {

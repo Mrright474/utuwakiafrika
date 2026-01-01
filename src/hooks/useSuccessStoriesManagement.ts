@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -32,6 +33,28 @@ export const useSuccessStoriesManagement = () => {
       return data as SuccessStory[];
     }
   });
+
+  // Real-time subscription for instant updates
+  useEffect(() => {
+    const channel = supabase
+      .channel('success_stories_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'success_stories'
+        },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ['success-stories'] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
 
   const uploadImage = async (file: File): Promise<string> => {
     const fileExt = file.name.split('.').pop();
