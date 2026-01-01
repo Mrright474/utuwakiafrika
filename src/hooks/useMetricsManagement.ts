@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -35,6 +36,28 @@ export const useMetricsManagement = () => {
       }));
     }
   });
+
+  // Real-time subscription for instant updates
+  useEffect(() => {
+    const channel = supabase
+      .channel('success_metrics_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'success_metrics'
+        },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ['success-metrics'] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
 
   const updateMutation = useMutation({
     mutationFn: async (metric: SuccessMetric) => {
