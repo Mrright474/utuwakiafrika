@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Upload, FileUp, AlertCircle, CheckCircle } from 'lucide-react';
+import { Upload, FileUp, AlertCircle, CheckCircle, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -10,7 +10,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { parseCSV, validateImportData, importRequiredColumns, importOptionalColumns } from '@/utils/importData';
+import { parseCSV, validateImportData, importRequiredColumns, importOptionalColumns, downloadCSVTemplate } from '@/utils/importData';
 
 interface ImportButtonProps {
   dataType: 'team' | 'programs' | 'testimonials' | 'metrics' | 'stories' | 'gallery';
@@ -106,7 +106,18 @@ export const ImportButton = ({ dataType, onImport, disabled }: ImportButtonProps
 
           <div className="space-y-4">
             <div className="text-sm text-muted-foreground">
-              <p className="font-medium mb-1">Required columns:</p>
+              <div className="flex items-center justify-between mb-2">
+                <p className="font-medium">Required columns:</p>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => downloadCSVTemplate(dataType)}
+                  className="gap-1 h-7 text-xs"
+                >
+                  <Download className="h-3 w-3" />
+                  Download Template
+                </Button>
+              </div>
               <code className="text-xs bg-muted px-2 py-1 rounded">
                 {requiredCols.join(', ')}
               </code>
