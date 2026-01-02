@@ -1,1 +1,16 @@
 project_id = "ipwrabxuomdxlrmizbdz"
+
+[functions.contact-submit]
+verify_jwt = false
+
+[functions.create-admin]
+verify_jwt = false
+
+[functions.newsletter-subscribe]
+verify_jwt = false
+
+[functions.newsletter-unsubscribe]
+verify_jwt = false
+
+[functions.generate-hero-image]
+verify_jwt = false

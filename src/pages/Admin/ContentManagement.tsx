@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Loader2, Users, FileText, MessageSquare, BarChart, Plus, Edit, Trash2, LogOut, ArrowLeft, Star, Image as ImageIcon, Images, EyeOff, Eye, CheckSquare, Square, Filter, Search, X } from 'lucide-react';
+import { Loader2, Users, FileText, MessageSquare, BarChart, Plus, Edit, Trash2, LogOut, ArrowLeft, Star, Image as ImageIcon, Images, EyeOff, Eye, CheckSquare, Square, Filter, Search, X, Sparkles } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -28,6 +28,7 @@ import ExportButton from '@/components/admin/ExportButton';
 import { ImportButton } from '@/components/admin/ImportButton';
 import { exportColumns } from '@/utils/exportData';
 import { toast } from 'sonner';
+import ImageGenerator from './ImageGenerator';
 
 type StatusFilter = 'all' | 'active' | 'inactive';
 
@@ -496,7 +497,7 @@ const ContentManagement = () => {
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-6 mb-8">
+            <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 lg:grid-cols-7 mb-8">
               <TabsTrigger value="team">
                 <Users className="mr-2 h-4 w-4" />
                 Team ({teamMembers.length})
@@ -520,6 +521,10 @@ const ContentManagement = () => {
               <TabsTrigger value="gallery">
                 <ImageIcon className="mr-2 h-4 w-4" />
                 Gallery ({images.length})
+              </TabsTrigger>
+              <TabsTrigger value="image-generator">
+                <Sparkles className="mr-2 h-4 w-4" />
+                AI Images
               </TabsTrigger>
             </TabsList>
 
@@ -1154,6 +1159,11 @@ const ContentManagement = () => {
                   )}
                 </CardContent>
               </Card>
+            </TabsContent>
+
+            {/* AI Image Generator Tab */}
+            <TabsContent value="image-generator">
+              <ImageGenerator />
             </TabsContent>
           </Tabs>
 
