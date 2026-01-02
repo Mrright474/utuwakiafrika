@@ -261,6 +261,28 @@ export const useProgramsManagement = () => {
     }
   });
 
+  const reorderMutation = useMutation({
+    mutationFn: async (items: Program[]) => {
+      const updates = items.map((item, index) =>
+        (supabase as any)
+          .from('programs')
+          .update({ display_order: index })
+          .eq('id', item.id)
+      );
+      const results = await Promise.all(updates);
+      const errors = results.filter((r) => r.error);
+      if (errors.length > 0) throw errors[0].error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['programs'] });
+      toast({ title: 'Success', description: 'Program order updated.' });
+    },
+    onError: (error) => {
+      toast({ title: 'Error', description: 'Failed to update order.', variant: 'destructive' });
+      console.error(error);
+    },
+  });
+
   return {
     programs,
     loading: isLoading,
@@ -275,6 +297,7 @@ export const useProgramsManagement = () => {
       bulkToggleActiveMutation.mutateAsync({ ids, active }),
     bulkDeletePrograms: (ids: string[]) =>
       bulkDeleteMutation.mutateAsync(ids),
+    reorderPrograms: (items: Program[]) => reorderMutation.mutateAsync(items),
     refetch: () => queryClient.invalidateQueries({ queryKey: ['programs'] })
   };
 };

@@ -306,6 +306,28 @@ export const useGalleryManagement = () => {
     }
   });
 
+  const reorderMutation = useMutation({
+    mutationFn: async (items: GalleryImage[]) => {
+      const updates = items.map((item, index) =>
+        supabase
+          .from('gallery_images')
+          .update({ display_order: index })
+          .eq('id', item.id)
+      );
+      const results = await Promise.all(updates);
+      const errors = results.filter((r) => r.error);
+      if (errors.length > 0) throw errors[0].error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['gallery-images'] });
+      toast({ title: 'Success', description: 'Image order updated.' });
+    },
+    onError: (error) => {
+      toast({ title: 'Error', description: 'Failed to update order.', variant: 'destructive' });
+      console.error(error);
+    },
+  });
+
   return {
     images,
     loading: isLoading,
@@ -320,5 +342,6 @@ export const useGalleryManagement = () => {
       bulkToggleActiveMutation.mutateAsync({ ids, active }),
     bulkDeleteImages: (ids: string[]) =>
       bulkDeleteMutation.mutateAsync(ids),
+    reorderImages: (items: GalleryImage[]) => reorderMutation.mutateAsync(items),
   };
 };

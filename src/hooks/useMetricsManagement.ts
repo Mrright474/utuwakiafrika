@@ -224,6 +224,28 @@ export const useMetricsManagement = () => {
     }
   });
 
+  const reorderMutation = useMutation({
+    mutationFn: async (items: SuccessMetric[]) => {
+      const updates = items.map((item, index) =>
+        (supabase as any)
+          .from('success_metrics')
+          .update({ display_order: index })
+          .eq('id', item.id)
+      );
+      const results = await Promise.all(updates);
+      const errors = results.filter((r) => r.error);
+      if (errors.length > 0) throw errors[0].error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['success-metrics'] });
+      toast({ title: 'Success', description: 'Metric order updated.' });
+    },
+    onError: (error) => {
+      toast({ title: 'Error', description: 'Failed to update order.', variant: 'destructive' });
+      console.error(error);
+    },
+  });
+
   return {
     metrics,
     loading: isLoading,
@@ -236,6 +258,7 @@ export const useMetricsManagement = () => {
       bulkToggleActiveMutation.mutateAsync({ ids, active }),
     bulkDeleteMetrics: (ids: string[]) =>
       bulkDeleteMutation.mutateAsync(ids),
+    reorderMetrics: (items: SuccessMetric[]) => reorderMutation.mutateAsync(items),
     refetch: () => queryClient.invalidateQueries({ queryKey: ['success-metrics'] })
   };
 };
