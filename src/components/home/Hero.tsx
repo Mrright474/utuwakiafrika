@@ -3,6 +3,7 @@ import React, { memo, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { ChevronRight, Heart, Users, Globe, HandHeart } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import heroImage from '@/assets/hero-ubuntu-community.jpg';
 
 
 const Hero = memo(() => {
@@ -18,9 +19,9 @@ const Hero = memo(() => {
       {/* Ubuntu-inspired background patterns */}
       <div className="absolute inset-0">
         <img 
-          src="/lovable-uploads/b07d8f50-577a-4699-87ba-8759e7ace688.png"
-          alt="African children representing Ubuntu - unity and community"
-          className="w-full h-full object-cover opacity-20"
+          src={heroImage}
+          alt="African community gathering in unity and celebration - Ubuntu spirit"
+          className="w-full h-full object-cover opacity-30"
           loading="eager"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-utu-black via-black/90 to-transparent"></div>
