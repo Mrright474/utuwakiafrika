@@ -275,6 +275,28 @@ export const useSuccessStoriesManagement = () => {
     }
   });
 
+  const reorderMutation = useMutation({
+    mutationFn: async (items: SuccessStory[]) => {
+      const updates = items.map((item, index) =>
+        supabase
+          .from('success_stories')
+          .update({ display_order: index })
+          .eq('id', item.id)
+      );
+      const results = await Promise.all(updates);
+      const errors = results.filter((r) => r.error);
+      if (errors.length > 0) throw errors[0].error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['success-stories'] });
+      toast({ title: 'Success', description: 'Story order updated.' });
+    },
+    onError: (error) => {
+      toast({ title: 'Error', description: 'Failed to update order.', variant: 'destructive' });
+      console.error(error);
+    },
+  });
+
   return {
     stories,
     loading: isLoading,
@@ -287,5 +309,6 @@ export const useSuccessStoriesManagement = () => {
       bulkToggleActiveMutation.mutateAsync({ ids, active }),
     bulkDeleteStories: (ids: string[]) =>
       bulkDeleteMutation.mutateAsync(ids),
+    reorderStories: (items: SuccessStory[]) => reorderMutation.mutateAsync(items),
   };
 };

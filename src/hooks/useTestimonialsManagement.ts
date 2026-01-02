@@ -253,6 +253,28 @@ export const useTestimonialsManagement = () => {
     }
   });
 
+  const reorderMutation = useMutation({
+    mutationFn: async (items: Testimonial[]) => {
+      const updates = items.map((item, index) =>
+        (supabase as any)
+          .from('testimonials')
+          .update({ display_order: index })
+          .eq('id', item.id)
+      );
+      const results = await Promise.all(updates);
+      const errors = results.filter((r) => r.error);
+      if (errors.length > 0) throw errors[0].error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['testimonials'] });
+      toast({ title: 'Success', description: 'Testimonial order updated.' });
+    },
+    onError: (error) => {
+      toast({ title: 'Error', description: 'Failed to update order.', variant: 'destructive' });
+      console.error(error);
+    },
+  });
+
   return {
     testimonials,
     loading: isLoading,
@@ -267,6 +289,7 @@ export const useTestimonialsManagement = () => {
       bulkToggleActiveMutation.mutateAsync({ ids, active }),
     bulkDeleteTestimonials: (ids: string[]) =>
       bulkDeleteMutation.mutateAsync(ids),
+    reorderTestimonials: (items: Testimonial[]) => reorderMutation.mutateAsync(items),
     refetch: () => queryClient.invalidateQueries({ queryKey: ['testimonials'] })
   };
 };
