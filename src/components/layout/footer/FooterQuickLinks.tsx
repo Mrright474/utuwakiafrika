@@ -59,6 +59,11 @@ const FooterQuickLinks = () => {
           </button>
         </li>
         <li>
+          <Link to="/volunteers/auth" className="text-gray-400 hover:text-white transition-colors flex items-center">
+            <span className="mr-2">•</span> Volunteer Portal
+          </Link>
+        </li>
+        <li>
           <Link to="/donate" className="text-gray-400 hover:text-white transition-colors flex items-center">
             <span className="mr-2">•</span> Donate
           </Link>
