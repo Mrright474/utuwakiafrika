@@ -90,10 +90,18 @@ const VolunteerRegistrationForm = () => {
       );
 
       if (authError) {
+        // Handle specific error cases
+        let errorMessage = authError.message;
+        if (authError.message.includes('already registered') || authError.message.includes('already exists')) {
+          errorMessage = "This email is already registered. Please try logging in instead.";
+        } else if (authError.message.includes('Failed to fetch')) {
+          errorMessage = "Network error. Please check your connection and try again.";
+        }
+        
         toast({
           variant: "destructive",
           title: "Registration Failed",
-          description: authError.message,
+          description: errorMessage,
         });
         return;
       }

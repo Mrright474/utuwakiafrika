@@ -412,6 +412,56 @@ export type Database = {
           },
         ]
       }
+      volunteer_hours: {
+        Row: {
+          activity_date: string
+          activity_type: string
+          created_at: string
+          description: string | null
+          hours: number
+          id: string
+          location: string | null
+          updated_at: string
+          verified: boolean | null
+          verified_by: string | null
+          volunteer_id: string
+        }
+        Insert: {
+          activity_date: string
+          activity_type: string
+          created_at?: string
+          description?: string | null
+          hours: number
+          id?: string
+          location?: string | null
+          updated_at?: string
+          verified?: boolean | null
+          verified_by?: string | null
+          volunteer_id: string
+        }
+        Update: {
+          activity_date?: string
+          activity_type?: string
+          created_at?: string
+          description?: string | null
+          hours?: number
+          id?: string
+          location?: string | null
+          updated_at?: string
+          verified?: boolean | null
+          verified_by?: string | null
+          volunteer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "volunteer_hours_volunteer_id_fkey"
+            columns: ["volunteer_id"]
+            isOneToOne: false
+            referencedRelation: "volunteer_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       volunteer_profiles: {
         Row: {
           age: number | null

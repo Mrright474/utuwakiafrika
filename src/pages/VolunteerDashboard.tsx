@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,16 +11,18 @@ import {
   User, 
   Activity, 
   Calendar, 
-  Settings, 
   LogOut, 
   Clock, 
   MapPin,
   Mail,
-  Phone
+  Phone,
+  CheckCircle,
+  XCircle
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import VolunteerHoursForm from '@/components/volunteers/VolunteerHoursForm';
 
 interface VolunteerProfile {
   id: string;
@@ -48,6 +50,17 @@ interface VolunteerActivity {
   status: string;
 }
 
+interface VolunteerHours {
+  id: string;
+  activity_date: string;
+  hours: number;
+  activity_type: string;
+  description?: string;
+  location?: string;
+  verified: boolean;
+  created_at: string;
+}
+
 const VolunteerDashboard = () => {
   const { user, signOut, loading } = useAuth();
   const { toast } = useToast();
@@ -55,6 +68,7 @@ const VolunteerDashboard = () => {
   
   const [profile, setProfile] = useState<VolunteerProfile | null>(null);
   const [activities, setActivities] = useState<VolunteerActivity[]>([]);
+  const [hours, setHours] = useState<VolunteerHours[]>([]);
   const [loadingProfile, setLoadingProfile] = useState(true);
 
   useEffect(() => {
@@ -69,6 +83,25 @@ const VolunteerDashboard = () => {
       fetchActivities();
     }
   }, [user]);
+
+  const fetchHours = useCallback(async (profileId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('volunteer_hours')
+        .select('*')
+        .eq('volunteer_id', profileId)
+        .order('activity_date', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching hours:', error);
+        return;
+      }
+
+      setHours(data || []);
+    } catch (error) {
+      console.error('Unexpected error:', error);
+    }
+  }, []);
 
   const fetchProfile = async () => {
     try {
@@ -89,6 +122,7 @@ const VolunteerDashboard = () => {
       }
 
       setProfile(data);
+      fetchHours(data.id);
     } catch (error) {
       console.error('Unexpected error:', error);
     } finally {
@@ -155,7 +189,9 @@ const VolunteerDashboard = () => {
     }
   };
 
-  const totalHours = activities.reduce((sum, activity) => sum + Number(activity.hours_contributed), 0);
+  const totalActivityHours = activities.reduce((sum, activity) => sum + Number(activity.hours_contributed), 0);
+  const totalLoggedHours = hours.reduce((sum, h) => sum + Number(h.hours), 0);
+  const totalHours = totalActivityHours + totalLoggedHours;
 
   if (loading || loadingProfile) {
     return (
@@ -359,16 +395,80 @@ const VolunteerDashboard = () => {
               </Card>
             </TabsContent>
 
-            <TabsContent value="activities" className="mt-6">
+            <TabsContent value="activities" className="mt-6 space-y-6">
+              {/* Log Hours Form */}
+              <VolunteerHoursForm 
+                volunteerId={profile.id} 
+                onSuccess={() => fetchHours(profile.id)}
+              />
+
+              {/* Logged Hours */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Your Activities</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    <Clock className="w-5 h-5" />
+                    Your Logged Hours
+                  </CardTitle>
                   <CardDescription>
-                    Track your volunteer activities and contributions
+                    Hours you've logged for your volunteer work
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  {activities.length > 0 ? (
+                  {hours.length > 0 ? (
+                    <div className="space-y-4">
+                      {hours.map((h) => (
+                        <div key={h.id} className="border rounded-lg p-4">
+                          <div className="flex justify-between items-start mb-2">
+                            <h4 className="font-semibold capitalize">{h.activity_type.replace('_', ' ')}</h4>
+                            <div className="flex items-center gap-2">
+                              {h.verified ? (
+                                <Badge className="bg-green-500">
+                                  <CheckCircle className="w-3 h-3 mr-1" />
+                                  Verified
+                                </Badge>
+                              ) : (
+                                <Badge variant="outline" className="text-yellow-600 border-yellow-600">
+                                  <XCircle className="w-3 h-3 mr-1" />
+                                  Pending
+                                </Badge>
+                              )}
+                              <Badge variant="secondary">{h.hours} hrs</Badge>
+                            </div>
+                          </div>
+                          {h.description && (
+                            <p className="text-utu-gray mb-2">{h.description}</p>
+                          )}
+                          <div className="flex justify-between text-sm text-utu-gray">
+                            <span>{new Date(h.activity_date).toLocaleDateString()}</span>
+                            {h.location && <span>📍 {h.location}</span>}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <Clock className="w-12 h-12 text-utu-gray mx-auto mb-4" />
+                      <h3 className="text-lg font-semibold text-utu-black mb-2">
+                        No Hours Logged Yet
+                      </h3>
+                      <p className="text-utu-gray">
+                        Use the "Log Hours" button above to track your volunteer contributions.
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Past Activities */}
+              {activities.length > 0 && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Past Activities</CardTitle>
+                    <CardDescription>
+                      Activities assigned by coordinators
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
                     <div className="space-y-4">
                       {activities.map((activity) => (
                         <div key={activity.id} className="border rounded-lg p-4">
@@ -388,19 +488,9 @@ const VolunteerDashboard = () => {
                         </div>
                       ))}
                     </div>
-                  ) : (
-                    <div className="text-center py-8">
-                      <Activity className="w-12 h-12 text-utu-gray mx-auto mb-4" />
-                      <h3 className="text-lg font-semibold text-utu-black mb-2">
-                        No Activities Yet
-                      </h3>
-                      <p className="text-utu-gray">
-                        Your volunteer activities will appear here once you start contributing.
-                      </p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              )}
             </TabsContent>
 
             <TabsContent value="opportunities" className="mt-6">
