@@ -99,4 +99,6 @@ export const exportColumns: Record<string, string[]> = {
   metrics: ['metric_name', 'metric_value', 'category', 'icon', 'active'],
   stories: ['title', 'description', 'category', 'view_count', 'active'],
   gallery: ['title', 'description', 'category', 'active'],
+  volunteerProfiles: ['first_name', 'last_name', 'email', 'phone', 'city', 'country', 'status', 'skills', 'experience', 'motivation', 'created_at'],
+  volunteerHours: ['volunteer_name', 'activity_date', 'hours', 'activity_type', 'description', 'location', 'verified', 'created_at'],
 };
