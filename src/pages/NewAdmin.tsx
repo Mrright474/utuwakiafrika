@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Users, MessageSquare, Mail, LogOut, Calendar, ExternalLink, User, Phone, MapPin, Settings } from 'lucide-react';
+import { Loader2, Users, MessageSquare, Mail, LogOut, Clock, User, Phone, MapPin, Settings, CheckCircle, XCircle, Calendar } from 'lucide-react';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { useAdminData } from '@/hooks/useAdminData';
 
@@ -43,14 +43,15 @@ const NewAdmin = () => {
   const { 
     contactSubmissions, 
     newsletterSubscribers, 
-    volunteerProfiles, 
+    volunteerProfiles,
+    volunteerHours,
     loading: dataLoading,
     updateContactStatus,
     updateVolunteerStatus,
+    verifyVolunteerHours,
     deleteContactSubmission 
   } = useAdminData(isAdmin);
 
-  // Redirect if not authenticated or not admin
   if (!loading && (!user || !isAdmin)) {
     return <Navigate to="/admin/auth" replace />;
   }
@@ -68,6 +69,10 @@ const NewAdmin = () => {
   const handleSignOut = async () => {
     await signOut();
   };
+
+  const pendingHours = volunteerHours.filter(h => !h.verified);
+  const totalHoursLogged = volunteerHours.reduce((sum, h) => sum + Number(h.hours), 0);
+  const verifiedHours = volunteerHours.filter(h => h.verified).reduce((sum, h) => sum + Number(h.hours), 0);
 
   return (
     <Layout>
@@ -102,10 +107,14 @@ const NewAdmin = () => {
             </div>
           ) : (
             <Tabs defaultValue="volunteers" className="w-full">
-              <TabsList className="grid w-full grid-cols-3 mb-8">
+              <TabsList className="grid w-full grid-cols-4 mb-8">
                 <TabsTrigger value="volunteers">
                   <Users className="mr-2 h-4 w-4" />
                   Volunteers ({volunteerProfiles.length})
+                </TabsTrigger>
+                <TabsTrigger value="hours">
+                  <Clock className="mr-2 h-4 w-4" />
+                  Hours ({pendingHours.length} pending)
                 </TabsTrigger>
                 <TabsTrigger value="contacts">
                   <MessageSquare className="mr-2 h-4 w-4" />
@@ -120,9 +129,9 @@ const NewAdmin = () => {
               <TabsContent value="volunteers">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Volunteer Applications</CardTitle>
+                    <CardTitle>Volunteer Profiles</CardTitle>
                     <CardDescription>
-                      Manage volunteer applications and user profiles.
+                      Manage volunteer applications and profiles.
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -134,7 +143,7 @@ const NewAdmin = () => {
                               <h3 className="font-semibold text-lg">
                                 {volunteer.first_name} {volunteer.last_name}
                               </h3>
-                              <div className="flex items-center gap-4 text-sm text-gray-600">
+                              <div className="flex items-center gap-4 text-sm text-muted-foreground">
                                 <div className="flex items-center gap-1">
                                   <User className="h-4 w-4" />
                                   {volunteer.volunteer_id || 'No ID assigned'}
@@ -151,15 +160,15 @@ const NewAdmin = () => {
                                 )}
                               </div>
                               {volunteer.city && volunteer.country && (
-                                <div className="flex items-center gap-1 text-sm text-gray-600">
+                                <div className="flex items-center gap-1 text-sm text-muted-foreground">
                                   <MapPin className="h-4 w-4" />
                                   {volunteer.city}, {volunteer.country}
                                 </div>
                               )}
                             </div>
                             <div className="flex items-center gap-2">
-                              <Badge className={getStatusColor(volunteer.status)}>
-                                {volunteer.status}
+                              <Badge className={getStatusColor(volunteer.status || 'pending')}>
+                                {volunteer.status || 'pending'}
                               </Badge>
                               <div className="flex gap-2">
                                 <Button
@@ -189,15 +198,132 @@ const NewAdmin = () => {
                             </div>
                           )}
                           
-                          <div className="text-xs text-gray-500">
+                          <div className="text-xs text-muted-foreground">
                             Applied: {formatDate(volunteer.created_at)}
                           </div>
                         </div>
                       ))}
                       
                       {volunteerProfiles.length === 0 && (
-                        <div className="text-center py-8 text-gray-500">
+                        <div className="text-center py-8 text-muted-foreground">
                           No volunteer applications yet.
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="hours">
+                <div className="grid gap-4 md:grid-cols-3 mb-6">
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm font-medium">Total Hours Logged</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">{totalHoursLogged.toFixed(1)}</div>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm font-medium">Verified Hours</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold text-green-600">{verifiedHours.toFixed(1)}</div>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm font-medium">Pending Verification</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold text-yellow-600">{pendingHours.length}</div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Volunteer Hours</CardTitle>
+                    <CardDescription>
+                      Review and verify volunteer hours submissions.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {volunteerHours.map((hours) => (
+                        <div key={hours.id} className="border rounded-lg p-4 space-y-3">
+                          <div className="flex justify-between items-start">
+                            <div className="space-y-2">
+                              <h3 className="font-semibold">
+                                {hours.volunteer_profiles?.first_name} {hours.volunteer_profiles?.last_name}
+                              </h3>
+                              <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                                <div className="flex items-center gap-1">
+                                  <Calendar className="h-4 w-4" />
+                                  {formatDate(hours.activity_date)}
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <Clock className="h-4 w-4" />
+                                  {hours.hours} hours
+                                </div>
+                                <Badge variant="outline">{hours.activity_type}</Badge>
+                              </div>
+                              {hours.location && (
+                                <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                                  <MapPin className="h-4 w-4" />
+                                  {hours.location}
+                                </div>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2">
+                              {hours.verified ? (
+                                <Badge className="bg-green-100 text-green-800">
+                                  <CheckCircle className="h-3 w-3 mr-1" />
+                                  Verified
+                                </Badge>
+                              ) : (
+                                <Badge className="bg-yellow-100 text-yellow-800">
+                                  <Clock className="h-3 w-3 mr-1" />
+                                  Pending
+                                </Badge>
+                              )}
+                              <Button
+                                size="sm"
+                                variant={hours.verified ? "outline" : "default"}
+                                onClick={() => verifyVolunteerHours(hours.id, !hours.verified)}
+                              >
+                                {hours.verified ? (
+                                  <>
+                                    <XCircle className="h-4 w-4 mr-1" />
+                                    Unverify
+                                  </>
+                                ) : (
+                                  <>
+                                    <CheckCircle className="h-4 w-4 mr-1" />
+                                    Verify
+                                  </>
+                                )}
+                              </Button>
+                            </div>
+                          </div>
+                          
+                          {hours.description && (
+                            <div>
+                              <span className="font-medium text-sm">Description: </span>
+                              <span className="text-sm">{hours.description}</span>
+                            </div>
+                          )}
+                          
+                          <div className="text-xs text-muted-foreground">
+                            Submitted: {formatDate(hours.created_at)}
+                          </div>
+                        </div>
+                      ))}
+                      
+                      {volunteerHours.length === 0 && (
+                        <div className="text-center py-8 text-muted-foreground">
+                          No volunteer hours logged yet.
                         </div>
                       )}
                     </div>
@@ -220,7 +346,7 @@ const NewAdmin = () => {
                           <div className="flex justify-between items-start">
                             <div>
                               <h3 className="font-semibold">{contact.name}</h3>
-                              <div className="flex items-center gap-4 text-sm text-gray-600">
+                              <div className="flex items-center gap-4 text-sm text-muted-foreground">
                                 <div className="flex items-center gap-1">
                                   <Mail className="h-4 w-4" />
                                   {contact.email}
@@ -267,17 +393,17 @@ const NewAdmin = () => {
                           
                           <div>
                             <span className="font-medium text-sm">Message:</span>
-                            <p className="text-sm mt-1 p-2 bg-gray-50 rounded">{contact.message}</p>
+                            <p className="text-sm mt-1 p-2 bg-muted rounded">{contact.message}</p>
                           </div>
                           
-                          <div className="text-xs text-gray-500">
+                          <div className="text-xs text-muted-foreground">
                             Submitted: {formatDate(contact.created_at)}
                           </div>
                         </div>
                       ))}
                       
                       {contactSubmissions.length === 0 && (
-                        <div className="text-center py-8 text-gray-500">
+                        <div className="text-center py-8 text-muted-foreground">
                           No contact submissions yet.
                         </div>
                       )}
@@ -300,10 +426,10 @@ const NewAdmin = () => {
                         <div key={subscriber.id} className="border rounded-lg p-4 flex justify-between items-center">
                           <div>
                             <div className="flex items-center gap-2">
-                              <Mail className="h-4 w-4 text-gray-500" />
+                              <Mail className="h-4 w-4 text-muted-foreground" />
                               <span className="font-medium">{subscriber.email}</span>
                             </div>
-                            <div className="text-sm text-gray-600 mt-1">
+                            <div className="text-sm text-muted-foreground mt-1">
                               Subscribed: {formatDate(subscriber.subscribed_at)}
                               {subscriber.unsubscribed_at && (
                                 <span className="ml-2">
@@ -319,7 +445,7 @@ const NewAdmin = () => {
                       ))}
                       
                       {newsletterSubscribers.length === 0 && (
-                        <div className="text-center py-8 text-gray-500">
+                        <div className="text-center py-8 text-muted-foreground">
                           No newsletter subscribers yet.
                         </div>
                       )}
