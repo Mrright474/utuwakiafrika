@@ -38,10 +38,29 @@ interface VolunteerProfile {
   created_at: string;
 }
 
+interface VolunteerHours {
+  id: string;
+  volunteer_id: string;
+  activity_date: string;
+  hours: number;
+  activity_type: string;
+  description?: string;
+  location?: string;
+  verified: boolean;
+  verified_by?: string;
+  created_at: string;
+  volunteer_profiles?: {
+    first_name: string;
+    last_name: string;
+    email: string;
+  };
+}
+
 export const useAdminData = (isAdmin: boolean) => {
   const [contactSubmissions, setContactSubmissions] = useState<ContactSubmission[]>([]);
   const [newsletterSubscribers, setNewsletterSubscribers] = useState<NewsletterSubscriber[]>([]);
   const [volunteerProfiles, setVolunteerProfiles] = useState<VolunteerProfile[]>([]);
+  const [volunteerHours, setVolunteerHours] = useState<VolunteerHours[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
@@ -59,7 +78,8 @@ export const useAdminData = (isAdmin: boolean) => {
       await Promise.all([
         fetchContactSubmissions(),
         fetchNewsletterSubscribers(),
-        fetchVolunteerProfiles()
+        fetchVolunteerProfiles(),
+        fetchVolunteerHours()
       ]);
     } catch (error) {
       console.error('Error fetching admin data:', error);
@@ -115,6 +135,27 @@ export const useAdminData = (isAdmin: boolean) => {
     setVolunteerProfiles(data || []);
   };
 
+  const fetchVolunteerHours = async () => {
+    const { data, error } = await supabase
+      .from('volunteer_hours')
+      .select(`
+        *,
+        volunteer_profiles (
+          first_name,
+          last_name,
+          email
+        )
+      `)
+      .order('activity_date', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching volunteer hours:', error);
+      return;
+    }
+
+    setVolunteerHours(data || []);
+  };
+
   const updateContactStatus = async (id: string, status: string) => {
     const { error } = await supabase
       .from('contact_submissions')
@@ -130,7 +171,6 @@ export const useAdminData = (isAdmin: boolean) => {
       return false;
     }
 
-    // Update local state
     setContactSubmissions(prev => 
       prev.map(item => item.id === id ? { ...item, status } : item)
     );
@@ -158,7 +198,6 @@ export const useAdminData = (isAdmin: boolean) => {
       return false;
     }
 
-    // Update local state
     setVolunteerProfiles(prev => 
       prev.map(item => item.id === id ? { ...item, status } : item)
     );
@@ -166,6 +205,40 @@ export const useAdminData = (isAdmin: boolean) => {
     toast({
       title: "Status Updated",
       description: "Volunteer status updated successfully.",
+    });
+
+    return true;
+  };
+
+  const verifyVolunteerHours = async (id: string, verified: boolean) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    const { error } = await supabase
+      .from('volunteer_hours')
+      .update({ 
+        verified, 
+        verified_by: verified ? user?.id : null 
+      })
+      .eq('id', id);
+
+    if (error) {
+      toast({
+        title: "Verification Failed",
+        description: error.message,
+        variant: "destructive"
+      });
+      return false;
+    }
+
+    setVolunteerHours(prev => 
+      prev.map(item => item.id === id ? { ...item, verified, verified_by: verified ? user?.id : undefined } : item)
+    );
+
+    toast({
+      title: verified ? "Hours Verified" : "Verification Removed",
+      description: verified 
+        ? "Volunteer hours have been verified." 
+        : "Verification has been removed.",
     });
 
     return true;
@@ -186,7 +259,6 @@ export const useAdminData = (isAdmin: boolean) => {
       return false;
     }
 
-    // Update local state
     setContactSubmissions(prev => prev.filter(item => item.id !== id));
 
     toast({
@@ -201,10 +273,12 @@ export const useAdminData = (isAdmin: boolean) => {
     contactSubmissions,
     newsletterSubscribers,
     volunteerProfiles,
+    volunteerHours,
     loading,
     refetch: fetchAllData,
     updateContactStatus,
     updateVolunteerStatus,
+    verifyVolunteerHours,
     deleteContactSubmission
   };
 };
