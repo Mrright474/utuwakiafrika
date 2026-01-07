@@ -5,9 +5,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Users, MessageSquare, Mail, LogOut, Clock, User, Phone, MapPin, Settings, CheckCircle, XCircle, Calendar } from 'lucide-react';
+import { Loader2, Users, MessageSquare, Mail, LogOut, Clock, User, Phone, MapPin, Settings, CheckCircle, XCircle, Calendar, Download } from 'lucide-react';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { useAdminData } from '@/hooks/useAdminData';
+import { exportToCSV, exportColumns } from '@/utils/exportData';
 
 const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString('en-US', {
@@ -74,6 +75,20 @@ const NewAdmin = () => {
   const totalHoursLogged = volunteerHours.reduce((sum, h) => sum + Number(h.hours), 0);
   const verifiedHours = volunteerHours.filter(h => h.verified).reduce((sum, h) => sum + Number(h.hours), 0);
 
+  const handleExportProfiles = () => {
+    const today = new Date().toISOString().split('T')[0];
+    exportToCSV(volunteerProfiles, exportColumns.volunteerProfiles, `volunteer-profiles-${today}`);
+  };
+
+  const handleExportHours = () => {
+    const today = new Date().toISOString().split('T')[0];
+    const hoursWithNames = volunteerHours.map(h => ({
+      ...h,
+      volunteer_name: `${h.volunteer_profiles?.first_name || ''} ${h.volunteer_profiles?.last_name || ''}`.trim()
+    }));
+    exportToCSV(hoursWithNames, exportColumns.volunteerHours, `volunteer-hours-${today}`);
+  };
+
   return (
     <Layout>
       <div className="bg-utu-light-gray py-8 min-h-screen">
@@ -128,11 +143,17 @@ const NewAdmin = () => {
 
               <TabsContent value="volunteers">
                 <Card>
-                  <CardHeader>
-                    <CardTitle>Volunteer Profiles</CardTitle>
-                    <CardDescription>
-                      Manage volunteer applications and profiles.
-                    </CardDescription>
+                  <CardHeader className="flex flex-row items-center justify-between">
+                    <div>
+                      <CardTitle>Volunteer Profiles</CardTitle>
+                      <CardDescription>
+                        Manage volunteer applications and profiles.
+                      </CardDescription>
+                    </div>
+                    <Button variant="outline" size="sm" onClick={handleExportProfiles}>
+                      <Download className="h-4 w-4 mr-2" />
+                      Export CSV
+                    </Button>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
@@ -243,11 +264,17 @@ const NewAdmin = () => {
                 </div>
 
                 <Card>
-                  <CardHeader>
-                    <CardTitle>Volunteer Hours</CardTitle>
-                    <CardDescription>
-                      Review and verify volunteer hours submissions.
-                    </CardDescription>
+                  <CardHeader className="flex flex-row items-center justify-between">
+                    <div>
+                      <CardTitle>Volunteer Hours</CardTitle>
+                      <CardDescription>
+                        Review and verify volunteer hours submissions.
+                      </CardDescription>
+                    </div>
+                    <Button variant="outline" size="sm" onClick={handleExportHours}>
+                      <Download className="h-4 w-4 mr-2" />
+                      Export CSV
+                    </Button>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
