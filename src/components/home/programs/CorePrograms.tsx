@@ -15,7 +15,7 @@ const iconMap: Record<string, any> = {
 const CorePrograms = () => {
   const { programs, loading } = useProgramsManagement();
   
-  const corePrograms = programs.filter(p => p.category === 'core' || !p.category);
+  const corePrograms = programs.filter(p => p.category !== 'future' && p.category !== 'special-events');
 
   if (loading) {
     return (
