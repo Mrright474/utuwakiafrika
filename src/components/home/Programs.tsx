@@ -2,6 +2,7 @@
 import React from 'react';
 import ProgramsHeader from './programs/ProgramsHeader';
 import CorePrograms from './programs/CorePrograms';
+import FutureProjects from './programs/FutureProjects';
 import SpecialEvents from './programs/SpecialEvents';
 import ProgramsApproach from './programs/ProgramsApproach';
 import ProgramsCallToAction from './programs/ProgramsCallToAction';
@@ -12,6 +13,7 @@ const Programs = () => {
       <div className="container mx-auto px-4">
         <ProgramsHeader />
         <CorePrograms />
+        <FutureProjects />
         <SpecialEvents />
         <ProgramsApproach />
         <ProgramsCallToAction />
