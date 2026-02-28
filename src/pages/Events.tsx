@@ -1,62 +1,17 @@
 
 import React from 'react';
 import Layout from '@/components/layout/Layout';
-import { Calendar, MapPin, Clock, Users } from 'lucide-react';
+import { Calendar, MapPin, Clock, Users, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Link } from 'react-router-dom';
+import { useEventsManagement } from '@/hooks/useEventsManagement';
 
 const Events = () => {
-  const upcomingEvents = [
-    {
-      id: 1,
-      title: "Annual Fundraising Gala",
-      date: "March 15, 2024",
-      time: "6:00 PM - 10:00 PM",
-      location: "Kampala Serena Hotel, Uganda",
-      description: "Join us for an evening of celebration and fundraising to support our ongoing projects across Africa.",
-      image: "/lovable-uploads/b07d8f50-577a-4699-87ba-8759e7ace688.png",
-      attendees: "200+ expected"
-    },
-    {
-      id: 2,
-      title: "Community Health Workshop",
-      date: "April 8, 2024",
-      time: "9:00 AM - 4:00 PM",
-      location: "Jinja Community Center, Uganda",
-      description: "Educational workshop on preventive healthcare and hygiene practices for rural communities.",
-      image: "/lovable-uploads/52fedddf-3da6-485c-af83-de0020326139.png",
-      attendees: "150+ expected"
-    },
-    {
-      id: 3,
-      title: "Youth Leadership Summit",
-      date: "May 20, 2024",
-      time: "8:00 AM - 6:00 PM",
-      location: "Nairobi Conference Center, Kenya",
-      description: "Empowering young African leaders with skills and knowledge for community development.",
-      image: "/lovable-uploads/969161e6-4a43-456e-8ceb-4578f7e45935.png",
-      attendees: "300+ expected"
-    }
-  ];
+  const { events, loading } = useEventsManagement();
 
-  const pastEvents = [
-    {
-      title: "Water Project Launch - Mbarara",
-      date: "January 2024",
-      impact: "Provided clean water access to 5,000 residents"
-    },
-    {
-      title: "Educational Support Initiative",
-      date: "December 2023",
-      impact: "Distributed school supplies to 1,200 students"
-    },
-    {
-      title: "Women's Empowerment Workshop",
-      date: "November 2023",
-      impact: "Trained 85 women in entrepreneurship skills"
-    }
-  ];
+  const upcomingEvents = events.filter(e => e.category === 'upcoming' && e.active !== false);
+  const pastEvents = events.filter(e => e.category === 'past' && e.active !== false);
 
   const handleEventRegistration = (eventTitle: string) => {
     alert(`Registration for "${eventTitle}" would be available here. Please contact us to register for this event.`);
@@ -82,85 +37,109 @@ const Events = () => {
         <section className="py-16">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-utu-black mb-4 font-heading">
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4 font-heading">
                 Upcoming Events
               </h2>
-              <p className="text-utu-gray text-lg max-w-2xl mx-auto">
+              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
                 Don't miss out on these exciting opportunities to make a difference in African communities.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {upcomingEvents.map((event) => (
-                <Card key={event.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                  <div className="aspect-video relative">
-                    <img 
-                      src={event.image} 
-                      alt={event.title}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <CardHeader>
-                    <CardTitle className="text-xl text-utu-black">{event.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    <div className="flex items-center text-utu-gray">
-                      <Calendar className="h-4 w-4 mr-2 text-utu-red" />
-                      {event.date}
+            {loading ? (
+              <div className="flex justify-center py-12">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              </div>
+            ) : upcomingEvents.length === 0 ? (
+              <div className="text-center py-12 text-muted-foreground">
+                No upcoming events at the moment. Check back soon!
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {upcomingEvents.map((event) => (
+                  <Card key={event.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                    <div className="aspect-video relative overflow-hidden bg-muted">
+                      {event.image_url ? (
+                        <img 
+                          src={event.image_url} 
+                          alt={event.title}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <Calendar className="h-12 w-12 text-muted-foreground" />
+                        </div>
+                      )}
                     </div>
-                    <div className="flex items-center text-utu-gray">
-                      <Clock className="h-4 w-4 mr-2 text-utu-red" />
-                      {event.time}
-                    </div>
-                    <div className="flex items-center text-utu-gray">
-                      <MapPin className="h-4 w-4 mr-2 text-utu-red" />
-                      {event.location}
-                    </div>
-                    <div className="flex items-center text-utu-gray">
-                      <Users className="h-4 w-4 mr-2 text-utu-red" />
-                      {event.attendees}
-                    </div>
-                    <p className="text-utu-gray text-sm leading-relaxed">
-                      {event.description}
-                    </p>
-                    <Button 
-                      onClick={() => handleEventRegistration(event.title)}
-                      className="w-full bg-utu-red hover:bg-red-700 text-white mt-4"
-                    >
-                      Register for Event
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                    <CardHeader>
+                      <CardTitle className="text-xl text-foreground">{event.title}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      <div className="flex items-center text-muted-foreground">
+                        <Calendar className="h-4 w-4 mr-2 text-primary" />
+                        {event.event_date}
+                      </div>
+                      {event.event_time && (
+                        <div className="flex items-center text-muted-foreground">
+                          <Clock className="h-4 w-4 mr-2 text-primary" />
+                          {event.event_time}
+                        </div>
+                      )}
+                      {event.location && (
+                        <div className="flex items-center text-muted-foreground">
+                          <MapPin className="h-4 w-4 mr-2 text-primary" />
+                          {event.location}
+                        </div>
+                      )}
+                      {event.attendees && (
+                        <div className="flex items-center text-muted-foreground">
+                          <Users className="h-4 w-4 mr-2 text-primary" />
+                          {event.attendees}
+                        </div>
+                      )}
+                      <p className="text-muted-foreground text-sm leading-relaxed">
+                        {event.description}
+                      </p>
+                      <Button 
+                        onClick={() => handleEventRegistration(event.title)}
+                        className="w-full bg-primary hover:bg-primary/90 text-primary-foreground mt-4"
+                      >
+                        Register for Event
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
           </div>
         </section>
 
         {/* Past Events Impact */}
-        <section className="py-16 bg-white">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-utu-black mb-4 font-heading">
-                Recent Event Impact
-              </h2>
-              <p className="text-utu-gray text-lg max-w-2xl mx-auto">
-                See the lasting impact of our recent events and initiatives across African communities.
-              </p>
-            </div>
+        {pastEvents.length > 0 && (
+          <section className="py-16 bg-white">
+            <div className="container mx-auto px-4">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4 font-heading">
+                  Recent Event Impact
+                </h2>
+                <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                  See the lasting impact of our recent events and initiatives across African communities.
+                </p>
+              </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {pastEvents.map((event, index) => (
-                <Card key={index} className="text-center p-6">
-                  <CardContent className="space-y-4">
-                    <h3 className="text-xl font-bold text-utu-black">{event.title}</h3>
-                    <p className="text-utu-gray font-medium">{event.date}</p>
-                    <p className="text-utu-red font-semibold">{event.impact}</p>
-                  </CardContent>
-                </Card>
-              ))}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {pastEvents.map((event) => (
+                  <Card key={event.id} className="text-center p-6">
+                    <CardContent className="space-y-4">
+                      <h3 className="text-xl font-bold text-foreground">{event.title}</h3>
+                      <p className="text-muted-foreground font-medium">{event.event_date}</p>
+                      <p className="text-primary font-semibold">{event.description}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* Call to Action */}
         <section className="py-16 bg-gradient-to-r from-utu-gold to-yellow-600">

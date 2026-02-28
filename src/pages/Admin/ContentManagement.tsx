@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Loader2, Users, FileText, MessageSquare, BarChart, Plus, Edit, Trash2, LogOut, ArrowLeft, Star, Image as ImageIcon, Images, EyeOff, Eye, CheckSquare, Square, Filter, Search, X, Sparkles } from 'lucide-react';
+import { Loader2, Users, FileText, MessageSquare, BarChart, Plus, Edit, Trash2, LogOut, ArrowLeft, Star, Image as ImageIcon, Images, EyeOff, Eye, CheckSquare, Square, Filter, Search, X, Sparkles, Calendar } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -20,6 +20,7 @@ import { useTestimonialsManagement } from '@/hooks/useTestimonialsManagement';
 import { useMetricsManagement } from '@/hooks/useMetricsManagement';
 import { useSuccessStoriesManagement } from '@/hooks/useSuccessStoriesManagement';
 import { useGalleryManagement } from '@/hooks/useGalleryManagement';
+import { useEventsManagement } from '@/hooks/useEventsManagement';
 import ImageUpload from '@/components/home/ImageUpload';
 import BatchImageUpload from '@/components/home/BatchImageUpload';
 import SortableTeamList from '@/components/admin/SortableTeamList';
@@ -71,6 +72,7 @@ const ContentManagement = () => {
   const { metrics, loading: metricsLoading, addMetric, updateMetric, deleteMetric, toggleMetricActive, bulkToggleMetricsActive, bulkDeleteMetrics, reorderMetrics } = useMetricsManagement();
   const { stories, loading: storiesLoading, addStory, updateStory, deleteStory, toggleStoryActive, bulkToggleStoriesActive, bulkDeleteStories, reorderStories } = useSuccessStoriesManagement();
   const { images, loading: galleryLoading, addImage, batchAddImages, isBatchUploading, updateImage, deleteImage, toggleImageActive, bulkToggleImagesActive, bulkDeleteImages, reorderImages } = useGalleryManagement();
+  const { events: eventsList, loading: eventsLoading, addEvent, updateEvent, deleteEvent, toggleEventActive } = useEventsManagement();
   const [batchDialogOpen, setBatchDialogOpen] = useState(false);
   const [batchCategory, setBatchCategory] = useState('');
 
@@ -261,6 +263,8 @@ const ContentManagement = () => {
       setEditingItem({ title: '', description: '', category: '', image_url: '' });
     } else if (type === 'gallery') {
       setEditingItem({ title: '', description: '', category: '', image_url: '' });
+    } else if (type === 'events') {
+      setEditingItem({ title: '', description: '', event_date: '', event_time: '', location: '', attendees: '', category: 'upcoming', impact: '', image_url: '' });
     }
     
     setSelectedFile(null);
@@ -333,6 +337,13 @@ const ContentManagement = () => {
         } else {
           await updateImage({ image: editingItem, imageFile: selectedFile });
         }
+      } else if (activeTab === 'events') {
+        if (dialogMode === 'add') {
+          const { id, ...data } = editingItem;
+          await addEvent(data, selectedFile);
+        } else {
+          await updateEvent(editingItem, selectedFile);
+        }
       }
       setDialogOpen(false);
       setEditingItem(null);
@@ -357,6 +368,8 @@ const ContentManagement = () => {
       } else if (type === 'gallery') {
         const image = images.find((i: any) => i.id === id);
         if (image) await deleteImage(image);
+      } else if (type === 'events') {
+        await deleteEvent(id);
       }
     } catch (error) {
       console.error('Error deleting:', error);
@@ -498,7 +511,7 @@ const ContentManagement = () => {
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 lg:grid-cols-7 mb-8">
+            <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 lg:grid-cols-8 mb-8">
               <TabsTrigger value="team">
                 <Users className="mr-2 h-4 w-4" />
                 Team ({teamMembers.length})
@@ -506,6 +519,10 @@ const ContentManagement = () => {
               <TabsTrigger value="programs">
                 <FileText className="mr-2 h-4 w-4" />
                 Programs ({programs.length})
+              </TabsTrigger>
+              <TabsTrigger value="events">
+                <Calendar className="mr-2 h-4 w-4" />
+                Events ({eventsList.length})
               </TabsTrigger>
               <TabsTrigger value="testimonials">
                 <MessageSquare className="mr-2 h-4 w-4" />
@@ -1055,6 +1072,61 @@ const ContentManagement = () => {
               </Card>
             </TabsContent>
 
+            {/* Events Tab */}
+            <TabsContent value="events">
+              <Card>
+                <CardHeader>
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <CardTitle>Events</CardTitle>
+                      <CardDescription>Manage upcoming and past events</CardDescription>
+                    </div>
+                    <Button onClick={() => handleAdd('events')}>
+                      <Plus className="mr-2 h-4 w-4" />
+                      Add Event
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {eventsLoading ? (
+                    <div className="flex justify-center py-8"><Loader2 className="h-8 w-8 animate-spin" /></div>
+                  ) : (
+                    <div className="space-y-4">
+                      {eventsList.map((event: any) => (
+                        <div key={event.id} className={`border rounded-lg p-4 flex justify-between items-start ${event.active === false ? 'opacity-60 bg-muted/50' : ''}`}>
+                          <div className="flex gap-4 flex-1">
+                            {event.image_url ? (
+                              <img src={event.image_url} alt={event.title} className="w-24 h-20 rounded object-cover" />
+                            ) : (
+                              <div className="w-24 h-20 rounded bg-muted flex items-center justify-center">
+                                <Calendar className="h-8 w-8 text-muted-foreground" />
+                              </div>
+                            )}
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2">
+                                <h3 className="font-semibold">{event.title}</h3>
+                                <Badge variant="outline" className="text-xs">{event.category || 'upcoming'}</Badge>
+                                {event.active === false && <Badge variant="secondary" className="text-xs"><EyeOff className="h-3 w-3 mr-1" />Inactive</Badge>}
+                              </div>
+                              <p className="text-sm text-muted-foreground mt-1">{event.event_date} {event.event_time && `• ${event.event_time}`}</p>
+                              {event.location && <p className="text-xs text-muted-foreground">{event.location}</p>}
+                              <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{event.description}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Switch checked={event.active !== false} onCheckedChange={(checked) => toggleEventActive(event.id, checked)} />
+                            <Button size="sm" variant="outline" onClick={() => handleEdit(event, 'events')}><Edit className="h-4 w-4" /></Button>
+                            <Button size="sm" variant="destructive" onClick={() => handleDelete(event.id, 'events')}><Trash2 className="h-4 w-4" /></Button>
+                          </div>
+                        </div>
+                      ))}
+                      {eventsList.length === 0 && <div className="text-center py-8 text-muted-foreground">No events yet. Click "Add Event" to get started.</div>}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
             {/* AI Image Generator Tab */}
             <TabsContent value="image-generator">
               <ImageGenerator />
@@ -1071,7 +1143,8 @@ const ContentManagement = () => {
                    activeTab === 'programs' ? 'Program' : 
                    activeTab === 'testimonials' ? 'Testimonial' : 
                    activeTab === 'metrics' ? 'Metric' :
-                   activeTab === 'stories' ? 'Success Story' : 'Gallery Image'}
+                   activeTab === 'stories' ? 'Success Story' :
+                   activeTab === 'events' ? 'Event' : 'Gallery Image'}
                 </DialogTitle>
               </DialogHeader>
               
@@ -1222,6 +1295,62 @@ const ContentManagement = () => {
                     <div>
                       <Label>Category</Label>
                       <Input value={editingItem?.category || ''} onChange={(e) => handleInputChange('category', e.target.value)} />
+                    </div>
+                    <ImageUpload
+                      mode={dialogMode}
+                      currentImage={imagePreview || editingItem?.image_url}
+                      onImageSelect={handleImageSelect}
+                      onImageRemove={() => {
+                        setSelectedFile(null);
+                        setImagePreview('');
+                      }}
+                    />
+                  </>
+                )}
+
+                {activeTab === 'events' && (
+                  <>
+                    <div>
+                      <Label>Title</Label>
+                      <Input value={editingItem?.title || ''} onChange={(e) => handleInputChange('title', e.target.value)} />
+                    </div>
+                    <div>
+                      <Label>Description</Label>
+                      <Textarea value={editingItem?.description || ''} onChange={(e) => handleInputChange('description', e.target.value)} rows={3} />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label>Event Date</Label>
+                        <Input value={editingItem?.event_date || ''} onChange={(e) => handleInputChange('event_date', e.target.value)} placeholder="e.g., March 15, 2025" />
+                      </div>
+                      <div>
+                        <Label>Event Time</Label>
+                        <Input value={editingItem?.event_time || ''} onChange={(e) => handleInputChange('event_time', e.target.value)} placeholder="e.g., 6:00 PM - 10:00 PM" />
+                      </div>
+                    </div>
+                    <div>
+                      <Label>Location</Label>
+                      <Input value={editingItem?.location || ''} onChange={(e) => handleInputChange('location', e.target.value)} placeholder="e.g., Kampala, Uganda" />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label>Expected Attendees</Label>
+                        <Input value={editingItem?.attendees || ''} onChange={(e) => handleInputChange('attendees', e.target.value)} placeholder="e.g., 200+ expected" />
+                      </div>
+                      <div>
+                        <Label>Category</Label>
+                        <Select value={editingItem?.category || 'upcoming'} onValueChange={(value) => handleInputChange('category', value)}>
+                          <SelectTrigger><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="upcoming">Upcoming</SelectItem>
+                            <SelectItem value="past">Past</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    <div>
+                      <Label>Impact (for past events)</Label>
+                      <Input value={editingItem?.impact || ''} onChange={(e) => handleInputChange('impact', e.target.value)} placeholder="e.g., Provided clean water to 5,000 residents" />
                     </div>
                     <ImageUpload
                       mode={dialogMode}
