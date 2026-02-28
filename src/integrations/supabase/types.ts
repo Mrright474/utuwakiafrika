@@ -80,6 +80,57 @@ export type Database = {
         }
         Relationships: []
       }
+      events: {
+        Row: {
+          active: boolean | null
+          attendees: string | null
+          category: string | null
+          created_at: string | null
+          description: string
+          display_order: number | null
+          event_date: string
+          event_time: string | null
+          id: string
+          image_url: string | null
+          impact: string | null
+          location: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          attendees?: string | null
+          category?: string | null
+          created_at?: string | null
+          description: string
+          display_order?: number | null
+          event_date: string
+          event_time?: string | null
+          id?: string
+          image_url?: string | null
+          impact?: string | null
+          location?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          attendees?: string | null
+          category?: string | null
+          created_at?: string | null
+          description?: string
+          display_order?: number | null
+          event_date?: string
+          event_time?: string | null
+          id?: string
+          image_url?: string | null
+          impact?: string | null
+          location?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       gallery_images: {
         Row: {
           active: boolean | null

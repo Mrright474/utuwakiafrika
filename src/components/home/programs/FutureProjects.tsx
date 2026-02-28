@@ -37,10 +37,10 @@ const FutureProjects = () => {
     return (
       <div className="mb-20">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-utu-black font-heading">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground font-heading">
             Our Pipeline & Future Projects
           </h2>
-          <div className="w-20 h-1 bg-utu-red mx-auto mb-6"></div>
+          <div className="w-20 h-1 bg-primary mx-auto mb-6"></div>
           <div className="text-center text-muted-foreground">Loading projects...</div>
         </div>
       </div>
@@ -52,13 +52,13 @@ const FutureProjects = () => {
   return (
     <div className="mb-20">
       <div className="text-center mb-12">
-        <Badge variant="outline" className="mb-4 text-sm px-4 py-1 border-utu-red text-utu-red">
+        <Badge variant="outline" className="mb-4 text-sm px-4 py-1 border-primary text-primary">
           Vision 2030+
         </Badge>
-        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-utu-black font-heading">
+        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground font-heading">
           Our Pipeline & Future Projects
         </h2>
-        <div className="w-20 h-1 bg-utu-red mx-auto mb-6"></div>
+        <div className="w-20 h-1 bg-primary mx-auto mb-6"></div>
         <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed">
           Bold, long-term initiatives that will reshape Africa's future — from world-class institutions 
           to cutting-edge technology platforms, all driven by the spirit of Ubuntu.
@@ -77,18 +77,36 @@ const FutureProjects = () => {
               key={project.id}
               className="group border-0 shadow-md hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden relative"
             >
+              {/* Project Image */}
+              {project.image && (
+                <div className="relative h-48 overflow-hidden">
+                  <img 
+                    src={project.image} 
+                    alt={project.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className={`absolute inset-0 bg-gradient-to-t from-black/60 to-transparent`} />
+                  <Badge className={`${badgeColor} border-0 text-xs font-medium absolute top-3 right-3`}>
+                    Future Project
+                  </Badge>
+                </div>
+              )}
+              
               <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`} />
-              <div className={`h-1.5 bg-gradient-to-r ${gradient}`} />
+              {!project.image && <div className={`h-1.5 bg-gradient-to-r ${gradient}`} />}
+              
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between mb-3">
                   <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white shadow-lg`}>
                     {IconComponent ? <IconComponent className="h-8 w-8" /> : null}
                   </div>
-                  <Badge className={`${badgeColor} border-0 text-xs font-medium`}>
-                    Future Project
-                  </Badge>
+                  {!project.image && (
+                    <Badge className={`${badgeColor} border-0 text-xs font-medium`}>
+                      Future Project
+                    </Badge>
+                  )}
                 </div>
-                <CardTitle className="text-lg text-utu-black font-heading leading-tight">
+                <CardTitle className="text-lg text-foreground font-heading leading-tight">
                   {project.title}
                 </CardTitle>
               </CardHeader>
