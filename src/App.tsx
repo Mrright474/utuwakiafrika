@@ -4,27 +4,40 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, Suspense, useEffect, ComponentType } from "react";
 import ChatBot from "./components/home/ChatBot";
 import ScrollToTop from "./components/layout/ScrollToTop";
 import { supabase } from "@/integrations/supabase/client";
 
+// Retry wrapper for lazy imports (handles stale cache/service worker issues)
+function lazyRetry<T extends ComponentType<any>>(
+  factory: () => Promise<{ default: T }>
+) {
+  return lazy(() =>
+    factory().catch(() => {
+      // Force reload on chunk load failure (stale cache)
+      window.location.reload();
+      return new Promise<{ default: T }>(() => {});
+    })
+  );
+}
+
 // Lazy load all page components for better performance
-const Index = lazy(() => import("./pages/Index"));
-const AboutPage = lazy(() => import("./pages/About"));
-const ProgramsPage = lazy(() => import("./pages/Programs"));
-const Events = lazy(() => import("./pages/Events"));
-const TeamPage = lazy(() => import("./pages/TeamPage"));
-const ImpactPage = lazy(() => import("./pages/ImpactPage"));
-const SuccessStoriesPage = lazy(() => import("./pages/SuccessStories"));
-const ContactPage = lazy(() => import("./pages/ContactPage"));
-const Donate = lazy(() => import("./pages/Donate"));
-const Admin = lazy(() => import("./pages/NewAdmin"));
-const ContentManagement = lazy(() => import("./pages/Admin/ContentManagement"));
-const AdminAuth = lazy(() => import("./pages/AdminAuth"));
-const VolunteerAuth = lazy(() => import("./pages/VolunteerAuth"));
-const VolunteerDashboard = lazy(() => import("./pages/VolunteerDashboard"));
-const NotFound = lazy(() => import("./pages/NotFound"));
+const Index = lazyRetry(() => import("./pages/Index"));
+const AboutPage = lazyRetry(() => import("./pages/About"));
+const ProgramsPage = lazyRetry(() => import("./pages/Programs"));
+const Events = lazyRetry(() => import("./pages/Events"));
+const TeamPage = lazyRetry(() => import("./pages/TeamPage"));
+const ImpactPage = lazyRetry(() => import("./pages/ImpactPage"));
+const SuccessStoriesPage = lazyRetry(() => import("./pages/SuccessStories"));
+const ContactPage = lazyRetry(() => import("./pages/ContactPage"));
+const Donate = lazyRetry(() => import("./pages/Donate"));
+const Admin = lazyRetry(() => import("./pages/NewAdmin"));
+const ContentManagement = lazyRetry(() => import("./pages/Admin/ContentManagement"));
+const AdminAuth = lazyRetry(() => import("./pages/AdminAuth"));
+const VolunteerAuth = lazyRetry(() => import("./pages/VolunteerAuth"));
+const VolunteerDashboard = lazyRetry(() => import("./pages/VolunteerDashboard"));
+const NotFound = lazyRetry(() => import("./pages/NotFound"));
 
 // Loading component for Suspense fallback
 const PageLoader = () => (
