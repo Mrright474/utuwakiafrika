@@ -37,6 +37,7 @@ const ContentManagement = lazyRetry(() => import("./pages/Admin/ContentManagemen
 const AdminAuth = lazyRetry(() => import("./pages/AdminAuth"));
 const VolunteerAuth = lazyRetry(() => import("./pages/VolunteerAuth"));
 const VolunteerDashboard = lazyRetry(() => import("./pages/VolunteerDashboard"));
+const ProjectDetail = lazyRetry(() => import("./pages/ProjectDetail"));
 const NotFound = lazyRetry(() => import("./pages/NotFound"));
 
 // Loading component for Suspense fallback
@@ -112,6 +113,7 @@ const App = () => {
             <Route path="/admin" element={<Admin />} />
             <Route path="/admin/content" element={<ContentManagement />} />
             <Route path="/admin/auth" element={<AdminAuth />} />
+            <Route path="/projects/:slug" element={<ProjectDetail />} />
             <Route path="/admin/*" element={<Admin />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
