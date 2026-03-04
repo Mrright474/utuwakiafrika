@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Loader2, Users, FileText, MessageSquare, BarChart, Plus, Edit, Trash2, LogOut, ArrowLeft, Star, Image as ImageIcon, Images, EyeOff, Eye, CheckSquare, Square, Filter, Search, X, Sparkles, Calendar } from 'lucide-react';
+import { Loader2, Users, FileText, MessageSquare, BarChart, Plus, Edit, Trash2, LogOut, ArrowLeft, Star, Image as ImageIcon, Images, EyeOff, Eye, CheckSquare, Square, Filter, Search, X, Sparkles, Calendar, ClipboardList } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -21,6 +21,7 @@ import { useMetricsManagement } from '@/hooks/useMetricsManagement';
 import { useSuccessStoriesManagement } from '@/hooks/useSuccessStoriesManagement';
 import { useGalleryManagement } from '@/hooks/useGalleryManagement';
 import { useEventsManagement } from '@/hooks/useEventsManagement';
+import { useEventRegistrations } from '@/hooks/useEventRegistrations';
 import ImageUpload from '@/components/home/ImageUpload';
 import BatchImageUpload from '@/components/home/BatchImageUpload';
 import SortableTeamList from '@/components/admin/SortableTeamList';
@@ -73,6 +74,7 @@ const ContentManagement = () => {
   const { stories, loading: storiesLoading, addStory, updateStory, deleteStory, toggleStoryActive, bulkToggleStoriesActive, bulkDeleteStories, reorderStories } = useSuccessStoriesManagement();
   const { images, loading: galleryLoading, addImage, batchAddImages, isBatchUploading, updateImage, deleteImage, toggleImageActive, bulkToggleImagesActive, bulkDeleteImages, reorderImages } = useGalleryManagement();
   const { events: eventsList, loading: eventsLoading, addEvent, updateEvent, deleteEvent, toggleEventActive } = useEventsManagement();
+  const { registrations, loading: registrationsLoading, updateRegistrationStatus, deleteRegistration } = useEventRegistrations();
   const [batchDialogOpen, setBatchDialogOpen] = useState(false);
   const [batchCategory, setBatchCategory] = useState('');
 
@@ -511,7 +513,7 @@ const ContentManagement = () => {
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 lg:grid-cols-8 mb-8">
+            <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 lg:grid-cols-9 mb-8">
               <TabsTrigger value="team">
                 <Users className="mr-2 h-4 w-4" />
                 Team ({teamMembers.length})
@@ -523,6 +525,10 @@ const ContentManagement = () => {
               <TabsTrigger value="events">
                 <Calendar className="mr-2 h-4 w-4" />
                 Events ({eventsList.length})
+              </TabsTrigger>
+              <TabsTrigger value="registrations">
+                <ClipboardList className="mr-2 h-4 w-4" />
+                Registrations ({registrations.length})
               </TabsTrigger>
               <TabsTrigger value="testimonials">
                 <MessageSquare className="mr-2 h-4 w-4" />
@@ -1121,6 +1127,61 @@ const ContentManagement = () => {
                         </div>
                       ))}
                       {eventsList.length === 0 && <div className="text-center py-8 text-muted-foreground">No events yet. Click "Add Event" to get started.</div>}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Registrations Tab */}
+            <TabsContent value="registrations">
+              <Card>
+                <CardHeader>
+                  <div>
+                    <CardTitle>Event Registrations</CardTitle>
+                    <CardDescription>View and manage event registrations from attendees</CardDescription>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {registrationsLoading ? (
+                    <div className="flex justify-center py-8"><Loader2 className="h-8 w-8 animate-spin" /></div>
+                  ) : registrations.length === 0 ? (
+                    <div className="text-center py-8 text-muted-foreground">No registrations yet.</div>
+                  ) : (
+                    <div className="space-y-3">
+                      {registrations.map((reg) => (
+                        <div key={reg.id} className="border rounded-lg p-4 flex justify-between items-start">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <h3 className="font-semibold">{reg.full_name}</h3>
+                              <Badge variant={reg.status === 'registered' ? 'default' : reg.status === 'confirmed' ? 'secondary' : 'outline'} className="text-xs">
+                                {reg.status}
+                              </Badge>
+                            </div>
+                            <p className="text-sm text-muted-foreground">Event: <strong>{reg.event_title}</strong></p>
+                            <p className="text-sm text-muted-foreground">{reg.email}{reg.phone ? ` • ${reg.phone}` : ''}</p>
+                            {reg.organization && <p className="text-xs text-muted-foreground">Org: {reg.organization}</p>}
+                            {reg.message && <p className="text-xs text-muted-foreground mt-1 italic">"{reg.message}"</p>}
+                            <p className="text-xs text-muted-foreground mt-1">{new Date(reg.created_at).toLocaleDateString()}</p>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Select value={reg.status} onValueChange={(val) => updateRegistrationStatus(reg.id, val)}>
+                              <SelectTrigger className="w-[120px] h-8 text-xs">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="registered">Registered</SelectItem>
+                                <SelectItem value="confirmed">Confirmed</SelectItem>
+                                <SelectItem value="cancelled">Cancelled</SelectItem>
+                                <SelectItem value="attended">Attended</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <Button size="sm" variant="destructive" onClick={() => { if (confirm('Delete this registration?')) deleteRegistration(reg.id); }}>
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   )}
                 </CardContent>
