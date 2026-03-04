@@ -1186,6 +1186,7 @@ const ContentManagement = () => {
                   )}
                 </CardContent>
               </Card>
+            </TabsContent>
 
             {/* AI Image Generator Tab */}
             <TabsContent value="image-generator">
