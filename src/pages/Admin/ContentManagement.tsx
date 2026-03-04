@@ -513,7 +513,7 @@ const ContentManagement = () => {
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 lg:grid-cols-8 mb-8">
+            <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 lg:grid-cols-9 mb-8">
               <TabsTrigger value="team">
                 <Users className="mr-2 h-4 w-4" />
                 Team ({teamMembers.length})
@@ -525,6 +525,10 @@ const ContentManagement = () => {
               <TabsTrigger value="events">
                 <Calendar className="mr-2 h-4 w-4" />
                 Events ({eventsList.length})
+              </TabsTrigger>
+              <TabsTrigger value="registrations">
+                <ClipboardList className="mr-2 h-4 w-4" />
+                Registrations ({registrations.length})
               </TabsTrigger>
               <TabsTrigger value="testimonials">
                 <MessageSquare className="mr-2 h-4 w-4" />
