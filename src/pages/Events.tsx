@@ -98,7 +98,7 @@ const Events = () => {
                         {event.description}
                       </p>
                       <Button 
-                        onClick={() => handleEventRegistration(event.title)}
+                        onClick={() => setRegisterEvent({ id: event.id, title: event.title, date: event.event_date })}
                         className="w-full bg-primary hover:bg-primary/90 text-primary-foreground mt-4"
                       >
                         Register for Event
