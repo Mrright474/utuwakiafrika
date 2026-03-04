@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Target, TrendingUp, Heart, Users, DollarSign, Calendar, CheckCircle, Clock, CircleDot, Globe } from 'lucide-react';
+import ProjectInvestmentForm from '@/components/donation/ProjectInvestmentForm';
 
 const statusIcon = (status: string) => {
   if (status === 'completed') return <CheckCircle className="h-5 w-5 text-green-500" />;
@@ -214,6 +215,19 @@ const ProjectDetail = () => {
                 </CardContent>
               </Card>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Investment Form */}
+      <section className="py-16 md:py-24 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="max-w-2xl mx-auto">
+            <ProjectInvestmentForm
+              projectTitle={project.title}
+              gradient={project.gradient}
+              investmentOptions={project.investmentOpportunities.map(o => ({ title: o.title, amount: o.amount }))}
+            />
           </div>
         </div>
       </section>
