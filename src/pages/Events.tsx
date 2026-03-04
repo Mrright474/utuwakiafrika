@@ -167,6 +167,17 @@ const Events = () => {
           </div>
         </section>
       </div>
+
+      {/* Registration Dialog */}
+      {registerEvent && (
+        <EventRegistrationForm
+          open={!!registerEvent}
+          onOpenChange={(open) => { if (!open) setRegisterEvent(null); }}
+          eventId={registerEvent.id}
+          eventTitle={registerEvent.title}
+          eventDate={registerEvent.date}
+        />
+      )}
     </Layout>
   );
 };
