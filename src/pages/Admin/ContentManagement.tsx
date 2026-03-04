@@ -1133,6 +1133,60 @@ const ContentManagement = () => {
               </Card>
             </TabsContent>
 
+            {/* Registrations Tab */}
+            <TabsContent value="registrations">
+              <Card>
+                <CardHeader>
+                  <div>
+                    <CardTitle>Event Registrations</CardTitle>
+                    <CardDescription>View and manage event registrations from attendees</CardDescription>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {registrationsLoading ? (
+                    <div className="flex justify-center py-8"><Loader2 className="h-8 w-8 animate-spin" /></div>
+                  ) : registrations.length === 0 ? (
+                    <div className="text-center py-8 text-muted-foreground">No registrations yet.</div>
+                  ) : (
+                    <div className="space-y-3">
+                      {registrations.map((reg) => (
+                        <div key={reg.id} className="border rounded-lg p-4 flex justify-between items-start">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <h3 className="font-semibold">{reg.full_name}</h3>
+                              <Badge variant={reg.status === 'registered' ? 'default' : reg.status === 'confirmed' ? 'secondary' : 'outline'} className="text-xs">
+                                {reg.status}
+                              </Badge>
+                            </div>
+                            <p className="text-sm text-muted-foreground">Event: <strong>{reg.event_title}</strong></p>
+                            <p className="text-sm text-muted-foreground">{reg.email}{reg.phone ? ` • ${reg.phone}` : ''}</p>
+                            {reg.organization && <p className="text-xs text-muted-foreground">Org: {reg.organization}</p>}
+                            {reg.message && <p className="text-xs text-muted-foreground mt-1 italic">"{reg.message}"</p>}
+                            <p className="text-xs text-muted-foreground mt-1">{new Date(reg.created_at).toLocaleDateString()}</p>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Select value={reg.status} onValueChange={(val) => updateRegistrationStatus(reg.id, val)}>
+                              <SelectTrigger className="w-[120px] h-8 text-xs">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="registered">Registered</SelectItem>
+                                <SelectItem value="confirmed">Confirmed</SelectItem>
+                                <SelectItem value="cancelled">Cancelled</SelectItem>
+                                <SelectItem value="attended">Attended</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <Button size="sm" variant="destructive" onClick={() => { if (confirm('Delete this registration?')) deleteRegistration(reg.id); }}>
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
             {/* AI Image Generator Tab */}
             <TabsContent value="image-generator">
               <ImageGenerator />
