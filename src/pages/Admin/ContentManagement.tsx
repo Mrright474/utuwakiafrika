@@ -21,6 +21,7 @@ import { useMetricsManagement } from '@/hooks/useMetricsManagement';
 import { useSuccessStoriesManagement } from '@/hooks/useSuccessStoriesManagement';
 import { useGalleryManagement } from '@/hooks/useGalleryManagement';
 import { useEventsManagement } from '@/hooks/useEventsManagement';
+import { useEventRegistrations } from '@/hooks/useEventRegistrations';
 import ImageUpload from '@/components/home/ImageUpload';
 import BatchImageUpload from '@/components/home/BatchImageUpload';
 import SortableTeamList from '@/components/admin/SortableTeamList';
