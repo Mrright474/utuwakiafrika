@@ -74,6 +74,7 @@ const ContentManagement = () => {
   const { stories, loading: storiesLoading, addStory, updateStory, deleteStory, toggleStoryActive, bulkToggleStoriesActive, bulkDeleteStories, reorderStories } = useSuccessStoriesManagement();
   const { images, loading: galleryLoading, addImage, batchAddImages, isBatchUploading, updateImage, deleteImage, toggleImageActive, bulkToggleImagesActive, bulkDeleteImages, reorderImages } = useGalleryManagement();
   const { events: eventsList, loading: eventsLoading, addEvent, updateEvent, deleteEvent, toggleEventActive } = useEventsManagement();
+  const { registrations, loading: registrationsLoading, updateRegistrationStatus, deleteRegistration } = useEventRegistrations();
   const [batchDialogOpen, setBatchDialogOpen] = useState(false);
   const [batchCategory, setBatchCategory] = useState('');
 
