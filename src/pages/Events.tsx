@@ -1,21 +1,19 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import Layout from '@/components/layout/Layout';
 import { Calendar, MapPin, Clock, Users, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Link } from 'react-router-dom';
 import { useEventsManagement } from '@/hooks/useEventsManagement';
+import EventRegistrationForm from '@/components/events/EventRegistrationForm';
 
 const Events = () => {
   const { events, loading } = useEventsManagement();
+  const [registerEvent, setRegisterEvent] = useState<{ id: string; title: string; date: string } | null>(null);
 
   const upcomingEvents = events.filter(e => e.category === 'upcoming' && e.active !== false);
   const pastEvents = events.filter(e => e.category === 'past' && e.active !== false);
-
-  const handleEventRegistration = (eventTitle: string) => {
-    alert(`Registration for "${eventTitle}" would be available here. Please contact us to register for this event.`);
-  };
 
   return (
     <Layout>
