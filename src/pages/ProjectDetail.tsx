@@ -219,6 +219,19 @@ const ProjectDetail = () => {
         </div>
       </section>
 
+      {/* Investment Form */}
+      <section className="py-16 md:py-24 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="max-w-2xl mx-auto">
+            <ProjectInvestmentForm
+              projectTitle={project.title}
+              gradient={project.gradient}
+              investmentOptions={project.investmentOpportunities.map(o => ({ title: o.title, amount: o.amount }))}
+            />
+          </div>
+        </div>
+      </section>
+
       {/* SDG Goals & CTA */}
       <section className={`py-16 md:py-24 bg-gradient-to-r ${project.gradient} text-white`}>
         <div className="container mx-auto px-4 text-center">
