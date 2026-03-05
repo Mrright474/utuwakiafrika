@@ -126,10 +126,13 @@ async function staleWhileRevalidate(request) {
 async function networkFirst(request) {
   try {
     const networkResponse = await fetch(request);
-    if (networkResponse.ok) {
+
+    // Cache only non-document requests to avoid serving stale HTML after deployments
+    if (networkResponse.ok && request.destination !== 'document') {
       const cache = await caches.open(DYNAMIC_CACHE);
       cache.put(request, networkResponse.clone());
     }
+
     return networkResponse;
   } catch (error) {
     console.error('Network first strategy failed, trying cache:', error);
