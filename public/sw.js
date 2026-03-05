@@ -3,12 +3,11 @@ const CACHE_NAME = 'utu-foundation-v1';
 const STATIC_CACHE = 'static-v1';
 const DYNAMIC_CACHE = 'dynamic-v1';
 
-// Assets to cache immediately
+// Assets to cache immediately (avoid caching index.html to prevent stale chunk references)
 const STATIC_ASSETS = [
-  '/',
-  '/index.html',
   '/manifest.json',
-  // Add critical CSS and JS files here
+  '/favicon.ico',
+  '/robots.txt',
 ];
 
 // Assets to cache on request
