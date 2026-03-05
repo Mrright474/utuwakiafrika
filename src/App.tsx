@@ -8,6 +8,7 @@ import { lazy, Suspense, useEffect, ComponentType } from "react";
 import ChatBot from "./components/home/ChatBot";
 import ScrollToTop from "./components/layout/ScrollToTop";
 import { supabase } from "@/integrations/supabase/client";
+import { prefetchAllRoutes } from "@/utils/routePrefetch";
 
 const CHUNK_RELOAD_KEY = 'chunk-reload-attempted';
 
@@ -90,6 +91,11 @@ const queryClient = new QueryClient({
 });
 
 const App = () => {
+  // Prefetch all route chunks after initial load for instant navigation
+  useEffect(() => {
+    prefetchAllRoutes();
+  }, []);
+
   useEffect(() => {
     const run = async () => {
       try {

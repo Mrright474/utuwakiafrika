@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Menu, X, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { TouchButton } from '@/components/ui/touch-button';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import PrefetchLink from '@/components/layout/PrefetchLink';
 import { useIsMobile, useTouchDevice } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 import { useFocusManagement } from '@/hooks/useFocusManagement';
@@ -93,7 +94,7 @@ const Navbar = () => {
         <div className="flex justify-between items-center">
           {/* Logo and brand name */}
           <div className="flex items-center">
-            <Link 
+            <PrefetchLink 
               to="/" 
               className="flex items-center group focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-md" 
               onClick={() => handleNavLinkClick('/')}
@@ -123,12 +124,12 @@ const Navbar = () => {
                   </span>
                 </p>
               </div>
-            </Link>
+            </PrefetchLink>
           </div>
 
           {/* Desktop navigation */}
           <div className="hidden md:flex items-center space-x-4 lg:space-x-6" role="menubar">
-            <Link 
+            <PrefetchLink 
               to="/"
               role="menuitem"
               className={cn(
@@ -141,63 +142,63 @@ const Navbar = () => {
             >
               <Home size={18} aria-hidden="true" />
               Home
-            </Link>
-            <Link 
+            </PrefetchLink>
+            <PrefetchLink 
               to="/about"
               className={`${isActive('/about') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium`}
               onClick={() => handleNavLinkClick('/about')}
             >
               About
-            </Link>
-            <Link 
+            </PrefetchLink>
+            <PrefetchLink 
               to="/programs"
               className={`${isActive('/programs') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium`}
               onClick={() => handleNavLinkClick('/programs')}
             >
               Programs
-            </Link>
-            <Link 
+            </PrefetchLink>
+            <PrefetchLink 
               to="/events"
               className={`${isActive('/events') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium`}
               onClick={() => handleNavLinkClick('/events')}
             >
               Events
-            </Link>
-            <Link 
+            </PrefetchLink>
+            <PrefetchLink 
               to="/team"
               className={`${isActive('/team') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium`}
               onClick={() => handleNavLinkClick('/team')}
             >
               Our Team
-            </Link>
-            <Link 
+            </PrefetchLink>
+            <PrefetchLink 
               to="/impact"
               className={`${isActive('/impact') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium`}
               onClick={() => handleNavLinkClick('/impact')}
             >
               Impact
-            </Link>
-            <Link 
+            </PrefetchLink>
+            <PrefetchLink 
               to="/stories"
               className={`${isActive('/stories') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium`}
               onClick={() => handleNavLinkClick('/stories')}
             >
               Stories
-            </Link>
-            <Link 
+            </PrefetchLink>
+            <PrefetchLink 
               to="/contact"
               className={`${isActive('/contact') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium`}
               onClick={() => handleNavLinkClick('/contact')}
             >
               Contact
-            </Link>
-            <Link 
+            </PrefetchLink>
+            <PrefetchLink 
               to="/volunteers/auth"
               className={`${isActive('/volunteers/auth') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium`}
               onClick={() => handleNavLinkClick('/volunteers/auth')}
             >
               Volunteer Portal
-            </Link>
+            </PrefetchLink>
             <Button 
               onClick={handleDonateClick} 
               className="bg-utu-red hover:bg-red-700 text-white"
@@ -260,7 +261,7 @@ const Navbar = () => {
                   : 'text-utu-black hover:text-utu-red hover:bg-utu-red/5'
               )}
             >
-              <Link 
+              <PrefetchLink 
                 to="/" 
                 role="menuitem"
                 onClick={() => handleNavLinkClick('/')}
@@ -269,7 +270,7 @@ const Navbar = () => {
                 <Home size={20} aria-hidden="true" />
                 Home
                 <VisuallyHidden>{isActive('/') ? ' (current page)' : ''}</VisuallyHidden>
-              </Link>
+              </PrefetchLink>
             </TouchButton>
             
             <TouchButton
@@ -283,9 +284,9 @@ const Navbar = () => {
                   : 'text-utu-black hover:text-utu-red hover:bg-utu-red/5'
               )}
             >
-              <Link to="/about" onClick={() => handleNavLinkClick('/about')}>
+              <PrefetchLink to="/about" onClick={() => handleNavLinkClick('/about')}>
                 About
-              </Link>
+              </PrefetchLink>
             </TouchButton>
             
             <TouchButton
@@ -299,9 +300,9 @@ const Navbar = () => {
                   : 'text-utu-black hover:text-utu-red hover:bg-utu-red/5'
               )}
             >
-              <Link to="/programs" onClick={() => handleNavLinkClick('/programs')}>
+              <PrefetchLink to="/programs" onClick={() => handleNavLinkClick('/programs')}>
                 Programs
-              </Link>
+              </PrefetchLink>
             </TouchButton>
             
             <TouchButton
@@ -315,9 +316,9 @@ const Navbar = () => {
                   : 'text-utu-black hover:text-utu-red hover:bg-utu-red/5'
               )}
             >
-              <Link to="/events" onClick={() => handleNavLinkClick('/events')}>
+              <PrefetchLink to="/events" onClick={() => handleNavLinkClick('/events')}>
                 Events
-              </Link>
+              </PrefetchLink>
             </TouchButton>
             
             <TouchButton
@@ -331,9 +332,9 @@ const Navbar = () => {
                   : 'text-utu-black hover:text-utu-red hover:bg-utu-red/5'
               )}
             >
-              <Link to="/team" onClick={() => handleNavLinkClick('/team')}>
+              <PrefetchLink to="/team" onClick={() => handleNavLinkClick('/team')}>
                 Our Team
-              </Link>
+              </PrefetchLink>
             </TouchButton>
             
             <TouchButton
@@ -347,9 +348,9 @@ const Navbar = () => {
                   : 'text-utu-black hover:text-utu-red hover:bg-utu-red/5'
               )}
             >
-              <Link to="/impact" onClick={() => handleNavLinkClick('/impact')}>
+              <PrefetchLink to="/impact" onClick={() => handleNavLinkClick('/impact')}>
                 Impact
-              </Link>
+              </PrefetchLink>
             </TouchButton>
             
             <TouchButton
@@ -363,9 +364,9 @@ const Navbar = () => {
                   : 'text-utu-black hover:text-utu-red hover:bg-utu-red/5'
               )}
             >
-              <Link to="/stories" onClick={() => handleNavLinkClick('/stories')}>
+              <PrefetchLink to="/stories" onClick={() => handleNavLinkClick('/stories')}>
                 Stories
-              </Link>
+              </PrefetchLink>
             </TouchButton>
             
             <TouchButton
@@ -379,9 +380,9 @@ const Navbar = () => {
                   : 'text-utu-black hover:text-utu-red hover:bg-utu-red/5'
               )}
             >
-              <Link to="/contact" onClick={() => handleNavLinkClick('/contact')}>
+              <PrefetchLink to="/contact" onClick={() => handleNavLinkClick('/contact')}>
                 Contact
-              </Link>
+              </PrefetchLink>
             </TouchButton>
             
             <TouchButton
@@ -395,9 +396,9 @@ const Navbar = () => {
                   : 'text-utu-black hover:text-utu-red hover:bg-utu-red/5'
               )}
             >
-              <Link to="/volunteers/auth" onClick={() => handleNavLinkClick('/volunteers/auth')}>
+              <PrefetchLink to="/volunteers/auth" onClick={() => handleNavLinkClick('/volunteers/auth')}>
                 Volunteer Portal
-              </Link>
+              </PrefetchLink>
             </TouchButton>
             
             <TouchButton
