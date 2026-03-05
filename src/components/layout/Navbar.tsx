@@ -193,6 +193,13 @@ const Navbar = () => {
               Contact
             </PrefetchLink>
             <PrefetchLink 
+              to="/communities"
+              className={`${isActive('/communities') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium`}
+              onClick={() => handleNavLinkClick('/communities')}
+            >
+              Communities
+            </PrefetchLink>
+            <PrefetchLink 
               to="/volunteers/auth"
               className={`${isActive('/volunteers/auth') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium`}
               onClick={() => handleNavLinkClick('/volunteers/auth')}
@@ -385,6 +392,22 @@ const Navbar = () => {
               </PrefetchLink>
             </TouchButton>
             
+            <TouchButton
+              variant="ghost"
+              size="touch"
+              asChild
+              className={cn(
+                "justify-start gap-3 w-full rounded-lg",
+                isActive('/communities') 
+                  ? 'text-utu-red font-semibold bg-utu-red/10' 
+                  : 'text-utu-black hover:text-utu-red hover:bg-utu-red/5'
+              )}
+            >
+              <PrefetchLink to="/communities" onClick={() => handleNavLinkClick('/communities')}>
+                Communities
+              </PrefetchLink>
+            </TouchButton>
+
             <TouchButton
               variant="ghost"
               size="touch"

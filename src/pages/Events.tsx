@@ -4,12 +4,15 @@ import Layout from '@/components/layout/Layout';
 import { Calendar, MapPin, Clock, Users, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
 import { useEventsManagement } from '@/hooks/useEventsManagement';
+import { useRegistrationCounts } from '@/hooks/useRegistrationCounts';
 import EventRegistrationForm from '@/components/events/EventRegistrationForm';
 
 const Events = () => {
   const { events, loading } = useEventsManagement();
+  const registrationCounts = useRegistrationCounts();
   const [registerEvent, setRegisterEvent] = useState<{ id: string; title: string; date: string } | null>(null);
 
   const upcomingEvents = events.filter(e => e.category === 'upcoming' && e.active !== false);
@@ -69,7 +72,15 @@ const Events = () => {
                       )}
                     </div>
                     <CardHeader>
-                      <CardTitle className="text-xl text-foreground">{event.title}</CardTitle>
+                      <div className="flex items-start justify-between gap-2">
+                        <CardTitle className="text-xl text-foreground">{event.title}</CardTitle>
+                        {(registrationCounts[event.id] || 0) > 0 && (
+                          <Badge className="bg-utu-green/10 text-utu-green border-utu-green/20 shrink-0">
+                            <Users className="h-3 w-3 mr-1" />
+                            {registrationCounts[event.id]} registered
+                          </Badge>
+                        )}
+                      </div>
                     </CardHeader>
                     <CardContent className="space-y-3">
                       <div className="flex items-center text-muted-foreground">
