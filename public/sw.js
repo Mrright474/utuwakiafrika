@@ -167,15 +167,14 @@ async function networkFirst(request) {
 }
 
 // Helper functions
-function isStaticAsset(url) {
-  return STATIC_ASSETS.some(asset => url.includes(asset)) ||
-         url.includes('.css') || 
-         url.includes('.js') ||
-         url.includes('/assets/');
+function isStaticAsset(requestUrl) {
+  const { pathname } = new URL(requestUrl);
+  return STATIC_ASSETS.includes(pathname);
 }
 
-function isDynamicAsset(url) {
-  return DYNAMIC_ASSETS_PATTERNS.some(pattern => pattern.test(url));
+function isDynamicAsset(requestUrl) {
+  const { pathname } = new URL(requestUrl);
+  return DYNAMIC_ASSETS_PATTERNS.some(pattern => pattern.test(pathname));
 }
 
 function isPageRequest(request) {
