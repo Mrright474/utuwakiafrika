@@ -9,15 +9,43 @@ import ChatBot from "./components/home/ChatBot";
 import ScrollToTop from "./components/layout/ScrollToTop";
 import { supabase } from "@/integrations/supabase/client";
 
+const CHUNK_RELOAD_KEY = 'chunk-reload-attempted';
+
 // Retry wrapper for lazy imports (handles stale cache/service worker issues)
 function lazyRetry<T extends ComponentType<any>>(
   factory: () => Promise<{ default: T }>
 ) {
   return lazy(() =>
-    factory().catch(() => {
-      // Force reload on chunk load failure (stale cache)
-      window.location.reload();
-      return new Promise<{ default: T }>(() => {});
+    factory().catch((error) => {
+      const hasReloaded = sessionStorage.getItem(CHUNK_RELOAD_KEY) === 'true';
+
+      if (!hasReloaded) {
+        sessionStorage.setItem(CHUNK_RELOAD_KEY, 'true');
+        window.location.reload();
+        return new Promise<{ default: T }>(() => {});
+      }
+
+      console.error('Lazy chunk failed after reload:', error);
+      const FallbackComponent = (() => (
+        <div className="min-h-screen bg-gradient-to-br from-utu-cream via-white to-utu-cream flex items-center justify-center px-4">
+          <div className="text-center max-w-md">
+            <h1 className="text-2xl font-bold text-utu-black mb-2">Update required</h1>
+            <p className="text-utu-gray mb-4">We couldn’t load the latest page assets. Please refresh to continue.</p>
+            <button
+              type="button"
+              onClick={() => {
+                sessionStorage.removeItem(CHUNK_RELOAD_KEY);
+                window.location.reload();
+              }}
+              className="inline-flex items-center justify-center rounded-md px-4 py-2 bg-utu-red text-white font-medium hover:opacity-90"
+            >
+              Refresh page
+            </button>
+          </div>
+        </div>
+      )) as unknown as T;
+
+      return { default: FallbackComponent };
     })
   );
 }

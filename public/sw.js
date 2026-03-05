@@ -3,12 +3,11 @@ const CACHE_NAME = 'utu-foundation-v1';
 const STATIC_CACHE = 'static-v1';
 const DYNAMIC_CACHE = 'dynamic-v1';
 
-// Assets to cache immediately
+// Assets to cache immediately (avoid caching index.html to prevent stale chunk references)
 const STATIC_ASSETS = [
-  '/',
-  '/index.html',
   '/manifest.json',
-  // Add critical CSS and JS files here
+  '/favicon.ico',
+  '/robots.txt',
 ];
 
 // Assets to cache on request
@@ -67,17 +66,20 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url);
 
   // Skip non-GET requests and external domains
-  if (request.method !== 'GET' || !url.origin.includes(self.location.origin)) {
+  if (request.method !== 'GET' || url.origin !== self.location.origin) {
     return;
   }
 
-  // Handle different types of requests
+  // Always prefer fresh HTML for navigation to avoid stale chunk references
+  if (isPageRequest(request)) {
+    event.respondWith(networkFirst(request));
+    return;
+  }
+
   if (isStaticAsset(request.url)) {
     event.respondWith(cacheFirst(request));
   } else if (isDynamicAsset(request.url)) {
     event.respondWith(staleWhileRevalidate(request));
-  } else if (isPageRequest(request)) {
-    event.respondWith(networkFirst(request));
   }
 });
 
@@ -124,10 +126,13 @@ async function staleWhileRevalidate(request) {
 async function networkFirst(request) {
   try {
     const networkResponse = await fetch(request);
-    if (networkResponse.ok) {
+
+    // Cache only non-document requests to avoid serving stale HTML after deployments
+    if (networkResponse.ok && request.destination !== 'document') {
       const cache = await caches.open(DYNAMIC_CACHE);
       cache.put(request, networkResponse.clone());
     }
+
     return networkResponse;
   } catch (error) {
     console.error('Network first strategy failed, trying cache:', error);
@@ -162,15 +167,14 @@ async function networkFirst(request) {
 }
 
 // Helper functions
-function isStaticAsset(url) {
-  return STATIC_ASSETS.some(asset => url.includes(asset)) ||
-         url.includes('.css') || 
-         url.includes('.js') ||
-         url.includes('/assets/');
+function isStaticAsset(requestUrl) {
+  const { pathname } = new URL(requestUrl);
+  return STATIC_ASSETS.includes(pathname);
 }
 
-function isDynamicAsset(url) {
-  return DYNAMIC_ASSETS_PATTERNS.some(pattern => pattern.test(url));
+function isDynamicAsset(requestUrl) {
+  const { pathname } = new URL(requestUrl);
+  return DYNAMIC_ASSETS_PATTERNS.some(pattern => pattern.test(pathname));
 }
 
 function isPageRequest(request) {
