@@ -9,6 +9,7 @@ const routeImports: Record<string, () => Promise<any>> = {
   '/stories': () => import('@/pages/SuccessStories'),
   '/contact': () => import('@/pages/ContactPage'),
   '/donate': () => import('@/pages/Donate'),
+  '/communities': () => import('@/pages/Communities'),
   '/volunteers/auth': () => import('@/pages/VolunteerAuth'),
 };
 
