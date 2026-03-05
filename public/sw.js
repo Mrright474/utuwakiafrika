@@ -66,17 +66,20 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url);
 
   // Skip non-GET requests and external domains
-  if (request.method !== 'GET' || !url.origin.includes(self.location.origin)) {
+  if (request.method !== 'GET' || url.origin !== self.location.origin) {
     return;
   }
 
-  // Handle different types of requests
+  // Always prefer fresh HTML for navigation to avoid stale chunk references
+  if (isPageRequest(request)) {
+    event.respondWith(networkFirst(request));
+    return;
+  }
+
   if (isStaticAsset(request.url)) {
     event.respondWith(cacheFirst(request));
   } else if (isDynamicAsset(request.url)) {
     event.respondWith(staleWhileRevalidate(request));
-  } else if (isPageRequest(request)) {
-    event.respondWith(networkFirst(request));
   }
 });
 
