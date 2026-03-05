@@ -91,6 +91,11 @@ const queryClient = new QueryClient({
 });
 
 const App = () => {
+  // Prefetch all route chunks after initial load for instant navigation
+  useEffect(() => {
+    prefetchAllRoutes();
+  }, []);
+
   useEffect(() => {
     const run = async () => {
       try {
