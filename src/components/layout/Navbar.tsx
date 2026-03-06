@@ -143,69 +143,26 @@ const Navbar = () => {
               <Home size={18} aria-hidden="true" />
               Home
             </PrefetchLink>
-            <PrefetchLink 
-              to="/about"
-              className={`${isActive('/about') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium`}
-              onClick={() => handleNavLinkClick('/about')}
-            >
-              About
-            </PrefetchLink>
-            <PrefetchLink 
-              to="/programs"
-              className={`${isActive('/programs') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium`}
-              onClick={() => handleNavLinkClick('/programs')}
-            >
-              Programs
-            </PrefetchLink>
-            <PrefetchLink 
-              to="/events"
-              className={`${isActive('/events') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium`}
-              onClick={() => handleNavLinkClick('/events')}
-            >
-              Events
-            </PrefetchLink>
-            <PrefetchLink 
-              to="/team"
-              className={`${isActive('/team') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium`}
-              onClick={() => handleNavLinkClick('/team')}
-            >
-              Our Team
-            </PrefetchLink>
-            <PrefetchLink 
-              to="/impact"
-              className={`${isActive('/impact') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium`}
-              onClick={() => handleNavLinkClick('/impact')}
-            >
-              Impact
-            </PrefetchLink>
-            <PrefetchLink 
-              to="/stories"
-              className={`${isActive('/stories') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium`}
-              onClick={() => handleNavLinkClick('/stories')}
-            >
-              Stories
-            </PrefetchLink>
-            <PrefetchLink 
-              to="/contact"
-              className={`${isActive('/contact') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium`}
-              onClick={() => handleNavLinkClick('/contact')}
-            >
-              Contact
-            </PrefetchLink>
-            <PrefetchLink 
-              to="/communities"
-              className={`${isActive('/communities') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium`}
-              onClick={() => handleNavLinkClick('/communities')}
-            >
-              Communities
-            </PrefetchLink>
-            <PrefetchLink 
-              to="/volunteers/auth"
-              className={`${isActive('/volunteers/auth') ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium`}
-              onClick={() => handleNavLinkClick('/volunteers/auth')}
-            >
-              Volunteer Portal
-            </PrefetchLink>
+            {[
+              { to: '/about', label: 'About' },
+              { to: '/programs', label: 'Programs' },
+              { to: '/communities', label: 'Communities' },
+              { to: '/events', label: 'Events' },
+              { to: '/impact', label: 'Impact' },
+              { to: '/stories', label: 'Stories' },
+              { to: '/team', label: 'Our Team' },
+              { to: '/contact', label: 'Contact' },
+              { to: '/volunteers/auth', label: 'Volunteer Portal' },
+            ].map(link => (
+              <PrefetchLink
+                key={link.to}
+                to={link.to}
+                className={`${isActive(link.to) ? 'text-utu-red font-semibold' : 'text-utu-black hover:text-utu-red'} transition-colors font-medium`}
+                onClick={() => handleNavLinkClick(link.to)}
+              >
+                {link.label}
+              </PrefetchLink>
+            ))}
             <Button 
               onClick={handleDonateClick} 
               className="bg-utu-red hover:bg-red-700 text-white"
