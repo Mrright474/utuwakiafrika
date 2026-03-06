@@ -44,6 +44,51 @@ export type Database = {
         }
         Relationships: []
       }
+      community_registrations: {
+        Row: {
+          business_type: string | null
+          city: string
+          country: string
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          message: string | null
+          phone: string | null
+          registration_type: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          business_type?: string | null
+          city: string
+          country: string
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          message?: string | null
+          phone?: string | null
+          registration_type?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          business_type?: string | null
+          city?: string
+          country?: string
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          message?: string | null
+          phone?: string | null
+          registration_type?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       contact_submissions: {
         Row: {
           created_at: string
