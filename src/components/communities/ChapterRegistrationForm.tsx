@@ -56,7 +56,7 @@ const ChapterRegistrationForm = () => {
 
       if (error) throw error;
 
-      toast.success('Registration submitted! We'll be in touch soon.');
+      toast.success('Registration submitted! We will be in touch soon.');
       setForm({
         full_name: '',
         email: '',
