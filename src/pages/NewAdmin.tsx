@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Users, MessageSquare, Mail, LogOut, Clock, User, Phone, MapPin, Settings, CheckCircle, XCircle, Calendar, Download } from 'lucide-react';
+import { Loader2, Users, MessageSquare, Mail, LogOut, Clock, User, Phone, MapPin, Settings, CheckCircle, XCircle, Calendar, Download, Globe, Briefcase } from 'lucide-react';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { useAdminData } from '@/hooks/useAdminData';
 import { exportToCSV, exportColumns } from '@/utils/exportData';
@@ -46,11 +46,14 @@ const NewAdmin = () => {
     newsletterSubscribers, 
     volunteerProfiles,
     volunteerHours,
+    communityRegistrations,
     loading: dataLoading,
     updateContactStatus,
     updateVolunteerStatus,
     verifyVolunteerHours,
-    deleteContactSubmission 
+    deleteContactSubmission,
+    updateCommunityRegistrationStatus,
+    deleteCommunityRegistration
   } = useAdminData(isAdmin);
 
   if (!loading && (!user || !isAdmin)) {
@@ -122,7 +125,7 @@ const NewAdmin = () => {
             </div>
           ) : (
             <Tabs defaultValue="volunteers" className="w-full">
-              <TabsList className="grid w-full grid-cols-4 mb-8">
+              <TabsList className="grid w-full grid-cols-5 mb-8">
                 <TabsTrigger value="volunteers">
                   <Users className="mr-2 h-4 w-4" />
                   Volunteers ({volunteerProfiles.length})
@@ -130,6 +133,10 @@ const NewAdmin = () => {
                 <TabsTrigger value="hours">
                   <Clock className="mr-2 h-4 w-4" />
                   Hours ({pendingHours.length} pending)
+                </TabsTrigger>
+                <TabsTrigger value="communities">
+                  <Globe className="mr-2 h-4 w-4" />
+                  Communities ({communityRegistrations.length})
                 </TabsTrigger>
                 <TabsTrigger value="contacts">
                   <MessageSquare className="mr-2 h-4 w-4" />
@@ -439,6 +446,94 @@ const NewAdmin = () => {
                 </Card>
               </TabsContent>
 
+              <TabsContent value="communities">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Community Chapter Registrations</CardTitle>
+                    <CardDescription>
+                      Manage requests to join or start Ubuntu Community chapters.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {communityRegistrations.map((reg) => (
+                        <div key={reg.id} className="border rounded-lg p-4 space-y-3">
+                          <div className="flex justify-between items-start">
+                            <div className="space-y-2">
+                              <h3 className="font-semibold text-lg">{reg.full_name}</h3>
+                              <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap">
+                                <div className="flex items-center gap-1">
+                                  <Mail className="h-4 w-4" />
+                                  {reg.email}
+                                </div>
+                                {reg.phone && (
+                                  <div className="flex items-center gap-1">
+                                    <Phone className="h-4 w-4" />
+                                    {reg.phone}
+                                  </div>
+                                )}
+                                <div className="flex items-center gap-1">
+                                  <MapPin className="h-4 w-4" />
+                                  {reg.city}, {reg.country}
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Badge variant="outline">
+                                  {reg.registration_type === 'start' ? 'Wants to start a chapter' : 'Wants to join'}
+                                </Badge>
+                                {reg.business_type && (
+                                  <Badge variant="secondary" className="flex items-center gap-1">
+                                    <Briefcase className="h-3 w-3" />
+                                    {reg.business_type}
+                                  </Badge>
+                                )}
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Badge className={getStatusColor(reg.status)}>
+                                {reg.status}
+                              </Badge>
+                              <div className="flex gap-2">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => updateCommunityRegistrationStatus(reg.id, 
+                                    reg.status === 'pending' ? 'approved' : 'pending'
+                                  )}
+                                >
+                                  {reg.status === 'pending' ? 'Approve' : 'Set Pending'}
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="destructive"
+                                  onClick={() => deleteCommunityRegistration(reg.id)}
+                                >
+                                  Delete
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                          {reg.message && (
+                            <div>
+                              <span className="font-medium text-sm">Message:</span>
+                              <p className="text-sm mt-1 p-2 bg-muted rounded">{reg.message}</p>
+                            </div>
+                          )}
+                          <div className="text-xs text-muted-foreground">
+                            Submitted: {formatDate(reg.created_at)}
+                          </div>
+                        </div>
+                      ))}
+                      {communityRegistrations.length === 0 && (
+                        <div className="text-center py-8 text-muted-foreground">
+                          No community registrations yet.
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
               <TabsContent value="newsletter">
                 <Card>
                   <CardHeader>
@@ -470,7 +565,6 @@ const NewAdmin = () => {
                           </Badge>
                         </div>
                       ))}
-                      
                       {newsletterSubscribers.length === 0 && (
                         <div className="text-center py-8 text-muted-foreground">
                           No newsletter subscribers yet.
