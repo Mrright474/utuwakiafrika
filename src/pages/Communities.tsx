@@ -153,10 +153,10 @@ const Communities = () => {
                   choose to buy from each other, wealth stays within the community and multiplies.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <Button className="bg-utu-green hover:bg-green-700 text-white" asChild>
-                    <Link to="/contact">Start a Chapter</Link>
+                  <Button asChild>
+                    <a href="#register">Start a Chapter</a>
                   </Button>
-                  <Button variant="outline" className="border-utu-green text-utu-green hover:bg-utu-green/5" asChild>
+                  <Button variant="outline" asChild>
                     <Link to="/donate">Become a Donor</Link>
                   </Button>
                 </div>
@@ -166,7 +166,7 @@ const Communities = () => {
         </section>
 
         {/* Benefits */}
-        <section className="py-16 bg-white">
+        <section className="py-16 bg-background">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4 font-heading">
@@ -176,8 +176,8 @@ const Communities = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
               {benefits.map((b, i) => (
                 <div key={i} className="flex gap-4 p-6 rounded-xl bg-muted/40">
-                  <div className="w-12 h-12 rounded-full bg-utu-gold/10 flex items-center justify-center flex-shrink-0">
-                    <b.icon className="h-6 w-6 text-utu-gold" />
+                  <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center flex-shrink-0">
+                    <b.icon className="h-6 w-6 text-accent-foreground" />
                   </div>
                   <div>
                     <h3 className="font-bold text-foreground mb-1">{b.title}</h3>
@@ -189,21 +189,24 @@ const Communities = () => {
           </div>
         </section>
 
+        {/* Registration Form */}
+        <ChapterRegistrationForm />
+
         {/* CTA */}
-        <section className="py-16 bg-gradient-to-r from-utu-green to-green-700">
+        <section className="py-16 bg-primary">
           <div className="container mx-auto px-4 text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6 font-heading">
+            <h2 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-6 font-heading">
               Ready to Build Your Community?
             </h2>
-            <p className="text-white/90 text-lg mb-8 max-w-2xl mx-auto">
+            <p className="text-primary-foreground/90 text-lg mb-8 max-w-2xl mx-auto">
               Whether you're a donor looking to connect locally, or an entrepreneur wanting to grow with support — 
               there's a place for you in an Ubuntu Community.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button className="bg-white text-utu-green hover:bg-gray-100" asChild>
-                <Link to="/contact">Contact Us to Join</Link>
+              <Button variant="secondary" asChild>
+                <a href="#register">Register Now</a>
               </Button>
-              <Button variant="outline" className="border-white text-white hover:bg-white hover:text-utu-green" asChild>
+              <Button variant="outline" className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary" asChild>
                 <Link to="/programs">View Our Programs</Link>
               </Button>
             </div>
