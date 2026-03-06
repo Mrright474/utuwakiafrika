@@ -46,11 +46,14 @@ const NewAdmin = () => {
     newsletterSubscribers, 
     volunteerProfiles,
     volunteerHours,
+    communityRegistrations,
     loading: dataLoading,
     updateContactStatus,
     updateVolunteerStatus,
     verifyVolunteerHours,
-    deleteContactSubmission 
+    deleteContactSubmission,
+    updateCommunityRegistrationStatus,
+    deleteCommunityRegistration
   } = useAdminData(isAdmin);
 
   if (!loading && (!user || !isAdmin)) {
