@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Link } from 'react-router-dom';
 import { Users, Calendar, Briefcase, Globe, Heart, MapPin, Handshake, TrendingUp } from 'lucide-react';
+import ChapterRegistrationForm from '@/components/communities/ChapterRegistrationForm';
 import communityNetworking from '@/assets/ubuntu-community-networking.jpg';
 import communityMeeting from '@/assets/ubuntu-community-meeting.jpg';
 import communityMarketplace from '@/assets/ubuntu-community-marketplace.jpg';
