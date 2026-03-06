@@ -56,11 +56,26 @@ interface VolunteerHours {
   };
 }
 
+export interface CommunityRegistration {
+  id: string;
+  full_name: string;
+  email: string;
+  phone?: string;
+  country: string;
+  city: string;
+  registration_type: string;
+  business_type?: string;
+  message?: string;
+  status: string;
+  created_at: string;
+}
+
 export const useAdminData = (isAdmin: boolean) => {
   const [contactSubmissions, setContactSubmissions] = useState<ContactSubmission[]>([]);
   const [newsletterSubscribers, setNewsletterSubscribers] = useState<NewsletterSubscriber[]>([]);
   const [volunteerProfiles, setVolunteerProfiles] = useState<VolunteerProfile[]>([]);
   const [volunteerHours, setVolunteerHours] = useState<VolunteerHours[]>([]);
+  const [communityRegistrations, setCommunityRegistrations] = useState<CommunityRegistration[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
@@ -79,7 +94,8 @@ export const useAdminData = (isAdmin: boolean) => {
         fetchContactSubmissions(),
         fetchNewsletterSubscribers(),
         fetchVolunteerProfiles(),
-        fetchVolunteerHours()
+        fetchVolunteerHours(),
+        fetchCommunityRegistrations()
       ]);
     } catch (error) {
       console.error('Error fetching admin data:', error);
@@ -98,13 +114,7 @@ export const useAdminData = (isAdmin: boolean) => {
       .from('contact_submissions')
       .select('*')
       .order('created_at', { ascending: false });
-
-    if (error) {
-      console.error('Error fetching contact submissions:', error);
-      return;
-    }
-
-    setContactSubmissions(data || []);
+    if (!error) setContactSubmissions(data || []);
   };
 
   const fetchNewsletterSubscribers = async () => {
@@ -112,13 +122,7 @@ export const useAdminData = (isAdmin: boolean) => {
       .from('newsletter_subscribers')
       .select('*')
       .order('subscribed_at', { ascending: false });
-
-    if (error) {
-      console.error('Error fetching newsletter subscribers:', error);
-      return;
-    }
-
-    setNewsletterSubscribers(data || []);
+    if (!error) setNewsletterSubscribers(data || []);
   };
 
   const fetchVolunteerProfiles = async () => {
@@ -126,34 +130,23 @@ export const useAdminData = (isAdmin: boolean) => {
       .from('volunteer_profiles')
       .select('*')
       .order('created_at', { ascending: false });
-
-    if (error) {
-      console.error('Error fetching volunteer profiles:', error);
-      return;
-    }
-
-    setVolunteerProfiles(data || []);
+    if (!error) setVolunteerProfiles(data || []);
   };
 
   const fetchVolunteerHours = async () => {
     const { data, error } = await supabase
       .from('volunteer_hours')
-      .select(`
-        *,
-        volunteer_profiles (
-          first_name,
-          last_name,
-          email
-        )
-      `)
+      .select(`*, volunteer_profiles (first_name, last_name, email)`)
       .order('activity_date', { ascending: false });
+    if (!error) setVolunteerHours(data || []);
+  };
 
-    if (error) {
-      console.error('Error fetching volunteer hours:', error);
-      return;
-    }
-
-    setVolunteerHours(data || []);
+  const fetchCommunityRegistrations = async () => {
+    const { data, error } = await (supabase as any)
+      .from('community_registrations')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (!error) setCommunityRegistrations(data || []);
   };
 
   const updateContactStatus = async (id: string, status: string) => {
@@ -161,25 +154,12 @@ export const useAdminData = (isAdmin: boolean) => {
       .from('contact_submissions')
       .update({ status })
       .eq('id', id);
-
     if (error) {
-      toast({
-        title: "Update Failed",
-        description: error.message,
-        variant: "destructive"
-      });
+      toast({ title: "Update Failed", description: error.message, variant: "destructive" });
       return false;
     }
-
-    setContactSubmissions(prev => 
-      prev.map(item => item.id === id ? { ...item, status } : item)
-    );
-
-    toast({
-      title: "Status Updated",
-      description: "Contact submission status updated successfully.",
-    });
-
+    setContactSubmissions(prev => prev.map(item => item.id === id ? { ...item, status } : item));
+    toast({ title: "Status Updated", description: "Contact submission status updated successfully." });
     return true;
   };
 
@@ -188,59 +168,27 @@ export const useAdminData = (isAdmin: boolean) => {
       .from('volunteer_profiles')
       .update({ status })
       .eq('id', id);
-
     if (error) {
-      toast({
-        title: "Update Failed",
-        description: error.message,
-        variant: "destructive"
-      });
+      toast({ title: "Update Failed", description: error.message, variant: "destructive" });
       return false;
     }
-
-    setVolunteerProfiles(prev => 
-      prev.map(item => item.id === id ? { ...item, status } : item)
-    );
-
-    toast({
-      title: "Status Updated",
-      description: "Volunteer status updated successfully.",
-    });
-
+    setVolunteerProfiles(prev => prev.map(item => item.id === id ? { ...item, status } : item));
+    toast({ title: "Status Updated", description: "Volunteer status updated successfully." });
     return true;
   };
 
   const verifyVolunteerHours = async (id: string, verified: boolean) => {
     const { data: { user } } = await supabase.auth.getUser();
-    
     const { error } = await supabase
       .from('volunteer_hours')
-      .update({ 
-        verified, 
-        verified_by: verified ? user?.id : null 
-      })
+      .update({ verified, verified_by: verified ? user?.id : null })
       .eq('id', id);
-
     if (error) {
-      toast({
-        title: "Verification Failed",
-        description: error.message,
-        variant: "destructive"
-      });
+      toast({ title: "Verification Failed", description: error.message, variant: "destructive" });
       return false;
     }
-
-    setVolunteerHours(prev => 
-      prev.map(item => item.id === id ? { ...item, verified, verified_by: verified ? user?.id : undefined } : item)
-    );
-
-    toast({
-      title: verified ? "Hours Verified" : "Verification Removed",
-      description: verified 
-        ? "Volunteer hours have been verified." 
-        : "Verification has been removed.",
-    });
-
+    setVolunteerHours(prev => prev.map(item => item.id === id ? { ...item, verified, verified_by: verified ? user?.id : undefined } : item));
+    toast({ title: verified ? "Hours Verified" : "Verification Removed", description: verified ? "Volunteer hours have been verified." : "Verification has been removed." });
     return true;
   };
 
@@ -249,23 +197,40 @@ export const useAdminData = (isAdmin: boolean) => {
       .from('contact_submissions')
       .delete()
       .eq('id', id);
-
     if (error) {
-      toast({
-        title: "Delete Failed",
-        description: error.message,
-        variant: "destructive"
-      });
+      toast({ title: "Delete Failed", description: error.message, variant: "destructive" });
       return false;
     }
-
     setContactSubmissions(prev => prev.filter(item => item.id !== id));
+    toast({ title: "Deleted", description: "Contact submission deleted successfully." });
+    return true;
+  };
 
-    toast({
-      title: "Deleted",
-      description: "Contact submission deleted successfully.",
-    });
+  const updateCommunityRegistrationStatus = async (id: string, status: string) => {
+    const { error } = await (supabase as any)
+      .from('community_registrations')
+      .update({ status })
+      .eq('id', id);
+    if (error) {
+      toast({ title: "Update Failed", description: error.message, variant: "destructive" });
+      return false;
+    }
+    setCommunityRegistrations(prev => prev.map(item => item.id === id ? { ...item, status } : item));
+    toast({ title: "Status Updated", description: "Community registration status updated." });
+    return true;
+  };
 
+  const deleteCommunityRegistration = async (id: string) => {
+    const { error } = await (supabase as any)
+      .from('community_registrations')
+      .delete()
+      .eq('id', id);
+    if (error) {
+      toast({ title: "Delete Failed", description: error.message, variant: "destructive" });
+      return false;
+    }
+    setCommunityRegistrations(prev => prev.filter(item => item.id !== id));
+    toast({ title: "Deleted", description: "Community registration deleted." });
     return true;
   };
 
@@ -274,11 +239,14 @@ export const useAdminData = (isAdmin: boolean) => {
     newsletterSubscribers,
     volunteerProfiles,
     volunteerHours,
+    communityRegistrations,
     loading,
     refetch: fetchAllData,
     updateContactStatus,
     updateVolunteerStatus,
     verifyVolunteerHours,
-    deleteContactSubmission
+    deleteContactSubmission,
+    updateCommunityRegistrationStatus,
+    deleteCommunityRegistration
   };
 };

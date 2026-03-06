@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Users, MessageSquare, Mail, LogOut, Clock, User, Phone, MapPin, Settings, CheckCircle, XCircle, Calendar, Download } from 'lucide-react';
+import { Loader2, Users, MessageSquare, Mail, LogOut, Clock, User, Phone, MapPin, Settings, CheckCircle, XCircle, Calendar, Download, Globe, Briefcase } from 'lucide-react';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { useAdminData } from '@/hooks/useAdminData';
 import { exportToCSV, exportColumns } from '@/utils/exportData';
