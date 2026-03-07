@@ -209,7 +209,7 @@ export const useTeamManagement = () => {
       if (errors.length > 0) throw errors[0].error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['team-members-admin'] });
+      queryClient.invalidateQueries({ queryKey: ['team-members'] });
       toast({
         title: "Success",
         description: "Team order updated.",
