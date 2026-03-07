@@ -40,7 +40,7 @@ export const useTeamManagement = () => {
   const [isUploading, setIsUploading] = useState(false);
 
   const { data: teamMembers = [], isLoading } = useQuery({
-    queryKey: ['team-members-admin'],
+    queryKey: ['team-members'],
     queryFn: async () => {
       const { data, error } = await (supabase as any)
         .from('team_members')
@@ -73,7 +73,7 @@ export const useTeamManagement = () => {
           table: 'team_members'
         },
         () => {
-          queryClient.invalidateQueries({ queryKey: ['team-members-admin'] });
+          queryClient.invalidateQueries({ queryKey: ['team-members'] });
         }
       )
       .subscribe();
@@ -105,7 +105,7 @@ export const useTeamManagement = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['team-members-admin'] });
+      queryClient.invalidateQueries({ queryKey: ['team-members'] });
       toast({
         title: "Success",
         description: "Team member updated successfully.",
@@ -152,7 +152,7 @@ export const useTeamManagement = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['team-members-admin'] });
+      queryClient.invalidateQueries({ queryKey: ['team-members'] });
       toast({
         title: "Success",
         description: "Team member added successfully.",
@@ -172,13 +172,13 @@ export const useTeamManagement = () => {
     mutationFn: async (id: string) => {
       const { error } = await (supabase as any)
         .from('team_members')
-        .update({ active: false })
+        .delete()
         .eq('id', id);
       
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['team-members-admin'] });
+      queryClient.invalidateQueries({ queryKey: ['team-members'] });
       toast({
         title: "Success",
         description: "Team member deleted successfully.",
