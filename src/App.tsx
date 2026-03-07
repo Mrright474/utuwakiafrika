@@ -7,7 +7,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { lazy, Suspense, useEffect, ComponentType } from "react";
 import ChatBot from "./components/home/ChatBot";
 import ScrollToTop from "./components/layout/ScrollToTop";
-import { supabase } from "@/integrations/supabase/client";
 import { prefetchAllRoutes } from "@/utils/routePrefetch";
 
 const CHUNK_RELOAD_KEY = 'chunk-reload-attempted';
@@ -97,33 +96,6 @@ const App = () => {
     prefetchAllRoutes();
   }, []);
 
-  useEffect(() => {
-    const run = async () => {
-      try {
-        const bootstrapped = localStorage.getItem('adminBootstrappedV3');
-        if (bootstrapped === 'true') {
-          console.log('Admin bootstrap already completed');
-          return;
-        }
-        
-        console.log('Starting admin bootstrap...');
-        const { data, error } = await supabase.functions.invoke('create-admin', { body: {} });
-        
-        if (error) {
-          console.error('create-admin invoke error:', error);
-          // Don't block the app if admin creation fails
-          return;
-        } else {
-          localStorage.setItem('adminBootstrappedV3', 'true');
-          console.info('Admin bootstrap complete:', data);
-        }
-      } catch (e) {
-        console.error('admin bootstrap error:', e);
-        // Don't block the app if bootstrap fails
-      }
-    };
-    run();
-  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
