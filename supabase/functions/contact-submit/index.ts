@@ -6,6 +6,8 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 interface ContactRequest {
   name: string;
   email: string;
@@ -15,7 +17,6 @@ interface ContactRequest {
 }
 
 const handler = async (req: Request): Promise<Response> => {
-  // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -23,34 +24,32 @@ const handler = async (req: Request): Promise<Response> => {
   try {
     const { name, email, phone, subject, message }: ContactRequest = await req.json();
 
-    // Validate required fields
     if (!name || !email || !message) {
       return new Response(
         JSON.stringify({ error: "Name, email, and message are required" }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json", ...corsHeaders },
-        }
+        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
     }
 
-    if (!email.includes('@')) {
+    if (!emailRegex.test(email)) {
       return new Response(
-        JSON.stringify({ error: "Valid email is required" }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json", ...corsHeaders },
-        }
+        JSON.stringify({ error: "Please provide a valid email address" }),
+        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
     }
 
-    // Initialize Supabase client
+    if (name.length > 100 || email.length > 255 || (message && message.length > 5000)) {
+      return new Response(
+        JSON.stringify({ error: "Input exceeds maximum allowed length" }),
+        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    // Insert contact submission
     const { error } = await supabase
       .from('contact_submissions')
       .insert({
@@ -61,25 +60,23 @@ const handler = async (req: Request): Promise<Response> => {
         message: message.trim()
       });
 
-    if (error) throw error;
-
-    console.log("Contact submission created from:", email);
+    if (error) {
+      console.error("Error in contact-submit function:", error);
+      return new Response(
+        JSON.stringify({ error: "An error occurred processing your request. Please try again." }),
+        { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
 
     return new Response(
       JSON.stringify({ message: "Contact form submitted successfully" }),
-      {
-        status: 200,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
-      }
+      { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
     );
   } catch (error: any) {
     console.error("Error in contact-submit function:", error);
     return new Response(
-      JSON.stringify({ error: error.message }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
-      }
+      JSON.stringify({ error: "An error occurred processing your request. Please try again." }),
+      { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
     );
   }
 };
