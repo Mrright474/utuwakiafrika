@@ -362,16 +362,35 @@ const ContentManagement = () => {
     }
   };
 
+  const getDeleteItemName = (id: string, type: string): string => {
+    if (type === 'team') return teamMembers.find((m: any) => m.id === id)?.name || 'this team member';
+    if (type === 'programs') return programs.find((p: any) => p.id === id)?.title || 'this program';
+    if (type === 'testimonials') return testimonials.find((t: any) => t.id === id)?.name || 'this testimonial';
+    if (type === 'metrics') return metrics.find((m: any) => m.id === id)?.metric_name || 'this metric';
+    if (type === 'stories') return stories.find((s: any) => s.id === id)?.title || 'this story';
+    if (type === 'gallery') return images.find((i: any) => i.id === id)?.title || 'this image';
+    if (type === 'events') return eventsList.find((e: any) => e.id === id)?.title || 'this event';
+    return 'this item';
+  };
+
+  const getDeleteTypeLabel = (type: string): string => {
+    const labels: Record<string, string> = {
+      team: 'Team Member', programs: 'Program', testimonials: 'Testimonial',
+      metrics: 'Metric', stories: 'Success Story', gallery: 'Gallery Image', events: 'Event',
+    };
+    return labels[type] || 'Item';
+  };
+
   const handleDelete = async (id: string, type: string) => {
-    if (type === 'team') {
-      const member = teamMembers.find((m: any) => m.id === id);
-      setDeleteConfirm({ id, type, name: member?.name || 'this team member' });
-      return;
-    }
-    if (!confirm('Are you sure you want to delete this item?')) return;
-    
+    setDeleteConfirm({ id, type, name: getDeleteItemName(id, type) });
+  };
+
+  const confirmDeleteItem = async () => {
+    if (!deleteConfirm) return;
+    const { id, type } = deleteConfirm;
     try {
-      if (type === 'programs') await deleteProgram(id);
+      if (type === 'team') await deleteTeamMember(id);
+      else if (type === 'programs') await deleteProgram(id);
       else if (type === 'testimonials') await deleteTestimonial(id);
       else if (type === 'metrics') await deleteMetric(id);
       else if (type === 'stories') {
@@ -380,20 +399,9 @@ const ContentManagement = () => {
       } else if (type === 'gallery') {
         const image = images.find((i: any) => i.id === id);
         if (image) await deleteImage(image);
-      } else if (type === 'events') {
-        await deleteEvent(id);
-      }
+      } else if (type === 'events') await deleteEvent(id);
     } catch (error) {
       console.error('Error deleting:', error);
-    }
-  };
-
-  const confirmDeleteTeamMember = async () => {
-    if (!deleteConfirm) return;
-    try {
-      await deleteTeamMember(deleteConfirm.id);
-    } catch (error) {
-      console.error('Error deleting team member:', error);
     } finally {
       setDeleteConfirm(null);
     }
@@ -1499,11 +1507,11 @@ const ContentManagement = () => {
         </div>
       </div>
 
-      {/* Team Member Delete Confirmation Dialog */}
+      {/* Delete Confirmation Dialog */}
       <AlertDialog open={!!deleteConfirm} onOpenChange={(open) => !open && setDeleteConfirm(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Team Member</AlertDialogTitle>
+            <AlertDialogTitle>Delete {deleteConfirm ? getDeleteTypeLabel(deleteConfirm.type) : 'Item'}</AlertDialogTitle>
             <AlertDialogDescription>
               Are you sure you want to permanently delete <strong>{deleteConfirm?.name}</strong>? This action cannot be undone.
             </AlertDialogDescription>
@@ -1511,7 +1519,7 @@ const ContentManagement = () => {
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              onClick={confirmDeleteTeamMember}
+              onClick={confirmDeleteItem}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               Delete
