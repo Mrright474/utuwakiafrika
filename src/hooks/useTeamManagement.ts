@@ -362,6 +362,9 @@ export const useTeamManagement = () => {
     deleteTeamMember: async (id: string) => {
       return deleteMutation.mutateAsync(id);
     },
+    toggleTeamMemberActive: async (id: string, active: boolean) => {
+      return toggleActiveMutation.mutateAsync({ id, active });
+    },
     reorderTeamMembers: async (members: TeamMember[]) => {
       return reorderMutation.mutateAsync(members);
     }

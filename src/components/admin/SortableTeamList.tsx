@@ -167,6 +167,7 @@ const SortableTeamList = ({
               member={member}
               onEdit={onEdit}
               onDelete={onDelete}
+              onToggleActive={onToggleActive}
             />
           ))}
         </div>
