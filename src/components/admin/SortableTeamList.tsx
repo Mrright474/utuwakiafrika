@@ -118,6 +118,7 @@ interface SortableTeamListProps {
   onReorder: (members: TeamMember[]) => void;
   onEdit: (member: TeamMember) => void;
   onDelete: (id: string) => void;
+  onToggleActive?: (id: string, active: boolean) => void;
 }
 
 const SortableTeamList = ({
