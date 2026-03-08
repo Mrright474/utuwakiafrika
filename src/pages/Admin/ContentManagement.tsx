@@ -1,10 +1,11 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { Navigate, Link } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
@@ -78,6 +79,7 @@ const ContentManagement = () => {
   const { registrations, loading: registrationsLoading, updateRegistrationStatus, deleteRegistration } = useEventRegistrations();
   const [batchDialogOpen, setBatchDialogOpen] = useState(false);
   const [batchCategory, setBatchCategory] = useState('');
+  const [deleteConfirm, setDeleteConfirm] = useState<{ id: string; type: string; name: string } | null>(null);
 
   // Filter helper function
   const filterByStatus = <T extends { active?: boolean }>(items: T[], filter: StatusFilter): T[] => {
@@ -361,11 +363,15 @@ const ContentManagement = () => {
   };
 
   const handleDelete = async (id: string, type: string) => {
+    if (type === 'team') {
+      const member = teamMembers.find((m: any) => m.id === id);
+      setDeleteConfirm({ id, type, name: member?.name || 'this team member' });
+      return;
+    }
     if (!confirm('Are you sure you want to delete this item?')) return;
     
     try {
-      if (type === 'team') await deleteTeamMember(id);
-      else if (type === 'programs') await deleteProgram(id);
+      if (type === 'programs') await deleteProgram(id);
       else if (type === 'testimonials') await deleteTestimonial(id);
       else if (type === 'metrics') await deleteMetric(id);
       else if (type === 'stories') {
@@ -379,6 +385,17 @@ const ContentManagement = () => {
       }
     } catch (error) {
       console.error('Error deleting:', error);
+    }
+  };
+
+  const confirmDeleteTeamMember = async () => {
+    if (!deleteConfirm) return;
+    try {
+      await deleteTeamMember(deleteConfirm.id);
+    } catch (error) {
+      console.error('Error deleting team member:', error);
+    } finally {
+      setDeleteConfirm(null);
     }
   };
 
@@ -1481,6 +1498,27 @@ const ContentManagement = () => {
           </Dialog>
         </div>
       </div>
+
+      {/* Team Member Delete Confirmation Dialog */}
+      <AlertDialog open={!!deleteConfirm} onOpenChange={(open) => !open && setDeleteConfirm(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Team Member</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to permanently delete <strong>{deleteConfirm?.name}</strong>? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDeleteTeamMember}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Layout>
   );
 };
