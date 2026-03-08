@@ -17,6 +17,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
 import { Edit, Trash2, Users, GripVertical } from 'lucide-react';
 import { TeamMember } from '@/hooks/useTeamManagement';
 
