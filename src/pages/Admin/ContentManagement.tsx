@@ -45,6 +45,7 @@ const ContentManagement = () => {
   const [imagePreview, setImagePreview] = useState<string>('');
 
   // Status filter state for each tab
+  const [teamFilter, setTeamFilter] = useState<StatusFilter>('all');
   const [programsFilter, setProgramsFilter] = useState<StatusFilter>('all');
   const [testimonialsFilter, setTestimonialsFilter] = useState<StatusFilter>('all');
   const [metricsFilter, setMetricsFilter] = useState<StatusFilter>('all');
