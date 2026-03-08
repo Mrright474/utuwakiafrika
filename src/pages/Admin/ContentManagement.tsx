@@ -363,11 +363,15 @@ const ContentManagement = () => {
   };
 
   const handleDelete = async (id: string, type: string) => {
+    if (type === 'team') {
+      const member = teamMembers.find((m: any) => m.id === id);
+      setDeleteConfirm({ id, type, name: member?.name || 'this team member' });
+      return;
+    }
     if (!confirm('Are you sure you want to delete this item?')) return;
     
     try {
-      if (type === 'team') await deleteTeamMember(id);
-      else if (type === 'programs') await deleteProgram(id);
+      if (type === 'programs') await deleteProgram(id);
       else if (type === 'testimonials') await deleteTestimonial(id);
       else if (type === 'metrics') await deleteMetric(id);
       else if (type === 'stories') {
@@ -381,6 +385,17 @@ const ContentManagement = () => {
       }
     } catch (error) {
       console.error('Error deleting:', error);
+    }
+  };
+
+  const confirmDeleteTeamMember = async () => {
+    if (!deleteConfirm) return;
+    try {
+      await deleteTeamMember(deleteConfirm.id);
+    } catch (error) {
+      console.error('Error deleting team member:', error);
+    } finally {
+      setDeleteConfirm(null);
     }
   };
 
