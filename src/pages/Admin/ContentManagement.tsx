@@ -88,14 +88,17 @@ const ContentManagement = () => {
 
   // Filtered and searched data
   const filteredTeamMembers = useMemo(() => {
-    if (!teamSearch.trim()) return teamMembers;
-    const search = teamSearch.toLowerCase();
-    return teamMembers.filter(m => 
-      m.name.toLowerCase().includes(search) || 
-      m.position.toLowerCase().includes(search) || 
-      m.role.toLowerCase().includes(search)
-    );
-  }, [teamMembers, teamSearch]);
+    let items = filterByStatus(teamMembers, teamFilter);
+    if (teamSearch.trim()) {
+      const search = teamSearch.toLowerCase();
+      items = items.filter(m => 
+        m.name.toLowerCase().includes(search) || 
+        m.position.toLowerCase().includes(search) || 
+        m.role.toLowerCase().includes(search)
+      );
+    }
+    return items;
+  }, [teamMembers, teamFilter, teamSearch]);
 
   const filteredPrograms = useMemo(() => {
     let items = filterByStatus(programs, programsFilter);
