@@ -67,7 +67,7 @@ const ContentManagement = () => {
   const [selectedImages, setSelectedImages] = useState<Set<string>>(new Set());
 
   // Management hooks
-  const { teamMembers, loading: teamLoading, addTeamMember, updateTeamMember, deleteTeamMember, reorderTeamMembers } = useTeamManagement();
+  const { teamMembers, loading: teamLoading, addTeamMember, updateTeamMember, deleteTeamMember, reorderTeamMembers, toggleTeamMemberActive } = useTeamManagement();
   const { programs, loading: programsLoading, addProgram, updateProgram, deleteProgram, toggleProgramActive, bulkToggleProgramsActive, bulkDeletePrograms, reorderPrograms } = useProgramsManagement();
   const { testimonials, loading: testimonialsLoading, addTestimonial, updateTestimonial, deleteTestimonial, toggleTestimonialActive, bulkToggleTestimonialsActive, bulkDeleteTestimonials, reorderTestimonials } = useTestimonialsManagement();
   const { metrics, loading: metricsLoading, addMetric, updateMetric, deleteMetric, toggleMetricActive, bulkToggleMetricsActive, bulkDeleteMetrics, reorderMetrics } = useMetricsManagement();
