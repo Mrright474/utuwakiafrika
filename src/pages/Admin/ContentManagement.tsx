@@ -79,6 +79,7 @@ const ContentManagement = () => {
   const { registrations, loading: registrationsLoading, updateRegistrationStatus, deleteRegistration } = useEventRegistrations();
   const [batchDialogOpen, setBatchDialogOpen] = useState(false);
   const [batchCategory, setBatchCategory] = useState('');
+  const [deleteConfirm, setDeleteConfirm] = useState<{ id: string; type: string; name: string } | null>(null);
 
   // Filter helper function
   const filterByStatus = <T extends { active?: boolean }>(items: T[], filter: StatusFilter): T[] => {
