@@ -27,7 +27,7 @@ interface SortableItemProps {
   onToggleActive?: (id: string, active: boolean) => void;
 }
 
-const SortableItem = ({ member, onEdit, onDelete }: SortableItemProps) => {
+const SortableItem = ({ member, onEdit, onDelete, onToggleActive }: SortableItemProps) => {
   const {
     attributes,
     listeners,
