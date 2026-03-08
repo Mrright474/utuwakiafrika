@@ -24,6 +24,7 @@ interface SortableItemProps {
   member: TeamMember;
   onEdit: (member: TeamMember) => void;
   onDelete: (id: string) => void;
+  onToggleActive?: (id: string, active: boolean) => void;
 }
 
 const SortableItem = ({ member, onEdit, onDelete }: SortableItemProps) => {
