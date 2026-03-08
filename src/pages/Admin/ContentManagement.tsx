@@ -623,6 +623,7 @@ const ContentManagement = () => {
                           onReorder={reorderTeamMembers}
                           onEdit={(member) => handleEdit(member, 'team')}
                           onDelete={(id) => handleDelete(id, 'team')}
+                          onToggleActive={(id, active) => toggleTeamMemberActive(id, active)}
                         />
                       )}
                     </>
