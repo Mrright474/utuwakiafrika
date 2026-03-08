@@ -126,6 +126,7 @@ const SortableTeamList = ({
   onReorder,
   onEdit,
   onDelete,
+  onToggleActive,
 }: SortableTeamListProps) => {
   const sensors = useSensors(
     useSensor(PointerSensor, {
