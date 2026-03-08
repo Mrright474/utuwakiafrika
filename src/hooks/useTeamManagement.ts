@@ -194,6 +194,32 @@ export const useTeamManagement = () => {
     }
   });
 
+  const toggleActiveMutation = useMutation({
+    mutationFn: async ({ id, active }: { id: string; active: boolean }) => {
+      const { error } = await (supabase as any)
+        .from('team_members')
+        .update({ active })
+        .eq('id', id);
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['team-members'] });
+      toast({
+        title: "Success",
+        description: "Team member visibility updated.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to update visibility.",
+        variant: "destructive",
+      });
+      console.error(error);
+    }
+  });
+
   const reorderMutation = useMutation({
     mutationFn: async (members: TeamMember[]) => {
       // Update display_order for each member
@@ -335,6 +361,9 @@ export const useTeamManagement = () => {
     },
     deleteTeamMember: async (id: string) => {
       return deleteMutation.mutateAsync(id);
+    },
+    toggleTeamMemberActive: async (id: string, active: boolean) => {
+      return toggleActiveMutation.mutateAsync({ id, active });
     },
     reorderTeamMembers: async (members: TeamMember[]) => {
       return reorderMutation.mutateAsync(members);

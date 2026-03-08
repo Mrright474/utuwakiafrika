@@ -17,6 +17,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
 import { Edit, Trash2, Users, GripVertical } from 'lucide-react';
 import { TeamMember } from '@/hooks/useTeamManagement';
 
@@ -24,9 +25,10 @@ interface SortableItemProps {
   member: TeamMember;
   onEdit: (member: TeamMember) => void;
   onDelete: (id: string) => void;
+  onToggleActive?: (id: string, active: boolean) => void;
 }
 
-const SortableItem = ({ member, onEdit, onDelete }: SortableItemProps) => {
+const SortableItem = ({ member, onEdit, onDelete, onToggleActive }: SortableItemProps) => {
   const {
     attributes,
     listeners,
@@ -83,7 +85,19 @@ const SortableItem = ({ member, onEdit, onDelete }: SortableItemProps) => {
           <p className="text-xs text-muted-foreground/70">{member.role}</p>
         </div>
       </div>
-      <div className="flex gap-2">
+      <div className="flex items-center gap-2">
+        {onToggleActive && (
+          <div className="flex items-center gap-1 mr-2">
+            <Switch
+              checked={member.active !== false}
+              onCheckedChange={(checked) => onToggleActive(member.id, checked)}
+              aria-label={`Toggle ${member.name} visibility`}
+            />
+            <span className="text-xs text-muted-foreground w-14">
+              {member.active !== false ? 'Active' : 'Hidden'}
+            </span>
+          </div>
+        )}
         <Button size="sm" variant="outline" onClick={() => onEdit(member)}>
           <Edit className="h-4 w-4" />
         </Button>
@@ -104,6 +118,7 @@ interface SortableTeamListProps {
   onReorder: (members: TeamMember[]) => void;
   onEdit: (member: TeamMember) => void;
   onDelete: (id: string) => void;
+  onToggleActive?: (id: string, active: boolean) => void;
 }
 
 const SortableTeamList = ({
@@ -111,6 +126,7 @@ const SortableTeamList = ({
   onReorder,
   onEdit,
   onDelete,
+  onToggleActive,
 }: SortableTeamListProps) => {
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -151,6 +167,7 @@ const SortableTeamList = ({
               member={member}
               onEdit={onEdit}
               onDelete={onDelete}
+              onToggleActive={onToggleActive}
             />
           ))}
         </div>

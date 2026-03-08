@@ -45,6 +45,7 @@ const ContentManagement = () => {
   const [imagePreview, setImagePreview] = useState<string>('');
 
   // Status filter state for each tab
+  const [teamFilter, setTeamFilter] = useState<StatusFilter>('all');
   const [programsFilter, setProgramsFilter] = useState<StatusFilter>('all');
   const [testimonialsFilter, setTestimonialsFilter] = useState<StatusFilter>('all');
   const [metricsFilter, setMetricsFilter] = useState<StatusFilter>('all');
@@ -67,7 +68,7 @@ const ContentManagement = () => {
   const [selectedImages, setSelectedImages] = useState<Set<string>>(new Set());
 
   // Management hooks
-  const { teamMembers, loading: teamLoading, addTeamMember, updateTeamMember, deleteTeamMember, reorderTeamMembers } = useTeamManagement();
+  const { teamMembers, loading: teamLoading, addTeamMember, updateTeamMember, deleteTeamMember, reorderTeamMembers, toggleTeamMemberActive } = useTeamManagement();
   const { programs, loading: programsLoading, addProgram, updateProgram, deleteProgram, toggleProgramActive, bulkToggleProgramsActive, bulkDeletePrograms, reorderPrograms } = useProgramsManagement();
   const { testimonials, loading: testimonialsLoading, addTestimonial, updateTestimonial, deleteTestimonial, toggleTestimonialActive, bulkToggleTestimonialsActive, bulkDeleteTestimonials, reorderTestimonials } = useTestimonialsManagement();
   const { metrics, loading: metricsLoading, addMetric, updateMetric, deleteMetric, toggleMetricActive, bulkToggleMetricsActive, bulkDeleteMetrics, reorderMetrics } = useMetricsManagement();
@@ -87,14 +88,17 @@ const ContentManagement = () => {
 
   // Filtered and searched data
   const filteredTeamMembers = useMemo(() => {
-    if (!teamSearch.trim()) return teamMembers;
-    const search = teamSearch.toLowerCase();
-    return teamMembers.filter(m => 
-      m.name.toLowerCase().includes(search) || 
-      m.position.toLowerCase().includes(search) || 
-      m.role.toLowerCase().includes(search)
-    );
-  }, [teamMembers, teamSearch]);
+    let items = filterByStatus(teamMembers, teamFilter);
+    if (teamSearch.trim()) {
+      const search = teamSearch.toLowerCase();
+      items = items.filter(m => 
+        m.name.toLowerCase().includes(search) || 
+        m.position.toLowerCase().includes(search) || 
+        m.role.toLowerCase().includes(search)
+      );
+    }
+    return items;
+  }, [teamMembers, teamFilter, teamSearch]);
 
   const filteredPrograms = useMemo(() => {
     let items = filterByStatus(programs, programsFilter);
@@ -582,7 +586,7 @@ const ContentManagement = () => {
                     </div>
                   ) : (
                     <>
-                      <div className="flex items-center gap-4 mb-4">
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-4">
                         <div className="relative flex-1 max-w-sm">
                           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                           <Input
@@ -597,6 +601,17 @@ const ContentManagement = () => {
                             </button>
                           )}
                         </div>
+                        <Select value={teamFilter} onValueChange={(v) => setTeamFilter(v as StatusFilter)}>
+                          <SelectTrigger className="w-[140px]">
+                            <Filter className="h-4 w-4 mr-2" />
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">All</SelectItem>
+                            <SelectItem value="active">Active</SelectItem>
+                            <SelectItem value="inactive">Inactive</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
                       {filteredTeamMembers.length === 0 ? (
                         <div className="text-center py-8 text-gray-500">
@@ -608,6 +623,7 @@ const ContentManagement = () => {
                           onReorder={reorderTeamMembers}
                           onEdit={(member) => handleEdit(member, 'team')}
                           onDelete={(id) => handleDelete(id, 'team')}
+                          onToggleActive={(id, active) => toggleTeamMemberActive(id, active)}
                         />
                       )}
                     </>
