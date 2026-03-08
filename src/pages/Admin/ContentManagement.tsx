@@ -1507,11 +1507,11 @@ const ContentManagement = () => {
         </div>
       </div>
 
-      {/* Team Member Delete Confirmation Dialog */}
+      {/* Delete Confirmation Dialog */}
       <AlertDialog open={!!deleteConfirm} onOpenChange={(open) => !open && setDeleteConfirm(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Team Member</AlertDialogTitle>
+            <AlertDialogTitle>Delete {deleteConfirm ? getDeleteTypeLabel(deleteConfirm.type) : 'Item'}</AlertDialogTitle>
             <AlertDialogDescription>
               Are you sure you want to permanently delete <strong>{deleteConfirm?.name}</strong>? This action cannot be undone.
             </AlertDialogDescription>
@@ -1519,7 +1519,7 @@ const ContentManagement = () => {
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              onClick={confirmDeleteTeamMember}
+              onClick={confirmDeleteItem}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               Delete
