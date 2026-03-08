@@ -85,7 +85,19 @@ const SortableItem = ({ member, onEdit, onDelete, onToggleActive }: SortableItem
           <p className="text-xs text-muted-foreground/70">{member.role}</p>
         </div>
       </div>
-      <div className="flex gap-2">
+      <div className="flex items-center gap-2">
+        {onToggleActive && (
+          <div className="flex items-center gap-1 mr-2">
+            <Switch
+              checked={member.active !== false}
+              onCheckedChange={(checked) => onToggleActive(member.id, checked)}
+              aria-label={`Toggle ${member.name} visibility`}
+            />
+            <span className="text-xs text-muted-foreground w-14">
+              {member.active !== false ? 'Active' : 'Hidden'}
+            </span>
+          </div>
+        )}
         <Button size="sm" variant="outline" onClick={() => onEdit(member)}>
           <Edit className="h-4 w-4" />
         </Button>
