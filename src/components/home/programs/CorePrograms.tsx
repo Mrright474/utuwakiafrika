@@ -1,17 +1,10 @@
 import React from 'react';
 import ProgramCard from './ProgramCard';
 import { useProgramsManagement } from '@/hooks/useProgramsManagement';
-import { BookOpen, Heart, Briefcase, Users, Star, Globe, Leaf, Monitor } from 'lucide-react';
+import { BookOpen, Heart, Briefcase, Users, Star, Globe, Leaf, Monitor, Calendar, Gift } from 'lucide-react';
 
 const iconMap: Record<string, any> = {
-  BookOpen,
-  Heart,
-  Briefcase,
-  Users,
-  Star,
-  Globe,
-  Leaf,
-  Monitor
+  BookOpen, Heart, Briefcase, Users, Star, Globe, Leaf, Monitor, Calendar, Gift
 };
 
 const CorePrograms = () => {
