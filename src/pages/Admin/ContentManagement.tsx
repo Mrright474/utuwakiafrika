@@ -80,6 +80,7 @@ const ContentManagement = () => {
   const [batchDialogOpen, setBatchDialogOpen] = useState(false);
   const [batchCategory, setBatchCategory] = useState('');
   const [deleteConfirm, setDeleteConfirm] = useState<{ id: string; type: string; name: string } | null>(null);
+  const [bulkDeleteConfirm, setBulkDeleteConfirm] = useState<{ type: string; ids: string[]; count: number } | null>(null);
 
   // Filter helper function
   const filterByStatus = <T extends { active?: boolean }>(items: T[], filter: StatusFilter): T[] => {
@@ -215,9 +216,12 @@ const ContentManagement = () => {
   const handleBulkDelete = async (type: string, ids: Set<string>) => {
     const idArray = Array.from(ids);
     if (idArray.length === 0) return;
-    
-    if (!confirm(`Are you sure you want to permanently delete ${idArray.length} item(s)? This cannot be undone.`)) return;
-    
+    setBulkDeleteConfirm({ type, ids: idArray, count: idArray.length });
+  };
+
+  const confirmBulkDelete = async () => {
+    if (!bulkDeleteConfirm) return;
+    const { type, ids: idArray } = bulkDeleteConfirm;
     try {
       if (type === 'programs') {
         await bulkDeletePrograms(idArray);
@@ -237,6 +241,8 @@ const ContentManagement = () => {
       }
     } catch (error) {
       console.error('Bulk delete failed:', error);
+    } finally {
+      setBulkDeleteConfirm(null);
     }
   };
 
@@ -1523,6 +1529,27 @@ const ContentManagement = () => {
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Bulk Delete Confirmation Dialog */}
+      <AlertDialog open={!!bulkDeleteConfirm} onOpenChange={(open) => !open && setBulkDeleteConfirm(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete {bulkDeleteConfirm?.count} {bulkDeleteConfirm ? getDeleteTypeLabel(bulkDeleteConfirm.type) : 'Item'}(s)</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to permanently delete <strong>{bulkDeleteConfirm?.count} item(s)</strong>? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmBulkDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete All
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
