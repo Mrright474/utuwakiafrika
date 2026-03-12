@@ -110,7 +110,7 @@ export const usePerformanceOptimizations = ({
 
   // Debounced resize handler for performance
   const createDebouncedResize = useCallback((callback: () => void, delay = 250) => {
-    let timeoutId: NodeJS.Timeout;
+    let timeoutId: ReturnType<typeof setTimeout>;
     
     return () => {
       clearTimeout(timeoutId);
