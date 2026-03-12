@@ -12,7 +12,7 @@ const iconMap: Record<string, any> = {
 const SpecialEvents = () => {
   const { programs, loading } = useProgramsManagement();
   
-  const specialEvents = programs.filter(p => p.category === 'event');
+  const specialEvents = programs.filter(p => p.category === 'special-events' || p.category === 'event');
 
   if (loading) {
     return (
