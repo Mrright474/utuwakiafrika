@@ -9,7 +9,9 @@ const iconMap: Record<string, any> = {
   Briefcase,
   Users,
   Star,
-  Globe
+  Globe,
+  Leaf,
+  Monitor
 };
 
 const CorePrograms = () => {

@@ -216,9 +216,12 @@ const ContentManagement = () => {
   const handleBulkDelete = async (type: string, ids: Set<string>) => {
     const idArray = Array.from(ids);
     if (idArray.length === 0) return;
-    
-    if (!confirm(`Are you sure you want to permanently delete ${idArray.length} item(s)? This cannot be undone.`)) return;
-    
+    setBulkDeleteConfirm({ type, ids: idArray, count: idArray.length });
+  };
+
+  const confirmBulkDelete = async () => {
+    if (!bulkDeleteConfirm) return;
+    const { type, ids: idArray } = bulkDeleteConfirm;
     try {
       if (type === 'programs') {
         await bulkDeletePrograms(idArray);
@@ -238,6 +241,8 @@ const ContentManagement = () => {
       }
     } catch (error) {
       console.error('Bulk delete failed:', error);
+    } finally {
+      setBulkDeleteConfirm(null);
     }
   };
 

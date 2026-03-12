@@ -1,0 +1,4 @@
+
+INSERT INTO programs (title, description, category, icon, image_url, display_order, active) VALUES
+('Climate Action & Environment', 'Protecting Africa''s natural heritage for future generations. Through tree planting, renewable energy advocacy, clean water initiatives, and environmental education, we empower communities to combat climate change and build sustainable, resilient ecosystems across the continent.', 'core', 'Leaf', '/lovable-uploads/climate-action-program.png', 7, true),
+('Digital Literacy & Innovation', 'Bridging the digital divide across Africa. We equip youth and communities with essential digital skills, coding training, and access to technology, preparing the next generation of African innovators to compete and lead in the global digital economy.', 'core', 'Monitor', '/lovable-uploads/digital-literacy-program.png', 8, true);
