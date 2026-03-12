@@ -16,7 +16,7 @@ export const usePerformanceOptimizations = ({
   criticalResources = []
 }: UsePerformanceOptimizationsOptions = {}) => {
   const metricsReported = useRef(false);
-  const memoryInterval = useRef<NodeJS.Timeout>();
+  const memoryInterval = useRef<ReturnType<typeof setInterval>>();
 
   // Preload critical resources including optimized images
   useEffect(() => {
