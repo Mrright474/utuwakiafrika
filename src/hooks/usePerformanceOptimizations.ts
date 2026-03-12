@@ -16,7 +16,7 @@ export const usePerformanceOptimizations = ({
   criticalResources = []
 }: UsePerformanceOptimizationsOptions = {}) => {
   const metricsReported = useRef(false);
-  const memoryInterval = useRef<NodeJS.Timeout>();
+  const memoryInterval = useRef<ReturnType<typeof setInterval>>();
 
   // Preload critical resources including optimized images
   useEffect(() => {
@@ -110,7 +110,7 @@ export const usePerformanceOptimizations = ({
 
   // Debounced resize handler for performance
   const createDebouncedResize = useCallback((callback: () => void, delay = 250) => {
-    let timeoutId: NodeJS.Timeout;
+    let timeoutId: ReturnType<typeof setTimeout>;
     
     return () => {
       clearTimeout(timeoutId);
