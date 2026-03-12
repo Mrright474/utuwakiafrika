@@ -80,6 +80,7 @@ const ContentManagement = () => {
   const [batchDialogOpen, setBatchDialogOpen] = useState(false);
   const [batchCategory, setBatchCategory] = useState('');
   const [deleteConfirm, setDeleteConfirm] = useState<{ id: string; type: string; name: string } | null>(null);
+  const [bulkDeleteConfirm, setBulkDeleteConfirm] = useState<{ type: string; ids: string[]; count: number } | null>(null);
 
   // Filter helper function
   const filterByStatus = <T extends { active?: boolean }>(items: T[], filter: StatusFilter): T[] => {
