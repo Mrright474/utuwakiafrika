@@ -23,6 +23,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import VolunteerHoursForm from '@/components/volunteers/VolunteerHoursForm';
+import VolunteerOpportunities from '@/components/volunteers/VolunteerOpportunities';
 
 interface VolunteerProfile {
   id: string;
