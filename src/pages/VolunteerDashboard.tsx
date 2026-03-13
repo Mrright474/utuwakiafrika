@@ -493,27 +493,8 @@ const VolunteerDashboard = () => {
               )}
             </TabsContent>
 
-            <TabsContent value="opportunities" className="mt-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Available Opportunities</CardTitle>
-                  <CardDescription>
-                    Discover new ways to make a difference
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-center py-8">
-                    <Heart className="w-12 h-12 text-utu-red mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-utu-black mb-2">
-                      Coming Soon
-                    </h3>
-                    <p className="text-utu-gray">
-                      We're working on bringing you exciting volunteer opportunities. 
-                      Check back soon!
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
+            <TabsContent value="opportunities" className="mt-6 space-y-6">
+              <VolunteerOpportunities />
             </TabsContent>
           </Tabs>
         </div>

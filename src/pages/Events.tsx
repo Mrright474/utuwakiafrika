@@ -1,19 +1,37 @@
 
 import React, { useState } from 'react';
 import Layout from '@/components/layout/Layout';
-import { Calendar, MapPin, Clock, Users, Loader2 } from 'lucide-react';
+import { Calendar, MapPin, Clock, Users, Loader2, Star, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
 import { useEventsManagement } from '@/hooks/useEventsManagement';
 import { useRegistrationCounts } from '@/hooks/useRegistrationCounts';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import EventRegistrationForm from '@/components/events/EventRegistrationForm';
 
 const Events = () => {
   const { events, loading } = useEventsManagement();
   const registrationCounts = useRegistrationCounts();
   const [registerEvent, setRegisterEvent] = useState<{ id: string; title: string; date: string } | null>(null);
+
+  // Fetch special events from programs table
+  const { data: specialEvents = [], isLoading: loadingSpecial } = useQuery({
+    queryKey: ['special-events-programs'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('programs')
+        .select('*')
+        .eq('category', 'special-events')
+        .eq('active', true)
+        .order('display_order');
+      if (error) throw error;
+      return data;
+    },
+    staleTime: 5 * 60 * 1000,
+  });
 
   const upcomingEvents = events.filter(e => e.category === 'upcoming' && e.active !== false);
   const pastEvents = events.filter(e => e.category === 'past' && e.active !== false);
@@ -33,6 +51,75 @@ const Events = () => {
             </p>
           </div>
         </section>
+
+        {/* Special Events Section */}
+        {(loadingSpecial || specialEvents.length > 0) && (
+          <section className="py-16 bg-gradient-to-br from-utu-gold/5 via-white to-utu-red/5">
+            <div className="container mx-auto px-4">
+              <div className="text-center mb-12">
+                <div className="inline-flex items-center bg-utu-gold/10 border border-utu-gold/20 rounded-full px-6 py-2 text-sm font-medium text-utu-gold mb-4">
+                  <Sparkles className="mr-2 h-4 w-4" />
+                  Signature Programs
+                </div>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4 font-heading">
+                  Special Events
+                </h2>
+                <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                  Our flagship annual events that bring together communities across Africa for unity, celebration, and collective impact.
+                </p>
+              </div>
+
+              {loadingSpecial ? (
+                <div className="flex justify-center py-12">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                  {specialEvents.map((event) => (
+                    <Card key={event.id} className="overflow-hidden hover:shadow-xl transition-all duration-300 border-2 hover:border-utu-gold/40 group">
+                      <div className="md:flex">
+                        <div className="md:w-2/5 aspect-video md:aspect-auto relative overflow-hidden bg-muted">
+                          {event.image_url ? (
+                            <img
+                              src={event.image_url}
+                              alt={event.title}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center min-h-[200px]">
+                              <Star className="h-12 w-12 text-utu-gold" />
+                            </div>
+                          )}
+                          <div className="absolute top-3 left-3">
+                            <Badge className="bg-utu-gold text-white border-0">
+                              <Star className="h-3 w-3 mr-1" />
+                              Annual Event
+                            </Badge>
+                          </div>
+                        </div>
+                        <div className="md:w-3/5 p-6 flex flex-col justify-between">
+                          <div>
+                            <h3 className="text-xl font-bold text-foreground mb-3">{event.title}</h3>
+                            <p className="text-muted-foreground text-sm leading-relaxed mb-4">
+                              {event.description}
+                            </p>
+                          </div>
+                          <div className="flex gap-3">
+                            <Link to="/contact" className="flex-1">
+                              <Button className="w-full bg-gradient-to-r from-utu-gold to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white rounded-full">
+                                Learn More & Register
+                              </Button>
+                            </Link>
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </div>
+          </section>
+        )}
 
         {/* Upcoming Events */}
         <section className="py-16">
