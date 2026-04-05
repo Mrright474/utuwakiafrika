@@ -330,11 +330,17 @@ const VolunteerDashboard = () => {
 
             <TabsContent value="profile" className="mt-6">
               <Card>
-                <CardHeader>
-                  <CardTitle>Your Profile</CardTitle>
-                  <CardDescription>
-                    Your volunteer profile information
-                  </CardDescription>
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <div>
+                    <CardTitle>Your Profile</CardTitle>
+                    <CardDescription>
+                      Your volunteer profile information
+                    </CardDescription>
+                  </div>
+                  <Button variant="outline" size="sm" onClick={() => setEditOpen(true)}>
+                    <Pencil className="w-4 h-4 mr-2" />
+                    Edit Profile
+                  </Button>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="flex items-center space-x-4">
