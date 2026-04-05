@@ -514,6 +514,16 @@ const VolunteerDashboard = () => {
           </Tabs>
         </div>
       </div>
+
+      {/* Profile Edit Dialog */}
+      {profile && (
+        <VolunteerProfileEdit
+          open={editOpen}
+          onOpenChange={setEditOpen}
+          profile={profile}
+          onSaved={fetchProfile}
+        />
+      )}
     </Layout>
   );
 };
