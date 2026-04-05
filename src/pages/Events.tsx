@@ -268,7 +268,7 @@ const Events = () => {
         </section>
       </div>
 
-      {/* Registration Dialog */}
+      {/* Registration Dialog for upcoming events */}
       {registerEvent && (
         <EventRegistrationForm
           open={!!registerEvent}
@@ -276,6 +276,17 @@ const Events = () => {
           eventId={registerEvent.id}
           eventTitle={registerEvent.title}
           eventDate={registerEvent.date}
+        />
+      )}
+
+      {/* Registration Dialog for special events */}
+      {registerSpecial && (
+        <EventRegistrationForm
+          open={!!registerSpecial}
+          onOpenChange={(open) => { if (!open) setRegisterSpecial(null); }}
+          eventId={registerSpecial.id}
+          eventTitle={registerSpecial.title}
+          eventDate="Annual Event"
         />
       )}
     </Layout>
