@@ -78,6 +78,7 @@ const VolunteerDashboard = () => {
   const [activities, setActivities] = useState<VolunteerActivity[]>([]);
   const [hours, setHours] = useState<VolunteerHours[]>([]);
   const [loadingProfile, setLoadingProfile] = useState(true);
+  const [editOpen, setEditOpen] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
