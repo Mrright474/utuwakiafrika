@@ -16,6 +16,7 @@ const Events = () => {
   const { events, loading } = useEventsManagement();
   const registrationCounts = useRegistrationCounts();
   const [registerEvent, setRegisterEvent] = useState<{ id: string; title: string; date: string } | null>(null);
+  const [registerSpecial, setRegisterSpecial] = useState<{ id: string; title: string } | null>(null);
 
   // Fetch special events from programs table
   const { data: specialEvents = [], isLoading: loadingSpecial } = useQuery({
