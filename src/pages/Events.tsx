@@ -106,11 +106,12 @@ const Events = () => {
                             </p>
                           </div>
                           <div className="flex gap-3">
-                            <Link to="/contact" className="flex-1">
-                              <Button className="w-full bg-gradient-to-r from-utu-gold to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white rounded-full">
-                                Learn More & Register
-                              </Button>
-                            </Link>
+                            <Button 
+                              className="flex-1 bg-gradient-to-r from-utu-gold to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white rounded-full"
+                              onClick={() => setRegisterSpecial({ id: event.id, title: event.title })}
+                            >
+                              Register Now
+                            </Button>
                           </div>
                         </div>
                       </div>
