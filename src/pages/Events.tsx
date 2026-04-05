@@ -16,6 +16,7 @@ const Events = () => {
   const { events, loading } = useEventsManagement();
   const registrationCounts = useRegistrationCounts();
   const [registerEvent, setRegisterEvent] = useState<{ id: string; title: string; date: string } | null>(null);
+  const [registerSpecial, setRegisterSpecial] = useState<{ id: string; title: string } | null>(null);
 
   // Fetch special events from programs table
   const { data: specialEvents = [], isLoading: loadingSpecial } = useQuery({
@@ -105,11 +106,12 @@ const Events = () => {
                             </p>
                           </div>
                           <div className="flex gap-3">
-                            <Link to="/contact" className="flex-1">
-                              <Button className="w-full bg-gradient-to-r from-utu-gold to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white rounded-full">
-                                Learn More & Register
-                              </Button>
-                            </Link>
+                            <Button 
+                              className="flex-1 bg-gradient-to-r from-utu-gold to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white rounded-full"
+                              onClick={() => setRegisterSpecial({ id: event.id, title: event.title })}
+                            >
+                              Register Now
+                            </Button>
                           </div>
                         </div>
                       </div>
@@ -266,7 +268,7 @@ const Events = () => {
         </section>
       </div>
 
-      {/* Registration Dialog */}
+      {/* Registration Dialog for upcoming events */}
       {registerEvent && (
         <EventRegistrationForm
           open={!!registerEvent}
@@ -274,6 +276,17 @@ const Events = () => {
           eventId={registerEvent.id}
           eventTitle={registerEvent.title}
           eventDate={registerEvent.date}
+        />
+      )}
+
+      {/* Registration Dialog for special events */}
+      {registerSpecial && (
+        <EventRegistrationForm
+          open={!!registerSpecial}
+          onOpenChange={(open) => { if (!open) setRegisterSpecial(null); }}
+          eventId={registerSpecial.id}
+          eventTitle={registerSpecial.title}
+          eventDate="Annual Event"
         />
       )}
     </Layout>
