@@ -17,13 +17,15 @@ import {
   Mail,
   Phone,
   CheckCircle,
-  XCircle
+  XCircle,
+  Pencil
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import VolunteerHoursForm from '@/components/volunteers/VolunteerHoursForm';
 import VolunteerOpportunities from '@/components/volunteers/VolunteerOpportunities';
+import VolunteerProfileEdit from '@/components/volunteers/VolunteerProfileEdit';
 
 interface VolunteerProfile {
   id: string;
