@@ -41,6 +41,11 @@ interface VolunteerProfile {
   join_date: string;
   skills?: string;
   motivation?: string;
+  availability?: string;
+  occupation?: string;
+  languages?: string;
+  emergency_contact?: string;
+  emergency_phone?: string;
 }
 
 interface VolunteerActivity {
