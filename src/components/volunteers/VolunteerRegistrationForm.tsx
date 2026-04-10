@@ -107,10 +107,9 @@ const VolunteerRegistrationForm = () => {
       }
 
       if (authData.user) {
-        // Create volunteer profile
-        const { error: profileError } = await supabase
-          .from('volunteer_profiles')
-          .insert({
+        // Create volunteer profile via edge function (uses service role to bypass RLS)
+        const { error: profileError } = await supabase.functions.invoke('create-volunteer-profile', {
+          body: {
             user_id: authData.user.id,
             first_name: formData.firstName,
             last_name: formData.lastName,
@@ -118,7 +117,7 @@ const VolunteerRegistrationForm = () => {
             phone: formData.phone,
             city: formData.city,
             country: formData.country,
-            age: formData.age ? parseInt(formData.age) : null,
+            age: formData.age,
             occupation: formData.occupation,
             education: formData.education,
             volunteer_area: formData.volunteerArea,
@@ -129,7 +128,8 @@ const VolunteerRegistrationForm = () => {
             motivation: formData.motivation,
             emergency_contact: formData.emergencyContact,
             emergency_phone: formData.emergencyPhone,
-          });
+          },
+        });
 
         if (profileError) {
           console.error('Profile creation error:', profileError);
