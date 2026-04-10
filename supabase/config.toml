@@ -14,3 +14,6 @@ verify_jwt = false
 
 [functions.generate-hero-image]
 verify_jwt = false
+
+[functions.create-volunteer-profile]
+verify_jwt = false
