@@ -118,7 +118,7 @@ const VolunteerDashboard = () => {
         .from('volunteer_profiles')
         .select('*')
         .eq('user_id', user?.id)
-        .single();
+        .maybeSingle();
 
       if (error) {
         console.error('Error fetching profile:', error);
@@ -130,8 +130,41 @@ const VolunteerDashboard = () => {
         return;
       }
 
-      setProfile(data);
-      fetchHours(data.id);
+      if (data) {
+        setProfile(data);
+        fetchHours(data.id);
+      } else {
+        // Auto-create profile for authenticated users who don't have one yet
+        // (e.g. profile insert failed during signup due to email confirmation flow)
+        const userMeta = user?.user_metadata || {};
+        const email = user?.email || '';
+        const { data: newProfile, error: insertError } = await supabase
+          .from('volunteer_profiles')
+          .insert({
+            user_id: user!.id,
+            first_name: userMeta.first_name || email.split('@')[0] || 'Volunteer',
+            last_name: userMeta.last_name || '',
+            email: email,
+          })
+          .select()
+          .single();
+
+        if (insertError) {
+          console.error('Error creating profile:', insertError);
+          toast({
+            variant: "destructive",
+            title: "Profile Setup Failed",
+            description: "Could not create your profile. Please try again or contact support.",
+          });
+          return;
+        }
+
+        setProfile(newProfile);
+        toast({
+          title: "Profile Created",
+          description: "Your volunteer profile has been set up. You can edit your details anytime.",
+        });
+      }
     } catch (error) {
       console.error('Unexpected error:', error);
     } finally {
