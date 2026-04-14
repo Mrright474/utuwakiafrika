@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Camera } from 'lucide-react';
 
 interface ProfileData {
   id: string;
@@ -25,6 +26,8 @@ interface ProfileData {
   languages?: string;
   emergency_contact?: string;
   emergency_phone?: string;
+  avatar_url?: string;
+  user_id?: string;
 }
 
 interface VolunteerProfileEditProps {
@@ -50,11 +53,54 @@ const VolunteerProfileEdit = ({ open, onOpenChange, profile, onSaved }: Voluntee
     emergency_contact: profile.emergency_contact || '',
     emergency_phone: profile.emergency_phone || '',
   });
+  const [avatarUrl, setAvatarUrl] = useState(profile.avatar_url || '');
+  const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
   const handleChange = (field: string, value: string) => {
     setForm(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast({ title: "Please select an image file", variant: "destructive" });
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast({ title: "Image must be under 5MB", variant: "destructive" });
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const ext = file.name.split('.').pop();
+      const filePath = `volunteer-avatars/${profile.id}.${ext}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('uploads')
+        .upload(filePath, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('uploads')
+        .getPublicUrl(filePath);
+
+      // Append cache-buster
+      setAvatarUrl(`${publicUrl}?t=${Date.now()}`);
+      toast({ title: "Photo uploaded!" });
+    } catch (err: any) {
+      console.error('Upload error:', err);
+      toast({ title: "Upload failed", description: err.message, variant: "destructive" });
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -82,6 +128,7 @@ const VolunteerProfileEdit = ({ open, onOpenChange, profile, onSaved }: Voluntee
           languages: form.languages.trim() || null,
           emergency_contact: form.emergency_contact.trim() || null,
           emergency_phone: form.emergency_phone.trim() || null,
+          avatar_url: avatarUrl || null,
         })
         .eq('id', profile.id);
 
@@ -105,6 +152,36 @@ const VolunteerProfileEdit = ({ open, onOpenChange, profile, onSaved }: Voluntee
           <DialogTitle>Edit Your Profile</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 py-2">
+          {/* Avatar Upload */}
+          <div className="flex flex-col items-center gap-3">
+            <div className="relative group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+              <Avatar className="h-24 w-24">
+                {avatarUrl && <AvatarImage src={avatarUrl} alt="Profile" />}
+                <AvatarFallback className="text-xl">
+                  {form.first_name.charAt(0)}{form.last_name.charAt(0)}
+                </AvatarFallback>
+              </Avatar>
+              <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                {uploading ? (
+                  <Loader2 className="h-6 w-6 text-white animate-spin" />
+                ) : (
+                  <Camera className="h-6 w-6 text-white" />
+                )}
+              </div>
+            </div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              className="hidden"
+              onChange={handleAvatarUpload}
+              disabled={uploading}
+            />
+            <button type="button" className="text-sm text-primary hover:underline" onClick={() => fileInputRef.current?.click()} disabled={uploading}>
+              {uploading ? 'Uploading...' : 'Change Photo'}
+            </button>
+          </div>
+
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="edit-fname">First Name *</Label>
@@ -203,7 +280,7 @@ const VolunteerProfileEdit = ({ open, onOpenChange, profile, onSaved }: Voluntee
             <Button type="button" variant="outline" className="flex-1" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
-            <Button type="submit" className="flex-1" disabled={saving}>
+            <Button type="submit" className="flex-1" disabled={saving || uploading}>
               {saving ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...</> : 'Save Changes'}
             </Button>
           </div>

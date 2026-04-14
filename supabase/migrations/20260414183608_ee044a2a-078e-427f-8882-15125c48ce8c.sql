@@ -1,0 +1,1 @@
+ALTER TABLE public.volunteer_profiles ADD COLUMN avatar_url text;

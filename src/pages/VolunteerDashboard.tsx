@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { 
   Heart, 
   User, 
@@ -46,6 +46,7 @@ interface VolunteerProfile {
   languages?: string;
   emergency_contact?: string;
   emergency_phone?: string;
+  avatar_url?: string;
 }
 
 interface VolunteerActivity {
@@ -378,6 +379,7 @@ const VolunteerDashboard = () => {
                 <CardContent className="space-y-6">
                   <div className="flex items-center space-x-4">
                     <Avatar className="h-20 w-20">
+                      {profile.avatar_url && <AvatarImage src={profile.avatar_url} alt={`${profile.first_name} ${profile.last_name}`} />}
                       <AvatarFallback className="text-lg">
                         {profile.first_name.charAt(0)}{profile.last_name.charAt(0)}
                       </AvatarFallback>
