@@ -60,6 +60,16 @@ const NewAdmin = () => {
     updateCommunityRegistrationStatus,
     deleteCommunityRegistration
   } = useAdminData(isAdmin);
+  const {
+    departments, staff, projects, tasks,
+    loading: orgLoading,
+    saveDepartment, deleteDepartment,
+    saveStaff, deleteStaff,
+    saveProject, deleteProject,
+    saveTask, deleteTask,
+  } = useOrgManagement(isAdmin);
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState('volunteers');
 
   if (!loading && (!user || !isAdmin)) {
     return <Navigate to="/admin/auth" replace />;
