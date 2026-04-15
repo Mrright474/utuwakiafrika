@@ -605,6 +605,37 @@ const NewAdmin = () => {
                   </CardContent>
                 </Card>
               </TabsContent>
+
+              <TabsContent value="departments">
+                <DepartmentsTab departments={departments} staff={staff} onSave={saveDepartment} onDelete={deleteDepartment} />
+              </TabsContent>
+
+              <TabsContent value="staff">
+                <StaffTab staff={staff} departments={departments} onSave={saveStaff} onDelete={deleteStaff} />
+              </TabsContent>
+
+              <TabsContent value="projects">
+                <ProjectsTab
+                  projects={projects}
+                  departments={departments}
+                  staff={staff}
+                  onSave={saveProject}
+                  onDelete={deleteProject}
+                  onSelectProject={(id) => { setSelectedProjectId(id); setActiveTab('workplan'); }}
+                />
+              </TabsContent>
+
+              <TabsContent value="workplan">
+                <WorkplanTab
+                  tasks={tasks}
+                  projects={projects}
+                  staff={staff}
+                  selectedProjectId={selectedProjectId}
+                  onSave={saveTask}
+                  onDelete={deleteTask}
+                  onBack={() => { setSelectedProjectId(null); setActiveTab('projects'); }}
+                />
+              </TabsContent>
             </Tabs>
           )}
         </div>
