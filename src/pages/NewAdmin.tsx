@@ -139,27 +139,43 @@ const NewAdmin = () => {
               <Loader2 className="h-8 w-8 animate-spin text-utu-red" />
             </div>
           ) : (
-            <Tabs defaultValue="volunteers" className="w-full">
-              <TabsList className="grid w-full grid-cols-5 mb-8">
+            <Tabs value={activeTab} onValueChange={(v) => { setActiveTab(v); if (v !== 'workplan') setSelectedProjectId(null); }} className="w-full">
+              <TabsList className="grid w-full grid-cols-9 mb-8">
                 <TabsTrigger value="volunteers">
-                  <Users className="mr-2 h-4 w-4" />
-                  Volunteers ({volunteerProfiles.length})
+                  <Users className="mr-1 h-4 w-4" />
+                  <span className="hidden lg:inline">Volunteers</span> ({volunteerProfiles.length})
                 </TabsTrigger>
                 <TabsTrigger value="hours">
-                  <Clock className="mr-2 h-4 w-4" />
-                  Hours ({pendingHours.length} pending)
+                  <Clock className="mr-1 h-4 w-4" />
+                  <span className="hidden lg:inline">Hours</span> ({pendingHours.length})
                 </TabsTrigger>
                 <TabsTrigger value="communities">
-                  <Globe className="mr-2 h-4 w-4" />
-                  Communities ({communityRegistrations.length})
+                  <Globe className="mr-1 h-4 w-4" />
+                  <span className="hidden lg:inline">Communities</span>
                 </TabsTrigger>
                 <TabsTrigger value="contacts">
-                  <MessageSquare className="mr-2 h-4 w-4" />
-                  Contacts ({contactSubmissions.length})
+                  <MessageSquare className="mr-1 h-4 w-4" />
+                  <span className="hidden lg:inline">Contacts</span>
                 </TabsTrigger>
                 <TabsTrigger value="newsletter">
-                  <Mail className="mr-2 h-4 w-4" />
-                  Newsletter ({newsletterSubscribers.length})
+                  <Mail className="mr-1 h-4 w-4" />
+                  <span className="hidden lg:inline">Newsletter</span>
+                </TabsTrigger>
+                <TabsTrigger value="departments">
+                  <Building2 className="mr-1 h-4 w-4" />
+                  <span className="hidden lg:inline">Departments</span>
+                </TabsTrigger>
+                <TabsTrigger value="staff">
+                  <UserCog className="mr-1 h-4 w-4" />
+                  <span className="hidden lg:inline">Staff</span> ({staff.length})
+                </TabsTrigger>
+                <TabsTrigger value="projects">
+                  <FolderKanban className="mr-1 h-4 w-4" />
+                  <span className="hidden lg:inline">Projects</span> ({projects.length})
+                </TabsTrigger>
+                <TabsTrigger value="workplan">
+                  <ListTodo className="mr-1 h-4 w-4" />
+                  <span className="hidden lg:inline">Workplan</span> ({tasks.length})
                 </TabsTrigger>
               </TabsList>
 
