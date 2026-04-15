@@ -177,9 +177,16 @@ const VolunteerProfileEdit = ({ open, onOpenChange, profile, onSaved }: Voluntee
               onChange={handleAvatarUpload}
               disabled={uploading}
             />
-            <button type="button" className="text-sm text-primary hover:underline" onClick={() => fileInputRef.current?.click()} disabled={uploading}>
-              {uploading ? 'Uploading...' : 'Change Photo'}
-            </button>
+            <div className="flex gap-3">
+              <button type="button" className="text-sm text-primary hover:underline" onClick={() => fileInputRef.current?.click()} disabled={uploading}>
+                {uploading ? 'Uploading...' : 'Change Photo'}
+              </button>
+              {avatarUrl && (
+                <button type="button" className="text-sm text-destructive hover:underline" onClick={() => setAvatarUrl('')} disabled={uploading}>
+                  Remove Photo
+                </button>
+              )}
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
