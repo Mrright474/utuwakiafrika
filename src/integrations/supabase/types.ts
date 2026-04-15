@@ -289,6 +289,172 @@ export type Database = {
         }
         Relationships: []
       }
+      org_departments: {
+        Row: {
+          color: string | null
+          created_at: string
+          description: string | null
+          display_order: number | null
+          head_staff_id: string | null
+          id: string
+          name: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          display_order?: number | null
+          head_staff_id?: string | null
+          id?: string
+          name: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          display_order?: number | null
+          head_staff_id?: string | null
+          id?: string
+          name?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_head_staff"
+            columns: ["head_staff_id"]
+            isOneToOne: false
+            referencedRelation: "org_staff"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      org_projects: {
+        Row: {
+          budget: number | null
+          created_at: string
+          department_id: string | null
+          description: string | null
+          end_date: string | null
+          id: string
+          priority: string
+          progress: number | null
+          project_lead_id: string | null
+          start_date: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          budget?: number | null
+          created_at?: string
+          department_id?: string | null
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          priority?: string
+          progress?: number | null
+          project_lead_id?: string | null
+          start_date?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          budget?: number | null
+          created_at?: string
+          department_id?: string | null
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          priority?: string
+          progress?: number | null
+          project_lead_id?: string | null
+          start_date?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "org_projects_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "org_departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "org_projects_project_lead_id_fkey"
+            columns: ["project_lead_id"]
+            isOneToOne: false
+            referencedRelation: "org_staff"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      org_staff: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          department_id: string | null
+          email: string
+          employment_type: string
+          first_name: string
+          hire_date: string | null
+          id: string
+          last_name: string
+          phone: string | null
+          position: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          department_id?: string | null
+          email: string
+          employment_type?: string
+          first_name: string
+          hire_date?: string | null
+          id?: string
+          last_name: string
+          phone?: string | null
+          position: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          department_id?: string | null
+          email?: string
+          employment_type?: string
+          first_name?: string
+          hire_date?: string | null
+          id?: string
+          last_name?: string
+          phone?: string | null
+          position?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "org_staff_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "org_departments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       programs: {
         Row: {
           active: boolean | null
@@ -327,6 +493,69 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      project_tasks: {
+        Row: {
+          actual_hours: number | null
+          assigned_to: string | null
+          created_at: string
+          description: string | null
+          display_order: number | null
+          due_date: string | null
+          estimated_hours: number | null
+          id: string
+          priority: string
+          project_id: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          actual_hours?: number | null
+          assigned_to?: string | null
+          created_at?: string
+          description?: string | null
+          display_order?: number | null
+          due_date?: string | null
+          estimated_hours?: number | null
+          id?: string
+          priority?: string
+          project_id: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          actual_hours?: number | null
+          assigned_to?: string | null
+          created_at?: string
+          description?: string | null
+          display_order?: number | null
+          due_date?: string | null
+          estimated_hours?: number | null
+          id?: string
+          priority?: string
+          project_id?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_tasks_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "org_staff"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_tasks_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "org_projects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       success_metrics: {
         Row: {
