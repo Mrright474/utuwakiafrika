@@ -1,14 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Navigate, Link } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Users, MessageSquare, Mail, LogOut, Clock, User, Phone, MapPin, Settings, CheckCircle, XCircle, Calendar, Download, Globe, Briefcase } from 'lucide-react';
+import { Loader2, Users, MessageSquare, Mail, LogOut, Clock, User, Phone, MapPin, Settings, CheckCircle, XCircle, Calendar, Download, Globe, Briefcase, Building2, UserCog, FolderKanban, ListTodo } from 'lucide-react';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { useAdminData } from '@/hooks/useAdminData';
+import { useOrgManagement } from '@/hooks/useOrgManagement';
 import { exportToCSV, exportColumns } from '@/utils/exportData';
+import DepartmentsTab from '@/components/admin/DepartmentsTab';
+import StaffTab from '@/components/admin/StaffTab';
+import ProjectsTab from '@/components/admin/ProjectsTab';
+import WorkplanTab from '@/components/admin/WorkplanTab';
 
 const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString('en-US', {
@@ -55,6 +60,16 @@ const NewAdmin = () => {
     updateCommunityRegistrationStatus,
     deleteCommunityRegistration
   } = useAdminData(isAdmin);
+  const {
+    departments, staff, projects, tasks,
+    loading: orgLoading,
+    saveDepartment, deleteDepartment,
+    saveStaff, deleteStaff,
+    saveProject, deleteProject,
+    saveTask, deleteTask,
+  } = useOrgManagement(isAdmin);
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState('volunteers');
 
   if (!loading && (!user || !isAdmin)) {
     return <Navigate to="/admin/auth" replace />;
@@ -124,27 +139,43 @@ const NewAdmin = () => {
               <Loader2 className="h-8 w-8 animate-spin text-utu-red" />
             </div>
           ) : (
-            <Tabs defaultValue="volunteers" className="w-full">
-              <TabsList className="grid w-full grid-cols-5 mb-8">
+            <Tabs value={activeTab} onValueChange={(v) => { setActiveTab(v); if (v !== 'workplan') setSelectedProjectId(null); }} className="w-full">
+              <TabsList className="grid w-full grid-cols-9 mb-8">
                 <TabsTrigger value="volunteers">
-                  <Users className="mr-2 h-4 w-4" />
-                  Volunteers ({volunteerProfiles.length})
+                  <Users className="mr-1 h-4 w-4" />
+                  <span className="hidden lg:inline">Volunteers</span> ({volunteerProfiles.length})
                 </TabsTrigger>
                 <TabsTrigger value="hours">
-                  <Clock className="mr-2 h-4 w-4" />
-                  Hours ({pendingHours.length} pending)
+                  <Clock className="mr-1 h-4 w-4" />
+                  <span className="hidden lg:inline">Hours</span> ({pendingHours.length})
                 </TabsTrigger>
                 <TabsTrigger value="communities">
-                  <Globe className="mr-2 h-4 w-4" />
-                  Communities ({communityRegistrations.length})
+                  <Globe className="mr-1 h-4 w-4" />
+                  <span className="hidden lg:inline">Communities</span>
                 </TabsTrigger>
                 <TabsTrigger value="contacts">
-                  <MessageSquare className="mr-2 h-4 w-4" />
-                  Contacts ({contactSubmissions.length})
+                  <MessageSquare className="mr-1 h-4 w-4" />
+                  <span className="hidden lg:inline">Contacts</span>
                 </TabsTrigger>
                 <TabsTrigger value="newsletter">
-                  <Mail className="mr-2 h-4 w-4" />
-                  Newsletter ({newsletterSubscribers.length})
+                  <Mail className="mr-1 h-4 w-4" />
+                  <span className="hidden lg:inline">Newsletter</span>
+                </TabsTrigger>
+                <TabsTrigger value="departments">
+                  <Building2 className="mr-1 h-4 w-4" />
+                  <span className="hidden lg:inline">Departments</span>
+                </TabsTrigger>
+                <TabsTrigger value="staff">
+                  <UserCog className="mr-1 h-4 w-4" />
+                  <span className="hidden lg:inline">Staff</span> ({staff.length})
+                </TabsTrigger>
+                <TabsTrigger value="projects">
+                  <FolderKanban className="mr-1 h-4 w-4" />
+                  <span className="hidden lg:inline">Projects</span> ({projects.length})
+                </TabsTrigger>
+                <TabsTrigger value="workplan">
+                  <ListTodo className="mr-1 h-4 w-4" />
+                  <span className="hidden lg:inline">Workplan</span> ({tasks.length})
                 </TabsTrigger>
               </TabsList>
 
@@ -573,6 +604,37 @@ const NewAdmin = () => {
                     </div>
                   </CardContent>
                 </Card>
+              </TabsContent>
+
+              <TabsContent value="departments">
+                <DepartmentsTab departments={departments} staff={staff} onSave={saveDepartment} onDelete={deleteDepartment} />
+              </TabsContent>
+
+              <TabsContent value="staff">
+                <StaffTab staff={staff} departments={departments} onSave={saveStaff} onDelete={deleteStaff} />
+              </TabsContent>
+
+              <TabsContent value="projects">
+                <ProjectsTab
+                  projects={projects}
+                  departments={departments}
+                  staff={staff}
+                  onSave={saveProject}
+                  onDelete={deleteProject}
+                  onSelectProject={(id) => { setSelectedProjectId(id); setActiveTab('workplan'); }}
+                />
+              </TabsContent>
+
+              <TabsContent value="workplan">
+                <WorkplanTab
+                  tasks={tasks}
+                  projects={projects}
+                  staff={staff}
+                  selectedProjectId={selectedProjectId}
+                  onSave={saveTask}
+                  onDelete={deleteTask}
+                  onBack={() => { setSelectedProjectId(null); setActiveTab('projects'); }}
+                />
               </TabsContent>
             </Tabs>
           )}
