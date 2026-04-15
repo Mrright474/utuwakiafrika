@@ -1,14 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Navigate, Link } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Users, MessageSquare, Mail, LogOut, Clock, User, Phone, MapPin, Settings, CheckCircle, XCircle, Calendar, Download, Globe, Briefcase } from 'lucide-react';
+import { Loader2, Users, MessageSquare, Mail, LogOut, Clock, User, Phone, MapPin, Settings, CheckCircle, XCircle, Calendar, Download, Globe, Briefcase, Building2, UserCog, FolderKanban, ListTodo } from 'lucide-react';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { useAdminData } from '@/hooks/useAdminData';
+import { useOrgManagement } from '@/hooks/useOrgManagement';
 import { exportToCSV, exportColumns } from '@/utils/exportData';
+import DepartmentsTab from '@/components/admin/DepartmentsTab';
+import StaffTab from '@/components/admin/StaffTab';
+import ProjectsTab from '@/components/admin/ProjectsTab';
+import WorkplanTab from '@/components/admin/WorkplanTab';
 
 const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString('en-US', {
