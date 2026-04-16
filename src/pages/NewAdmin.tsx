@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Users, MessageSquare, Mail, LogOut, Clock, User, Phone, MapPin, Settings, CheckCircle, XCircle, Calendar, Download, Globe, Briefcase, Building2, UserCog, FolderKanban, ListTodo } from 'lucide-react';
+import { Loader2, Users, MessageSquare, Mail, LogOut, Clock, User, Phone, MapPin, Settings, CheckCircle, XCircle, Calendar, Download, Globe, Briefcase, Building2, UserCog, FolderKanban, ListTodo, LayoutDashboard } from 'lucide-react';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { useAdminData } from '@/hooks/useAdminData';
 import { useOrgManagement } from '@/hooks/useOrgManagement';
@@ -14,6 +14,8 @@ import DepartmentsTab from '@/components/admin/DepartmentsTab';
 import StaffTab from '@/components/admin/StaffTab';
 import ProjectsTab from '@/components/admin/ProjectsTab';
 import WorkplanTab from '@/components/admin/WorkplanTab';
+import OrgOverviewTab from '@/components/admin/OrgOverviewTab';
+import GanttTimeline from '@/components/admin/GanttTimeline';
 
 const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString('en-US', {
@@ -69,7 +71,7 @@ const NewAdmin = () => {
     saveTask, deleteTask,
   } = useOrgManagement(isAdmin);
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState('volunteers');
+  const [activeTab, setActiveTab] = useState('overview');
 
   if (!loading && (!user || !isAdmin)) {
     return <Navigate to="/admin/auth" replace />;
@@ -140,7 +142,11 @@ const NewAdmin = () => {
             </div>
           ) : (
             <Tabs value={activeTab} onValueChange={(v) => { setActiveTab(v); if (v !== 'workplan') setSelectedProjectId(null); }} className="w-full">
-              <TabsList className="grid w-full grid-cols-9 mb-8">
+              <TabsList className="grid w-full grid-cols-10 mb-8">
+                <TabsTrigger value="overview">
+                  <LayoutDashboard className="mr-1 h-4 w-4" />
+                  <span className="hidden lg:inline">Overview</span>
+                </TabsTrigger>
                 <TabsTrigger value="volunteers">
                   <Users className="mr-1 h-4 w-4" />
                   <span className="hidden lg:inline">Volunteers</span> ({volunteerProfiles.length})
@@ -634,6 +640,21 @@ const NewAdmin = () => {
                   onSave={saveTask}
                   onDelete={deleteTask}
                   onBack={() => { setSelectedProjectId(null); setActiveTab('projects'); }}
+                />
+                <GanttTimeline
+                  tasks={tasks}
+                  projects={projects}
+                  staff={staff}
+                  selectedProjectId={selectedProjectId}
+                />
+              </TabsContent>
+
+              <TabsContent value="overview">
+                <OrgOverviewTab
+                  departments={departments}
+                  staff={staff}
+                  projects={projects}
+                  tasks={tasks}
                 />
               </TabsContent>
             </Tabs>
