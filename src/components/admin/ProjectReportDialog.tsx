@@ -38,12 +38,35 @@ const ProjectReportDialog = ({ open, onOpenChange, project, tasks, staff, depart
         </DialogHeader>
 
         <div id="project-report" className="space-y-6 print:p-0">
-          {/* Header */}
-          <header className="border-b pb-4">
-            <h1 className="text-3xl font-bold">{project.title}</h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              Generated {new Date().toLocaleDateString()} • Status: {project.status} • Priority: {project.priority}
-            </p>
+          {/* Letterhead */}
+          <header className="border-b-2 border-primary pb-4">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <img
+                  src="/lovable-uploads/8c92f756-dfe1-496d-8f40-b05da33fb433.png"
+                  alt="Utu Wa Kiafrika Charity Network Logo"
+                  className="h-16 w-auto print:h-20"
+                />
+                <div>
+                  <h2 className="text-xl font-bold leading-tight">Utu Wa Kiafrika</h2>
+                  <p className="text-sm text-muted-foreground">Charity Network</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    www.utuwakiafrika.org • info@utuafrika.org
+                  </p>
+                </div>
+              </div>
+              <div className="text-right text-xs text-muted-foreground">
+                <p className="font-semibold uppercase tracking-wide">Project Report</p>
+                <p className="mt-1">Generated {new Date().toLocaleDateString()}</p>
+                <p>Ref: {project.id.slice(0, 8).toUpperCase()}</p>
+              </div>
+            </div>
+            <div className="mt-4">
+              <h1 className="text-2xl font-bold">{project.title}</h1>
+              <p className="text-sm text-muted-foreground mt-1">
+                Status: <span className="capitalize">{project.status}</span> • Priority: <span className="capitalize">{project.priority}</span>
+              </p>
+            </div>
           </header>
 
           {/* Overview */}
