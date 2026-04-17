@@ -117,6 +117,7 @@ const ProjectsTab = ({ projects, departments, staff, tasks, onSave, onDelete, on
                   <div className="flex items-center gap-2">
                     <Badge className={priorityColors[p.priority]}>{p.priority}</Badge>
                     <Badge className={statusColors[p.status] || 'bg-gray-100'}>{p.status}</Badge>
+                    <Button size="icon" variant="ghost" onClick={(e) => { e.stopPropagation(); setReportProject(p); }} title="Print Report"><FileText className="h-4 w-4" /></Button>
                     <Button size="icon" variant="ghost" onClick={(e) => openEdit(p, e)}><Edit2 className="h-4 w-4" /></Button>
                     <Button size="icon" variant="ghost" onClick={(e) => { e.stopPropagation(); onDelete(p.id); }}><Trash2 className="h-4 w-4 text-destructive" /></Button>
                   </div>
