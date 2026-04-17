@@ -204,6 +204,15 @@ const ProjectsTab = ({ projects, departments, staff, tasks, onSave, onDelete, on
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <ProjectReportDialog
+        open={!!reportProject}
+        onOpenChange={(o) => !o && setReportProject(null)}
+        project={reportProject}
+        tasks={tasks}
+        staff={staff}
+        departments={departments}
+      />
     </>
   );
 };

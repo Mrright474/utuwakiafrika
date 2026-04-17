@@ -625,6 +625,7 @@ const NewAdmin = () => {
                   projects={projects}
                   departments={departments}
                   staff={staff}
+                  tasks={tasks}
                   onSave={saveProject}
                   onDelete={deleteProject}
                   onSelectProject={(id) => { setSelectedProjectId(id); setActiveTab('workplan'); }}
