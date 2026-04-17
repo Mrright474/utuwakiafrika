@@ -309,3 +309,23 @@ h1, h2, h3, h4, h5, h6 {
 .donate-button:hover {
   box-shadow: 0 10px 30px rgba(229, 43, 56, 0.3);
 }
+
+/* Print styles for project report */
+@media print {
+  body * { visibility: hidden; }
+  #project-report, #project-report * { visibility: visible; }
+  #project-report {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    padding: 1.5rem;
+    color: #000;
+    background: #fff;
+  }
+  #project-report h1 { font-size: 24pt; }
+  #project-report h2 { font-size: 14pt; margin-top: 1rem; }
+  #project-report table { page-break-inside: auto; }
+  #project-report tr { page-break-inside: avoid; }
+  #project-report section { page-break-inside: avoid; }
+}
