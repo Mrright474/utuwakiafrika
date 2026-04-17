@@ -8,15 +8,17 @@ import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Plus, Edit2, Trash2, FolderKanban, Calendar, DollarSign } from 'lucide-react';
-import type { OrgProject, OrgDepartment, OrgStaff } from '@/hooks/useOrgManagement';
+import { Plus, Edit2, Trash2, FolderKanban, Calendar, DollarSign, FileText } from 'lucide-react';
+import type { OrgProject, OrgDepartment, OrgStaff, ProjectTask } from '@/hooks/useOrgManagement';
 import ExportButton from './ExportButton';
 import { exportColumns } from '@/utils/exportData';
+import ProjectReportDialog from './ProjectReportDialog';
 
 interface Props {
   projects: OrgProject[];
   departments: OrgDepartment[];
   staff: OrgStaff[];
+  tasks: ProjectTask[];
   onSave: (p: any) => Promise<boolean>;
   onDelete: (id: string) => Promise<boolean>;
   onSelectProject: (id: string) => void;
@@ -38,11 +40,12 @@ const priorityColors: Record<string, string> = {
   critical: 'bg-red-100 text-red-800',
 };
 
-const ProjectsTab = ({ projects, departments, staff, onSave, onDelete, onSelectProject }: Props) => {
+const ProjectsTab = ({ projects, departments, staff, tasks, onSave, onDelete, onSelectProject }: Props) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [form, setForm] = useState<any>(emptyProject);
   const [editing, setEditing] = useState(false);
   const [statusFilter, setStatusFilter] = useState('all');
+  const [reportProject, setReportProject] = useState<OrgProject | null>(null);
 
   const openAdd = () => { setForm({ ...emptyProject }); setEditing(false); setDialogOpen(true); };
   const openEdit = (p: OrgProject, e: React.MouseEvent) => {
@@ -114,6 +117,7 @@ const ProjectsTab = ({ projects, departments, staff, onSave, onDelete, onSelectP
                   <div className="flex items-center gap-2">
                     <Badge className={priorityColors[p.priority]}>{p.priority}</Badge>
                     <Badge className={statusColors[p.status] || 'bg-gray-100'}>{p.status}</Badge>
+                    <Button size="icon" variant="ghost" onClick={(e) => { e.stopPropagation(); setReportProject(p); }} title="Print Report"><FileText className="h-4 w-4" /></Button>
                     <Button size="icon" variant="ghost" onClick={(e) => openEdit(p, e)}><Edit2 className="h-4 w-4" /></Button>
                     <Button size="icon" variant="ghost" onClick={(e) => { e.stopPropagation(); onDelete(p.id); }}><Trash2 className="h-4 w-4 text-destructive" /></Button>
                   </div>
@@ -200,6 +204,15 @@ const ProjectsTab = ({ projects, departments, staff, onSave, onDelete, onSelectP
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <ProjectReportDialog
+        open={!!reportProject}
+        onOpenChange={(o) => !o && setReportProject(null)}
+        project={reportProject}
+        tasks={tasks}
+        staff={staff}
+        departments={departments}
+      />
     </>
   );
 };
