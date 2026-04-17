@@ -10,6 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Plus, Edit2, Trash2, FolderKanban, Calendar, DollarSign } from 'lucide-react';
 import type { OrgProject, OrgDepartment, OrgStaff } from '@/hooks/useOrgManagement';
+import ExportButton from './ExportButton';
+import { exportColumns } from '@/utils/exportData';
 
 interface Props {
   projects: OrgProject[];
@@ -64,6 +66,19 @@ const ProjectsTab = ({ projects, departments, staff, onSave, onDelete, onSelectP
 
   const filtered = statusFilter === 'all' ? projects : projects.filter(p => p.status === statusFilter);
 
+  const exportRows = filtered.map(p => ({
+    title: p.title,
+    description: p.description || '',
+    department: p.org_departments?.name || '',
+    project_lead: p.org_staff ? `${p.org_staff.first_name} ${p.org_staff.last_name}` : '',
+    status: p.status,
+    priority: p.priority,
+    start_date: p.start_date || '',
+    end_date: p.end_date || '',
+    budget: p.budget ?? '',
+    progress: p.progress ?? 0,
+  }));
+
   return (
     <>
       <Card>
@@ -83,6 +98,7 @@ const ProjectsTab = ({ projects, departments, staff, onSave, onDelete, onSelectP
                 <SelectItem value="completed">Completed</SelectItem>
               </SelectContent>
             </Select>
+            <ExportButton data={exportRows} columns={exportColumns.projects} filename="projects" />
             <Button onClick={openAdd} size="sm"><Plus className="h-4 w-4 mr-1" /> New Project</Button>
           </div>
         </CardHeader>

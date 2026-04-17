@@ -10,6 +10,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Plus, Edit2, Trash2, UserCog, Mail, Phone } from 'lucide-react';
 import type { OrgStaff, OrgDepartment } from '@/hooks/useOrgManagement';
+import ExportButton from './ExportButton';
+import { exportColumns } from '@/utils/exportData';
 
 interface Props {
   staff: OrgStaff[];
@@ -37,6 +39,18 @@ const StaffTab = ({ staff, departments, onSave, onDelete }: Props) => {
 
   const filtered = filter === 'all' ? staff : staff.filter(s => s.department_id === filter);
 
+  const exportRows = filtered.map(s => ({
+    first_name: s.first_name,
+    last_name: s.last_name,
+    email: s.email,
+    phone: s.phone || '',
+    position: s.position,
+    department: s.org_departments?.name || '',
+    employment_type: s.employment_type,
+    status: s.status,
+    hire_date: s.hire_date || '',
+  }));
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active': return 'bg-green-100 text-green-800';
@@ -62,6 +76,7 @@ const StaffTab = ({ staff, departments, onSave, onDelete }: Props) => {
                 {departments.map(d => <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>)}
               </SelectContent>
             </Select>
+            <ExportButton data={exportRows} columns={exportColumns.staff} filename="staff-directory" />
             <Button onClick={openAdd} size="sm"><Plus className="h-4 w-4 mr-1" /> Add Staff</Button>
           </div>
         </CardHeader>
