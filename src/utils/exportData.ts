@@ -101,4 +101,6 @@ export const exportColumns: Record<string, string[]> = {
   gallery: ['title', 'description', 'category', 'active'],
   volunteerProfiles: ['first_name', 'last_name', 'email', 'phone', 'city', 'country', 'status', 'skills', 'experience', 'motivation', 'created_at'],
   volunteerHours: ['volunteer_name', 'activity_date', 'hours', 'activity_type', 'description', 'location', 'verified', 'created_at'],
+  staff: ['first_name', 'last_name', 'email', 'phone', 'position', 'department', 'employment_type', 'status', 'hire_date'],
+  projects: ['title', 'description', 'department', 'project_lead', 'status', 'priority', 'start_date', 'end_date', 'budget', 'progress'],
 };
