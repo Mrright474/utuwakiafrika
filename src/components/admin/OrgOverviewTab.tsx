@@ -59,6 +59,13 @@ const OrgOverviewTab = ({ departments, staff, projects, tasks }: Props) => {
 
   return (
     <div className="space-y-6">
+      {/* Report Button */}
+      <div className="flex justify-end">
+        <Button variant="outline" onClick={() => setReportOpen(true)}>
+          <FileText className="h-4 w-4 mr-1" /> Department Summary Report
+        </Button>
+      </div>
+
       {/* Summary Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
