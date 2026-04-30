@@ -1,7 +1,9 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Users, FolderKanban, AlertTriangle, Building2, CheckCircle2, Clock, TrendingUp } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Users, FolderKanban, AlertTriangle, Building2, CheckCircle2, Clock, TrendingUp, FileText } from 'lucide-react';
+import DepartmentReportDialog from './DepartmentReportDialog';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { BarChart, Bar, XAxis, YAxis, PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 import type { OrgDepartment, OrgStaff, OrgProject, ProjectTask } from '@/hooks/useOrgManagement';
