@@ -1,7 +1,9 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Users, FolderKanban, AlertTriangle, Building2, CheckCircle2, Clock, TrendingUp } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Users, FolderKanban, AlertTriangle, Building2, CheckCircle2, Clock, TrendingUp, FileText } from 'lucide-react';
+import DepartmentReportDialog from './DepartmentReportDialog';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { BarChart, Bar, XAxis, YAxis, PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 import type { OrgDepartment, OrgStaff, OrgProject, ProjectTask } from '@/hooks/useOrgManagement';
@@ -16,6 +18,7 @@ interface Props {
 const COLORS = ['#E53E3E', '#DD6B20', '#D69E2E', '#38A169', '#3182CE', '#805AD5', '#D53F8C', '#319795'];
 
 const OrgOverviewTab = ({ departments, staff, projects, tasks }: Props) => {
+  const [reportOpen, setReportOpen] = useState(false);
   const activeStaff = staff.filter(s => s.status === 'active');
   const activeProjects = projects.filter(p => ['active', 'in-progress'].includes(p.status));
   const today = new Date().toISOString().split('T')[0];
@@ -56,6 +59,13 @@ const OrgOverviewTab = ({ departments, staff, projects, tasks }: Props) => {
 
   return (
     <div className="space-y-6">
+      {/* Report Button */}
+      <div className="flex justify-end">
+        <Button variant="outline" onClick={() => setReportOpen(true)}>
+          <FileText className="h-4 w-4 mr-1" /> Department Summary Report
+        </Button>
+      </div>
+
       {/* Summary Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
@@ -190,6 +200,14 @@ const OrgOverviewTab = ({ departments, staff, projects, tasks }: Props) => {
           </CardContent>
         </Card>
       )}
+      <DepartmentReportDialog
+        open={reportOpen}
+        onOpenChange={setReportOpen}
+        departments={departments}
+        projects={projects}
+        staff={staff}
+        tasks={tasks}
+      />
     </div>
   );
 };
