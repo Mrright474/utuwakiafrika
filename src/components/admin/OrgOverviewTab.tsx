@@ -18,6 +18,7 @@ interface Props {
 const COLORS = ['#E53E3E', '#DD6B20', '#D69E2E', '#38A169', '#3182CE', '#805AD5', '#D53F8C', '#319795'];
 
 const OrgOverviewTab = ({ departments, staff, projects, tasks }: Props) => {
+  const [reportOpen, setReportOpen] = useState(false);
   const activeStaff = staff.filter(s => s.status === 'active');
   const activeProjects = projects.filter(p => ['active', 'in-progress'].includes(p.status));
   const today = new Date().toISOString().split('T')[0];
