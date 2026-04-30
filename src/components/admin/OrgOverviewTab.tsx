@@ -200,6 +200,14 @@ const OrgOverviewTab = ({ departments, staff, projects, tasks }: Props) => {
           </CardContent>
         </Card>
       )}
+      <DepartmentReportDialog
+        open={reportOpen}
+        onOpenChange={setReportOpen}
+        departments={departments}
+        projects={projects}
+        staff={staff}
+        tasks={tasks}
+      />
     </div>
   );
 };
