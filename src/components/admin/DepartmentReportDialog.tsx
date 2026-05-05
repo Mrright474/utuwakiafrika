@@ -30,7 +30,16 @@ const DepartmentReportDialog = ({ open, onOpenChange, departments, projects, sta
       return acc;
     }, {} as Record<string, number>);
 
-    return { dept, deptProjects, deptStaff, deptTasks, totalBudget, totalEstHours, totalActHours, completedTasks, overdueTasks, statusCounts };
+    const completionRate = deptTasks.length > 0 ? (completedTasks / deptTasks.length) * 100 : 0;
+    const tasksWithDueDate = deptTasks.filter(t => t.due_date);
+    const onTimeTasks = tasksWithDueDate.filter(t => {
+      if (t.status === 'done') return new Date(t.updated_at) <= new Date(t.due_date!);
+      return new Date(t.due_date!) >= new Date();
+    }).length;
+    const onTimeRate = tasksWithDueDate.length > 0 ? (onTimeTasks / tasksWithDueDate.length) * 100 : 0;
+    const budgetVariance = totalEstHours > 0 ? ((totalActHours - totalEstHours) / totalEstHours) * 100 : 0;
+
+    return { dept, deptProjects, deptStaff, deptTasks, totalBudget, totalEstHours, totalActHours, completedTasks, overdueTasks, statusCounts, completionRate, onTimeRate, budgetVariance };
   });
 
   const grandTotalBudget = deptSummaries.reduce((s, d) => s + d.totalBudget, 0);
