@@ -30,7 +30,16 @@ const DepartmentReportDialog = ({ open, onOpenChange, departments, projects, sta
       return acc;
     }, {} as Record<string, number>);
 
-    return { dept, deptProjects, deptStaff, deptTasks, totalBudget, totalEstHours, totalActHours, completedTasks, overdueTasks, statusCounts };
+    const completionRate = deptTasks.length > 0 ? (completedTasks / deptTasks.length) * 100 : 0;
+    const tasksWithDueDate = deptTasks.filter(t => t.due_date);
+    const onTimeTasks = tasksWithDueDate.filter(t => {
+      if (t.status === 'done') return new Date(t.updated_at) <= new Date(t.due_date!);
+      return new Date(t.due_date!) >= new Date();
+    }).length;
+    const onTimeRate = tasksWithDueDate.length > 0 ? (onTimeTasks / tasksWithDueDate.length) * 100 : 0;
+    const budgetVariance = totalEstHours > 0 ? ((totalActHours - totalEstHours) / totalEstHours) * 100 : 0;
+
+    return { dept, deptProjects, deptStaff, deptTasks, totalBudget, totalEstHours, totalActHours, completedTasks, overdueTasks, statusCounts, completionRate, onTimeRate, budgetVariance };
   });
 
   const grandTotalBudget = deptSummaries.reduce((s, d) => s + d.totalBudget, 0);
@@ -95,7 +104,7 @@ const DepartmentReportDialog = ({ open, onOpenChange, departments, projects, sta
           </section>
 
           {/* Per-Department Breakdown */}
-          {deptSummaries.map(({ dept, deptProjects, deptStaff, deptTasks, totalBudget, totalEstHours, totalActHours, completedTasks, overdueTasks, statusCounts }) => (
+          {deptSummaries.map(({ dept, deptProjects, deptStaff, deptTasks, totalBudget, totalEstHours, totalActHours, completedTasks, overdueTasks, statusCounts, completionRate, onTimeRate, budgetVariance }) => (
             <section key={dept.id} className="border rounded-lg p-4 break-inside-avoid">
               <div className="flex items-center gap-2 mb-3">
                 <div className="w-3 h-3 rounded-full" style={{ backgroundColor: dept.color || '#3B82F6' }} />
@@ -121,6 +130,24 @@ const DepartmentReportDialog = ({ open, onOpenChange, departments, projects, sta
                   ))}
                 </div>
               )}
+
+              {/* KPI cards */}
+              <div className="grid grid-cols-3 gap-2 mb-3">
+                <div className="border rounded p-2 text-center">
+                  <p className="text-xs text-muted-foreground">Completion Rate</p>
+                  <p className={`text-lg font-bold ${completionRate >= 75 ? 'text-green-600' : completionRate >= 40 ? 'text-yellow-600' : 'text-destructive'}`}>{completionRate.toFixed(0)}%</p>
+                </div>
+                <div className="border rounded p-2 text-center">
+                  <p className="text-xs text-muted-foreground">Hours Variance</p>
+                  <p className={`text-lg font-bold ${Math.abs(budgetVariance) <= 10 ? 'text-green-600' : Math.abs(budgetVariance) <= 25 ? 'text-yellow-600' : 'text-destructive'}`}>
+                    {budgetVariance > 0 ? '+' : ''}{budgetVariance.toFixed(0)}%
+                  </p>
+                </div>
+                <div className="border rounded p-2 text-center">
+                  <p className="text-xs text-muted-foreground">On-Time Tasks</p>
+                  <p className={`text-lg font-bold ${onTimeRate >= 80 ? 'text-green-600' : onTimeRate >= 50 ? 'text-yellow-600' : 'text-destructive'}`}>{onTimeRate.toFixed(0)}%</p>
+                </div>
+              </div>
 
               {/* Staff workload table */}
               {deptStaff.length > 0 && (
