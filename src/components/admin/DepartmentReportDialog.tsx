@@ -104,7 +104,7 @@ const DepartmentReportDialog = ({ open, onOpenChange, departments, projects, sta
           </section>
 
           {/* Per-Department Breakdown */}
-          {deptSummaries.map(({ dept, deptProjects, deptStaff, deptTasks, totalBudget, totalEstHours, totalActHours, completedTasks, overdueTasks, statusCounts }) => (
+          {deptSummaries.map(({ dept, deptProjects, deptStaff, deptTasks, totalBudget, totalEstHours, totalActHours, completedTasks, overdueTasks, statusCounts, completionRate, onTimeRate, budgetVariance }) => (
             <section key={dept.id} className="border rounded-lg p-4 break-inside-avoid">
               <div className="flex items-center gap-2 mb-3">
                 <div className="w-3 h-3 rounded-full" style={{ backgroundColor: dept.color || '#3B82F6' }} />
