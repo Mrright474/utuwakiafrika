@@ -1,12 +1,17 @@
-
 import React from 'react';
 import Layout from '@/components/layout/Layout';
 import DonationForm from '@/components/donation/DonationForm';
 import { Heart, Users, Globe, Sparkles } from 'lucide-react';
+import SEO from '@/components/seo/SEO';
 
 const Donate = () => {
   return (
     <Layout>
+      <SEO
+        title="Donate — Support Ubuntu Communities in Africa"
+        description="Make a secure one-time or recurring donation to fund education, clean water, healthcare, and empowerment programs across Africa."
+        path="/donate"
+      />
       <div className="bg-gradient-to-br from-utu-light-gray via-white to-gray-50 py-20 md:py-28 section-ubuntu">
         <div className="container mx-auto px-4">
           {/* Ubuntu-inspired header */}

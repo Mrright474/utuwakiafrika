@@ -40,6 +40,11 @@ const Events = () => {
 
   return (
     <Layout>
+      <SEO
+        title="Events — Join Our Ubuntu Community Gatherings"
+        description="Upcoming workshops, community gatherings, and signature annual events bringing Ubuntu spirit to communities across Africa."
+        path="/events"
+      />
       <div className="bg-gradient-to-b from-white to-utu-light-gray">
         {/* Hero Section */}
         <section className="py-20 bg-gradient-to-r from-utu-red to-red-700">

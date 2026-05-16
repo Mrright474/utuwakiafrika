@@ -71,6 +71,11 @@ const Index = memo(() => {
 
   return (
     <Layout>
+      <SEO
+        title="Utu Wa Kiafrika — A Helping Hand For Every African"
+        description="Ubuntu-rooted charity building self-sustaining African communities through education, health, water, and women's empowerment programs."
+        path="/"
+      />
       <div className="relative overflow-x-hidden w-full">
         <BackgroundImage 
           src="/lovable-uploads/688ac280-0ee5-48ac-8a44-82ad202140e7.png"
