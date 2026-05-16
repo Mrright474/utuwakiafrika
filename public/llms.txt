@@ -1,0 +1,23 @@
+# Utu Wa Kiafrika Charity Network
+
+> Ubuntu-rooted African humanitarian charity building self-sustaining communities through education, health, clean water, women's empowerment, and cultural revival.
+
+Utu Wa Kiafrika ("African humanity") is a grassroots non-profit operating across East Africa. Programs span schools, mobile clinics, water wells, women's enterprise microloans, youth volunteering, and Vision 2030 development projects.
+
+## Pages
+
+- [Home](/): Mission overview, impact stats, and Ubuntu philosophy.
+- [About](/about): Founding story, leadership, mission, vision, and where we work.
+- [Programs](/programs): Education, health, water, empowerment, and special initiatives.
+- [Events](/events): Upcoming community events and registration.
+- [Team](/team): Leadership and staff directory.
+- [Impact](/impact): Reach, statistics, and annual reports.
+- [Success Stories](/stories): Real stories from communities we serve.
+- [Communities](/communities): Local Ubuntu chapters and how to start one.
+- [Volunteers](/volunteers/auth): Volunteer registration and service-hour tracking.
+- [Donate](/donate): One-time and recurring giving, project investment.
+- [Contact](/contact): Address, phone, email, and FAQ.
+
+## Optional
+
+- [Admin login](/admin/auth): Staff-only.

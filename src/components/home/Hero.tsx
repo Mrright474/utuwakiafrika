@@ -23,6 +23,9 @@ const Hero = memo(() => {
           alt="African community gathering in unity and celebration - Ubuntu spirit"
           className="w-full h-full object-cover opacity-30"
           loading="eager"
+          fetchPriority="high"
+          width={1920}
+          height={1080}
         />
         <div className="absolute inset-0 bg-gradient-to-r from-utu-black via-black/90 to-transparent"></div>
         <div className="absolute inset-0 ubuntu-pattern opacity-30"></div>

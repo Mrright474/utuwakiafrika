@@ -18,6 +18,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
+import SEO from '@/components/seo/SEO';
 
 const SuccessStoriesPage = () => {
   const { stories, loading } = useSuccessStoriesManagement();
@@ -116,6 +117,11 @@ const SuccessStoriesPage = () => {
 
   return (
     <Layout>
+      <SEO
+        title="Success Stories — Lives Transformed by Ubuntu"
+        description="Read real stories of transformation from the African communities served by Utu Wa Kiafrika programs."
+        path="/stories"
+      />
       <div className="min-h-screen bg-gradient-to-b from-white to-utu-light-gray">
         {/* Header Section */}
         <section className="relative py-16 sm:py-24 bg-gradient-to-br from-utu-red via-utu-gold to-utu-green">

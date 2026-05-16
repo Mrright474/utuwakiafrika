@@ -8,6 +8,7 @@ import ChapterRegistrationForm from '@/components/communities/ChapterRegistratio
 import communityNetworking from '@/assets/ubuntu-community-networking.jpg';
 import communityMeeting from '@/assets/ubuntu-community-meeting.jpg';
 import communityMarketplace from '@/assets/ubuntu-community-marketplace.jpg';
+import SEO from '@/components/seo/SEO';
 
 const howItWorks = [
   {
@@ -42,6 +43,11 @@ const benefits = [
 const Communities = () => {
   return (
     <Layout>
+      <SEO
+        title="Ubuntu Communities — Local Chapters Near You"
+        description="Join or start a local Ubuntu Community chapter. Network with donors and entrepreneurs, promote your business, and grow together."
+        path="/communities"
+      />
       <div className="bg-gradient-to-b from-white to-utu-light-gray">
         {/* Hero */}
         <section className="relative py-20 overflow-hidden">
