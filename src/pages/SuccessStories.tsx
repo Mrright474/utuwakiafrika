@@ -18,6 +18,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
+import SEO from '@/components/seo/SEO';
 
 const SuccessStoriesPage = () => {
   const { stories, loading } = useSuccessStoriesManagement();

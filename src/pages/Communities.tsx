@@ -8,6 +8,7 @@ import ChapterRegistrationForm from '@/components/communities/ChapterRegistratio
 import communityNetworking from '@/assets/ubuntu-community-networking.jpg';
 import communityMeeting from '@/assets/ubuntu-community-meeting.jpg';
 import communityMarketplace from '@/assets/ubuntu-community-marketplace.jpg';
+import SEO from '@/components/seo/SEO';
 
 const howItWorks = [
   {

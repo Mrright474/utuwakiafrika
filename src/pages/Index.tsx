@@ -11,6 +11,7 @@ import { useLocation } from 'react-router-dom';
 import LazySection from '@/components/utils/LazySection';
 import usePerformance from '@/hooks/usePerformance';
 import { usePerformanceOptimizations } from '@/hooks/usePerformanceOptimizations';
+import SEO from '@/components/seo/SEO';
 
 const Index = memo(() => {
   const location = useLocation();

@@ -11,6 +11,7 @@ import { useRegistrationCounts } from '@/hooks/useRegistrationCounts';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import EventRegistrationForm from '@/components/events/EventRegistrationForm';
+import SEO from '@/components/seo/SEO';
 
 const Events = () => {
   const { events, loading } = useEventsManagement();
