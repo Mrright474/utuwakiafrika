@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Target, TrendingUp, Heart, Users, DollarSign, Calendar, CheckCircle, Clock, CircleDot, Globe } from 'lucide-react';
 import ProjectInvestmentForm from '@/components/donation/ProjectInvestmentForm';
+import SEO from '@/components/seo/SEO';
 
 const statusIcon = (status: string) => {
   if (status === 'completed') return <CheckCircle className="h-5 w-5 text-green-500" />;
@@ -33,6 +34,13 @@ const ProjectDetail = () => {
 
   return (
     <Layout>
+      <SEO
+        title={`${project.title} — Utu Wa Kiafrika Vision 2030`}
+        description={project.tagline?.slice(0, 155) || project.overview?.slice(0, 155) || `Learn about ${project.title}, a Utu Wa Kiafrika Vision 2030 initiative.`}
+        path={`/projects/${project.slug}`}
+        type="article"
+        image={project.heroImage}
+      />
       {/* Hero Section */}
       <section className="relative h-[70vh] min-h-[500px] overflow-hidden">
         <img src={project.heroImage} alt={project.title} className="absolute inset-0 w-full h-full object-cover" />

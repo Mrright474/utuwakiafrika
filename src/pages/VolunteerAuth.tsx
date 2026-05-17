@@ -10,6 +10,7 @@ import { Heart, UserPlus, LogIn } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import VolunteerRegistrationForm from '@/components/volunteers/VolunteerRegistrationForm';
+import SEO from '@/components/seo/SEO';
 
 const VolunteerAuth = () => {
   const { signIn, user, loading } = useAuth();
@@ -88,6 +89,11 @@ const VolunteerAuth = () => {
 
   return (
     <Layout>
+      <SEO
+        title="Volunteer Login & Sign Up — Utu Wa Kiafrika"
+        description="Sign in or register as a volunteer with Utu Wa Kiafrika. Join community projects, log service hours, and make an impact across Africa."
+        path="/volunteers/auth"
+      />
       <div className="min-h-screen bg-gradient-to-br from-utu-cream via-white to-utu-cream py-12">
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="text-center mb-8">
