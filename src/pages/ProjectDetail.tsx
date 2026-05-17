@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Target, TrendingUp, Heart, Users, DollarSign, Calendar, CheckCircle, Clock, CircleDot, Globe } from 'lucide-react';
 import ProjectInvestmentForm from '@/components/donation/ProjectInvestmentForm';
+import SEO from '@/components/seo/SEO';
 
 const statusIcon = (status: string) => {
   if (status === 'completed') return <CheckCircle className="h-5 w-5 text-green-500" />;
