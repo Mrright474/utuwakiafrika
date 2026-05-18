@@ -6,7 +6,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") {
@@ -14,12 +14,12 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const body = await req.json();
-    const email = typeof body.email === "string" ? body.email.trim() : "";
+    const body = await req.json().catch(() => ({}));
+    const token = typeof body.token === "string" ? body.token.trim() : "";
 
-    if (!email || !emailRegex.test(email)) {
+    if (!token || !uuidRegex.test(token)) {
       return new Response(
-        JSON.stringify({ error: "Please provide a valid email address" }),
+        JSON.stringify({ error: "A valid unsubscribe token is required." }),
         { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
     }
@@ -29,22 +29,29 @@ const handler = async (req: Request): Promise<Response> => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    // Use service role to update - no public RLS UPDATE policy needed
     const { data, error } = await supabase
-      .from('newsletter_subscribers')
-      .update({ 
-        status: 'unsubscribed',
-        unsubscribed_at: new Date().toISOString()
+      .from("newsletter_subscribers")
+      .update({
+        status: "unsubscribed",
+        unsubscribed_at: new Date().toISOString(),
       })
-      .eq('email', email.toLowerCase())
-      .eq('status', 'active')
-      .select('id');
+      .eq("unsubscribe_token", token)
+      .eq("status", "active")
+      .select("id");
 
     if (error) {
       console.error("Error in newsletter-unsubscribe function:", error);
       return new Response(
         JSON.stringify({ error: "An error occurred processing your request. Please try again." }),
         { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
+    if (!data || data.length === 0) {
+      // Generic response — do not reveal whether the token matched
+      return new Response(
+        JSON.stringify({ message: "If this subscription exists, it has been unsubscribed." }),
+        { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
     }
 
