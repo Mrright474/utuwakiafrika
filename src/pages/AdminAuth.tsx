@@ -266,11 +266,8 @@ const AdminAuth = () => {
               </TabsContent>
             </Tabs>
             
-            <div className="mt-6 text-center">
-              <p className="text-sm text-gray-600">
-                Use admin@utuafrika.org email for automatic admin privileges.
-              </p>
-            </div>
+            
+
           </CardContent>
         </Card>
       </div>
