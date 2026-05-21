@@ -664,6 +664,10 @@ const NewAdmin = () => {
                   tasks={tasks}
                 />
               </TabsContent>
+
+              <TabsContent value="security">
+                <MfaSettings />
+              </TabsContent>
             </Tabs>
           )}
         </div>
