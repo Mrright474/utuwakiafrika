@@ -16,6 +16,8 @@ import ProjectsTab from '@/components/admin/ProjectsTab';
 import WorkplanTab from '@/components/admin/WorkplanTab';
 import OrgOverviewTab from '@/components/admin/OrgOverviewTab';
 import GanttTimeline from '@/components/admin/GanttTimeline';
+import MfaSettings from '@/components/admin/MfaSettings';
+import { Shield } from 'lucide-react';
 
 const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString('en-US', {
