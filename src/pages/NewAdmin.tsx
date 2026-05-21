@@ -16,6 +16,8 @@ import ProjectsTab from '@/components/admin/ProjectsTab';
 import WorkplanTab from '@/components/admin/WorkplanTab';
 import OrgOverviewTab from '@/components/admin/OrgOverviewTab';
 import GanttTimeline from '@/components/admin/GanttTimeline';
+import MfaSettings from '@/components/admin/MfaSettings';
+import { Shield } from 'lucide-react';
 
 const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString('en-US', {
@@ -142,7 +144,7 @@ const NewAdmin = () => {
             </div>
           ) : (
             <Tabs value={activeTab} onValueChange={(v) => { setActiveTab(v); if (v !== 'workplan') setSelectedProjectId(null); }} className="w-full">
-              <TabsList className="grid w-full grid-cols-10 mb-8">
+              <TabsList className="grid w-full grid-cols-11 mb-8">
                 <TabsTrigger value="overview">
                   <LayoutDashboard className="mr-1 h-4 w-4" />
                   <span className="hidden lg:inline">Overview</span>
@@ -182,6 +184,10 @@ const NewAdmin = () => {
                 <TabsTrigger value="workplan">
                   <ListTodo className="mr-1 h-4 w-4" />
                   <span className="hidden lg:inline">Workplan</span> ({tasks.length})
+                </TabsTrigger>
+                <TabsTrigger value="security">
+                  <Shield className="mr-1 h-4 w-4" />
+                  <span className="hidden lg:inline">Security</span>
                 </TabsTrigger>
               </TabsList>
 
@@ -657,6 +663,10 @@ const NewAdmin = () => {
                   projects={projects}
                   tasks={tasks}
                 />
+              </TabsContent>
+
+              <TabsContent value="security">
+                <MfaSettings />
               </TabsContent>
             </Tabs>
           )}
