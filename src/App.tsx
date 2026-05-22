@@ -69,6 +69,8 @@ const ProjectDetail = lazyRetry(() => import("./pages/ProjectDetail"));
 const Communities = lazyRetry(() => import("./pages/Communities"));
 const NotFound = lazyRetry(() => import("./pages/NotFound"));
 
+import ProtectedAdminRoute from "./components/admin/ProtectedAdminRoute";
+
 // Loading component for Suspense fallback
 const PageLoader = () => (
   <div className="min-h-screen bg-gradient-to-br from-utu-cream via-white to-utu-cream flex items-center justify-center">
@@ -117,12 +119,12 @@ const App = () => {
             <Route path="/donate" element={<Donate />} />
             <Route path="/volunteers/auth" element={<VolunteerAuth />} />
             <Route path="/volunteers/dashboard" element={<VolunteerDashboard />} />
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/admin/content" element={<ContentManagement />} />
             <Route path="/admin/auth" element={<AdminAuth />} />
+            <Route path="/admin" element={<ProtectedAdminRoute><Admin /></ProtectedAdminRoute>} />
+            <Route path="/admin/content" element={<ProtectedAdminRoute><ContentManagement /></ProtectedAdminRoute>} />
             <Route path="/communities" element={<Communities />} />
             <Route path="/projects/:slug" element={<ProjectDetail />} />
-            <Route path="/admin/*" element={<Admin />} />
+            <Route path="/admin/*" element={<ProtectedAdminRoute><Admin /></ProtectedAdminRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
             </Routes>
