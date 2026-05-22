@@ -119,12 +119,12 @@ const App = () => {
             <Route path="/donate" element={<Donate />} />
             <Route path="/volunteers/auth" element={<VolunteerAuth />} />
             <Route path="/volunteers/dashboard" element={<VolunteerDashboard />} />
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/admin/content" element={<ContentManagement />} />
             <Route path="/admin/auth" element={<AdminAuth />} />
+            <Route path="/admin" element={<ProtectedAdminRoute><Admin /></ProtectedAdminRoute>} />
+            <Route path="/admin/content" element={<ProtectedAdminRoute><ContentManagement /></ProtectedAdminRoute>} />
             <Route path="/communities" element={<Communities />} />
             <Route path="/projects/:slug" element={<ProjectDetail />} />
-            <Route path="/admin/*" element={<Admin />} />
+            <Route path="/admin/*" element={<ProtectedAdminRoute><Admin /></ProtectedAdminRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
             </Routes>
