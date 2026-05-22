@@ -69,6 +69,8 @@ const ProjectDetail = lazyRetry(() => import("./pages/ProjectDetail"));
 const Communities = lazyRetry(() => import("./pages/Communities"));
 const NotFound = lazyRetry(() => import("./pages/NotFound"));
 
+import ProtectedAdminRoute from "./components/admin/ProtectedAdminRoute";
+
 // Loading component for Suspense fallback
 const PageLoader = () => (
   <div className="min-h-screen bg-gradient-to-br from-utu-cream via-white to-utu-cream flex items-center justify-center">
