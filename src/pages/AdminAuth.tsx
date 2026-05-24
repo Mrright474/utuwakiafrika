@@ -19,7 +19,7 @@ const AdminAuth = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [isSigningUp, setIsSigningUp] = useState(false);
-  const { isAdmin, loading, signIn } = useAdminAuth();
+  const { isAdmin, loading, signIn, signOut, user } = useAdminAuth();
   const { toast } = useToast();
 
   // Redirect if already admin
@@ -84,6 +84,23 @@ const AdminAuth = () => {
       }
     } finally {
       setIsSigningUp(false);
+    }
+  };
+
+  const handleSignOut = async () => {
+    // Sign out globally to clear all sessions and AAL2 challenge state
+    const { error } = await supabase.auth.signOut({ scope: 'global' });
+    if (error) {
+      toast({
+        title: "Sign Out Failed",
+        description: error.message,
+        variant: "destructive"
+      });
+    } else {
+      toast({
+        title: "Signed Out",
+        description: "Your session has been cleared.",
+      });
     }
   };
 
