@@ -282,9 +282,23 @@ const AdminAuth = () => {
                 </form>
               </TabsContent>
             </Tabs>
-            
-            
 
+            {user && (
+              <div className="mt-6 pt-6 border-t border-border">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full"
+                  onClick={handleSignOut}
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Sign out and clear session
+                </Button>
+                <p className="mt-2 text-xs text-center text-muted-foreground">
+                  Clears any saved MFA challenge state so you can start fresh.
+                </p>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
