@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Loader2, Shield, Eye, EyeOff } from 'lucide-react';
+import { Loader2, Shield, Eye, EyeOff, LogOut } from 'lucide-react';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -19,7 +19,7 @@ const AdminAuth = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [isSigningUp, setIsSigningUp] = useState(false);
-  const { isAdmin, loading, signIn } = useAdminAuth();
+  const { isAdmin, loading, signIn, signOut, user } = useAdminAuth();
   const { toast } = useToast();
 
   // Redirect if already admin
@@ -84,6 +84,23 @@ const AdminAuth = () => {
       }
     } finally {
       setIsSigningUp(false);
+    }
+  };
+
+  const handleSignOut = async () => {
+    // Sign out globally to clear all sessions and AAL2 challenge state
+    const { error } = await supabase.auth.signOut({ scope: 'global' });
+    if (error) {
+      toast({
+        title: "Sign Out Failed",
+        description: error.message,
+        variant: "destructive"
+      });
+    } else {
+      toast({
+        title: "Signed Out",
+        description: "Your session has been cleared.",
+      });
     }
   };
 
@@ -265,9 +282,23 @@ const AdminAuth = () => {
                 </form>
               </TabsContent>
             </Tabs>
-            
-            
 
+            {user && (
+              <div className="mt-6 pt-6 border-t border-border">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full"
+                  onClick={handleSignOut}
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Sign out and clear session
+                </Button>
+                <p className="mt-2 text-xs text-center text-muted-foreground">
+                  Clears any saved MFA challenge state so you can start fresh.
+                </p>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
