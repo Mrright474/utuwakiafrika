@@ -19,6 +19,7 @@ interface EnrollState {
 
 const MfaSettings: React.FC = () => {
   const { toast } = useToast();
+  const { requireFreshAal2 } = useSensitiveAction();
   const [loading, setLoading] = useState(true);
   const [working, setWorking] = useState(false);
   const [verifiedFactors, setVerifiedFactors] = useState<Array<{ id: string; friendly_name?: string | null; created_at: string }>>([]);
