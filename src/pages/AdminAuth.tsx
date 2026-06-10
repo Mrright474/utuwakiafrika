@@ -23,6 +23,19 @@ const AdminAuth = () => {
   const { isAdmin, loading, signIn, signOut, user } = useAdminAuth();
   const { toast } = useToast();
 
+  // Track AAL2 verification so sensitive admin actions can gate on a
+  // recent TOTP success without re-prompting.
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'MFA_CHALLENGE_VERIFIED') {
+        markAal2Verified();
+      } else if (event === 'SIGNED_OUT') {
+        clearAdminSessionState();
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
   // Redirect if already admin
   if (!loading && isAdmin) {
     return <Navigate to="/admin" replace />;
