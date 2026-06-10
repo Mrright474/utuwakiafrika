@@ -7,6 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import { Loader2, ShieldCheck, ShieldAlert, Trash2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useSensitiveAction } from '@/hooks/useSensitiveAction';
+import { markAal2Verified } from '@/lib/adminSession';
 
 interface EnrollState {
   factorId: string;
@@ -17,6 +19,7 @@ interface EnrollState {
 
 const MfaSettings: React.FC = () => {
   const { toast } = useToast();
+  const { requireFreshAal2 } = useSensitiveAction();
   const [loading, setLoading] = useState(true);
   const [working, setWorking] = useState(false);
   const [verifiedFactors, setVerifiedFactors] = useState<Array<{ id: string; friendly_name?: string | null; created_at: string }>>([]);
@@ -91,23 +94,26 @@ const MfaSettings: React.FC = () => {
       toast({ title: 'Verification failed', description: vErr.message, variant: 'destructive' });
       return;
     }
+    markAal2Verified();
     toast({ title: 'MFA enabled', description: 'Two-factor authentication is now active on your account.' });
     setEnroll(null);
     setCode('');
     loadFactors();
   };
 
-  const removeFactor = async (factorId: string) => {
+  const removeFactor = (factorId: string) => {
     if (!confirm('Remove this MFA factor? You will no longer be required to enter a code at sign-in.')) return;
-    setWorking(true);
-    const { error } = await supabase.auth.mfa.unenroll({ factorId });
-    setWorking(false);
-    if (error) {
-      toast({ title: 'Failed to remove factor', description: error.message, variant: 'destructive' });
-      return;
-    }
-    toast({ title: 'MFA factor removed' });
-    loadFactors();
+    requireFreshAal2(async () => {
+      setWorking(true);
+      const { error } = await supabase.auth.mfa.unenroll({ factorId });
+      setWorking(false);
+      if (error) {
+        toast({ title: 'Failed to remove factor', description: error.message, variant: 'destructive' });
+        return;
+      }
+      toast({ title: 'MFA factor removed' });
+      loadFactors();
+    });
   };
 
   if (loading) {

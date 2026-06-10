@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,6 +10,7 @@ import { Loader2, Shield, Eye, EyeOff, LogOut } from 'lucide-react';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { clearAdminSessionState, markAal2Verified } from '@/lib/adminSession';
 
 const AdminAuth = () => {
   const [email, setEmail] = useState('');
@@ -21,6 +22,19 @@ const AdminAuth = () => {
   const [isSigningUp, setIsSigningUp] = useState(false);
   const { isAdmin, loading, signIn, signOut, user } = useAdminAuth();
   const { toast } = useToast();
+
+  // Track AAL2 verification so sensitive admin actions can gate on a
+  // recent TOTP success without re-prompting.
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'MFA_CHALLENGE_VERIFIED') {
+        markAal2Verified();
+      } else if (event === 'SIGNED_OUT') {
+        clearAdminSessionState();
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, []);
 
   // Redirect if already admin
   if (!loading && isAdmin) {
