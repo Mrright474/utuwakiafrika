@@ -94,6 +94,7 @@ const MfaSettings: React.FC = () => {
       toast({ title: 'Verification failed', description: vErr.message, variant: 'destructive' });
       return;
     }
+    markAal2Verified();
     toast({ title: 'MFA enabled', description: 'Two-factor authentication is now active on your account.' });
     setEnroll(null);
     setCode('');
