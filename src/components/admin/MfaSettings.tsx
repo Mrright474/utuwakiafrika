@@ -101,17 +101,19 @@ const MfaSettings: React.FC = () => {
     loadFactors();
   };
 
-  const removeFactor = async (factorId: string) => {
+  const removeFactor = (factorId: string) => {
     if (!confirm('Remove this MFA factor? You will no longer be required to enter a code at sign-in.')) return;
-    setWorking(true);
-    const { error } = await supabase.auth.mfa.unenroll({ factorId });
-    setWorking(false);
-    if (error) {
-      toast({ title: 'Failed to remove factor', description: error.message, variant: 'destructive' });
-      return;
-    }
-    toast({ title: 'MFA factor removed' });
-    loadFactors();
+    requireFreshAal2(async () => {
+      setWorking(true);
+      const { error } = await supabase.auth.mfa.unenroll({ factorId });
+      setWorking(false);
+      if (error) {
+        toast({ title: 'Failed to remove factor', description: error.message, variant: 'destructive' });
+        return;
+      }
+      toast({ title: 'MFA factor removed' });
+      loadFactors();
+    });
   };
 
   if (loading) {
