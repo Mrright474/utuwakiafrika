@@ -14,11 +14,11 @@ export async function logAdminAction(
       console.warn('[audit] skipped — no authenticated user', { action });
       return;
     }
-    const { error } = await supabase.from('admin_audit_log').insert({
+    const { error } = await supabase.from('admin_audit_log').insert([{
       user_id: user.id,
       action,
-      metadata: metadata ?? null,
-    });
+      metadata: (metadata ?? null) as any,
+    }]);
     if (error) {
       console.error('[audit] failed to record action', action, error);
     }
