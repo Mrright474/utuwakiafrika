@@ -9,49 +9,77 @@ import {
 } from 'react';
 import ReauthDialog from '@/components/admin/ReauthDialog';
 import { isAal2Fresh } from '@/lib/adminSession';
+import { logAdminAction } from '@/lib/adminAudit';
 import { useToast } from '@/hooks/use-toast';
 
 type SensitiveAction = () => void | Promise<void>;
 
+interface RequireOptions {
+  /** Short identifier for the audit log, e.g. "mfa.unenroll". */
+  action: string;
+  /** Optional structured context recorded with the audit entry. */
+  metadata?: Record<string, unknown>;
+}
+
 interface SensitiveActionContextValue {
-  /** Run `action` immediately if a recent TOTP verification exists,
-   *  otherwise prompt for a fresh code first. */
-  requireFreshAal2: (action: SensitiveAction) => void;
+  /** Run `fn` immediately if a recent TOTP verification exists,
+   *  otherwise prompt for a fresh code first. The action is recorded
+   *  in the admin audit log on successful execution. */
+  requireFreshAal2: (fn: SensitiveAction, options: RequireOptions) => void;
 }
 
 const SensitiveActionContext = createContext<SensitiveActionContextValue | null>(null);
 
+interface PendingEntry {
+  fn: SensitiveAction;
+  options: RequireOptions;
+}
+
 export const SensitiveActionProvider = ({ children }: { children: ReactNode }) => {
   const [open, setOpen] = useState(false);
-  const pendingRef = useRef<SensitiveAction | null>(null);
+  const pendingRef = useRef<PendingEntry | null>(null);
   const { toast } = useToast();
 
-  const runPending = useCallback(async () => {
-    const action = pendingRef.current;
+  const runPending = useCallback(async (reauthRequired: boolean) => {
+    const entry = pendingRef.current;
     pendingRef.current = null;
-    if (!action) return;
+    if (!entry) return;
     try {
-      await action();
+      await entry.fn();
+      void logAdminAction(entry.options.action, {
+        ...(entry.options.metadata ?? {}),
+        reauth_required: reauthRequired,
+      });
     } catch (err) {
       console.error('Sensitive action failed', err);
+      void logAdminAction(`${entry.options.action}.failed`, {
+        ...(entry.options.metadata ?? {}),
+        reauth_required: reauthRequired,
+        error: err instanceof Error ? err.message : String(err),
+      });
     }
   }, []);
 
   const requireFreshAal2 = useCallback(
-    (action: SensitiveAction) => {
+    (fn: SensitiveAction, options: RequireOptions) => {
       if (isAal2Fresh()) {
-        void action();
+        pendingRef.current = { fn, options };
+        void runPending(false);
         return;
       }
-      pendingRef.current = action;
+      pendingRef.current = { fn, options };
       setOpen(true);
     },
-    [],
+    [runPending],
   );
 
   const handleCancel = useCallback(() => {
+    const entry = pendingRef.current;
     pendingRef.current = null;
     setOpen(false);
+    if (entry) {
+      void logAdminAction(`${entry.options.action}.cancelled`, entry.options.metadata);
+    }
     toast({
       title: 'Action cancelled',
       description: 'MFA confirmation is required for this action.',
@@ -60,7 +88,7 @@ export const SensitiveActionProvider = ({ children }: { children: ReactNode }) =
 
   const handleVerified = useCallback(() => {
     setOpen(false);
-    void runPending();
+    void runPending(true);
   }, [runPending]);
 
   const value = useMemo(() => ({ requireFreshAal2 }), [requireFreshAal2]);
