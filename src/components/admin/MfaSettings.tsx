@@ -113,7 +113,7 @@ const MfaSettings: React.FC = () => {
       }
       toast({ title: 'MFA factor removed' });
       loadFactors();
-    });
+    }, { action: 'mfa.unenroll', metadata: { factor_id: factorId } });
   };
 
   if (loading) {
