@@ -43,7 +43,7 @@ const ProjectDetail = () => {
       />
       {/* Hero Section */}
       <section className="relative h-[70vh] min-h-[500px] overflow-hidden">
-        <img src={project.heroImage} alt={project.title} className="absolute inset-0 w-full h-full object-cover" />
+        <img src={project.heroImage} alt={`Hero image for the ${project.title} project — ${project.tagline}`} fetchPriority="high" decoding="async" className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
         <div className="relative z-10 container mx-auto px-4 h-full flex flex-col justify-end pb-16">
           <Link to="/programs" className="inline-flex items-center gap-2 text-white/80 hover:text-white mb-6 transition-colors w-fit">
