@@ -40,16 +40,23 @@ const OurFounder = () => {
         </div>
         
         <div className="order-1 lg:order-2 text-center">
-          <div className="relative inline-block">
+          <figure className="relative inline-block">
             <img 
               src="/lovable-uploads/6e61272d-7786-4ccc-950e-4ae86bc5f39d.png" 
-              alt="Ben Kazigo Luweru, Founder and Executive Director" 
+              alt="Portrait of Ben Kazigo Luweru, Founder and Executive Director of Utu Wa Kiafrika" 
+              loading="lazy"
+              decoding="async"
+              width={640}
+              height={640}
               className="w-80 h-80 object-cover rounded-3xl shadow-2xl ubuntu-card mx-auto" 
             />
             <div className="absolute -bottom-4 -right-4 w-16 h-16 bg-gradient-to-br from-utu-red to-red-600 rounded-2xl flex items-center justify-center shadow-lg">
               <Heart className="h-8 w-8 text-white" />
             </div>
-          </div>
+            <figcaption className="mt-4 text-sm text-utu-gray italic">
+              Ben Kazigo Luweru — Founder & Executive Director, Utu Wa Kiafrika.
+            </figcaption>
+          </figure>
         </div>
       </div>
     </div>

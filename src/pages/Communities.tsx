@@ -90,14 +90,16 @@ const Communities = () => {
                   supports your growth in return.
                 </p>
               </div>
-              <div className="rounded-2xl overflow-hidden shadow-xl">
+              <figure className="rounded-2xl overflow-hidden shadow-xl">
                 <img
                   src={communityMeeting}
-                  alt="Ubuntu Community members in a circle meeting discussing business ideas"
+                  alt="Ubuntu Community members gathered in a circle, sharing business ideas and mentoring one another"
                   className="w-full h-auto object-cover"
                   loading="lazy"
+                  decoding="async"
                 />
-              </div>
+                <figcaption className="sr-only">A monthly Ubuntu Community circle meeting.</figcaption>
+              </figure>
             </div>
           </div>
         </section>
@@ -138,14 +140,16 @@ const Communities = () => {
         <section className="py-16">
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <div className="rounded-2xl overflow-hidden shadow-xl order-2 lg:order-1">
+              <figure className="rounded-2xl overflow-hidden shadow-xl order-2 lg:order-1">
                 <img
                   src={communityMarketplace}
-                  alt="Ubuntu Community marketplace where members showcase products and services"
+                  alt="Members of an Ubuntu Community marketplace showcasing handmade products, food and services at a monthly gathering"
                   className="w-full h-auto object-cover"
                   loading="lazy"
+                  decoding="async"
                 />
-              </div>
+                <figcaption className="sr-only">The Ubuntu Marketplace at a community gathering.</figcaption>
+              </figure>
               <div className="order-1 lg:order-2">
                 <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6 font-heading">
                   The Ubuntu Marketplace

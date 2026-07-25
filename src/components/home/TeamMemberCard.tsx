@@ -39,7 +39,9 @@ const TeamMemberCard = ({
         <div className="w-full h-full rounded-full overflow-hidden bg-gray-100">
           <img 
             src={image} 
-            alt={name} 
+            alt={`Portrait of ${name}, ${position} at Utu Wa Kiafrika`}
+            loading="lazy"
+            decoding="async"
             className="w-full h-full object-cover object-center transition-transform duration-300 group-hover:scale-105" 
             onError={(e) => {
               (e.target as HTMLImageElement).src = "/placeholder.svg";

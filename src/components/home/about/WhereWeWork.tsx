@@ -41,19 +41,20 @@ const WhereWeWork = () => {
             </div>
           </div>
           
-          <div className="text-center">
+          <figure className="text-center">
             <img 
               src={africaMap}
               alt="Illustrated map of Africa with community figures joining hands around the continent, symbolizing Ubuntu and our Pan-African reach"
               loading="lazy"
+              decoding="async"
               width={1024}
               height={1024}
               className="w-full max-w-md h-80 object-cover rounded-2xl shadow-xl ubuntu-card mx-auto" 
             />
-            <p className="text-sm text-utu-gray mt-4 italic">
-              "Africa is not just our continent — it is our home, our identity, our future."
-            </p>
-          </div>
+            <figcaption className="text-sm text-utu-gray mt-4 italic">
+              Ubuntu across Africa — communities united by shared humanity. "Africa is not just our continent — it is our home, our identity, our future."
+            </figcaption>
+          </figure>
         </div>
       </div>
     </div>

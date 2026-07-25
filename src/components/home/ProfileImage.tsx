@@ -12,7 +12,9 @@ const ProfileImage = ({ src, alt, className }: ProfileImageProps) => {
     <div className="aspect-square overflow-hidden rounded-lg shadow-md">
       <img 
         src={src} 
-        alt={alt} 
+        alt={alt}
+        loading="lazy"
+        decoding="async"
         className={`w-full h-full object-cover transition-transform hover:scale-105 duration-300 ${className || ''}`}
         onError={(e) => {
           (e.target as HTMLImageElement).src = "/placeholder.svg";

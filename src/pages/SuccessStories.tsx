@@ -228,7 +228,9 @@ const SuccessStoriesPage = () => {
                       <div className="relative h-48 overflow-hidden">
                         <img
                           src={story.image_url}
-                          alt={story.title}
+                          alt={`Success story: ${story.title}${story.category ? ` — ${story.category}` : ''}`}
+                          loading="lazy"
+                          decoding="async"
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                           onError={(e) => {
                             e.currentTarget.src = '/placeholder.svg';
@@ -325,16 +327,19 @@ const SuccessStoriesPage = () => {
             {selectedStory && (
               <div className="space-y-6 print:space-y-8">
                 {selectedStory.image_url && (
-                  <div className="relative h-64 sm:h-80 rounded-lg overflow-hidden print:h-96 print:page-break-inside-avoid">
+                  <figure className="relative h-64 sm:h-80 rounded-lg overflow-hidden print:h-96 print:page-break-inside-avoid">
                     <img
                       src={selectedStory.image_url}
-                      alt={selectedStory.title}
+                      alt={`Photograph illustrating the success story: ${selectedStory.title}`}
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover"
                       onError={(e) => {
                         e.currentTarget.src = '/placeholder.svg';
                       }}
                     />
-                  </div>
+                    <figcaption className="sr-only">{selectedStory.title}</figcaption>
+                  </figure>
                 )}
                 {selectedStory.category && (
                   <Badge className="bg-utu-red text-white w-fit print:text-lg print:px-4 print:py-2">
