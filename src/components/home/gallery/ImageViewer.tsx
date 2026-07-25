@@ -27,7 +27,9 @@ const ImageViewer = ({
       <div className="relative">
         <img
           src={currentImage.src}
-          alt={currentImage.alt}
+          alt={currentImage.alt || currentImage.caption || 'Utu Wa Kiafrika gallery photograph'}
+          loading="lazy"
+          decoding="async"
           className="w-full max-h-[70vh] object-contain"
         />
         <Button
