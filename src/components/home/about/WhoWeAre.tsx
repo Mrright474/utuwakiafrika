@@ -30,7 +30,9 @@ const WhoWeAre = () => {
           <div className="relative overflow-hidden rounded-3xl shadow-2xl group">
             <img 
               src={helpingHandsImage}
-              alt="Hands sharing bread - symbol of our mission to feed and help vulnerable communities" 
+              alt="Outstretched hands sharing bread with vulnerable community members, symbolising Utu Wa Kiafrika's mission to feed and empower those in need" 
+              loading="lazy"
+              decoding="async"
               className="w-full h-96 object-cover transition-all duration-700 group-hover:scale-105" 
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60 group-hover:opacity-30 transition-opacity duration-500"></div>
