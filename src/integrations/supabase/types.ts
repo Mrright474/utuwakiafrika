@@ -965,7 +965,6 @@ export type Database = {
         Args: { story_id: string }
         Returns: undefined
       }
-      promote_self_to_admin: { Args: never; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "volunteer" | "user"
