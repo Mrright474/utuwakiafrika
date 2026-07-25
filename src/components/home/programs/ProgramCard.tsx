@@ -18,7 +18,9 @@ const ProgramCard = ({ title, description, icon, color, image }: ProgramProps) =
         <div className="h-48 overflow-hidden">
           <img 
             src={image} 
-            alt={title}
+            alt={`${title} program at Utu Wa Kiafrika`}
+            loading="lazy"
+            decoding="async"
             className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
           />
         </div>
