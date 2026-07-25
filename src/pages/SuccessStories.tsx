@@ -228,7 +228,9 @@ const SuccessStoriesPage = () => {
                       <div className="relative h-48 overflow-hidden">
                         <img
                           src={story.image_url}
-                          alt={story.title}
+                          alt={`Success story: ${story.title}${story.category ? ` — ${story.category}` : ''}`}
+                          loading="lazy"
+                          decoding="async"
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                           onError={(e) => {
                             e.currentTarget.src = '/placeholder.svg';
