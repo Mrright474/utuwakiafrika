@@ -25,7 +25,9 @@ const StoryCard = ({ story }: { story: Story }) => (
     <div className="md:w-1/4 flex justify-center">
       <img 
         src={story.image} 
-        alt={story.name} 
+        alt={`Portrait of ${story.name}${story.location ? `, from ${story.location}` : ''}, sharing their Utu Wa Kiafrika impact story`}
+        loading="lazy"
+        decoding="async"
         className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover"
         onError={(e) => {
           (e.target as HTMLImageElement).src = "/placeholder.svg";
