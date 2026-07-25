@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { MapPin } from 'lucide-react';
+import africaMap from '@/assets/where-we-work-africa.jpg';
 
 const WhereWeWork = () => {
   return (
@@ -42,8 +43,11 @@ const WhereWeWork = () => {
           
           <div className="text-center">
             <img 
-              src="/lovable-uploads/f90b8fff-8fac-4c94-8b28-10ed3702cc33.png" 
-              alt="African continent map showing our reach" 
+              src={africaMap}
+              alt="Illustrated map of Africa with community figures joining hands around the continent, symbolizing Ubuntu and our Pan-African reach"
+              loading="lazy"
+              width={1024}
+              height={1024}
               className="w-full max-w-md h-80 object-cover rounded-2xl shadow-xl ubuntu-card mx-auto" 
             />
             <p className="text-sm text-utu-gray mt-4 italic">

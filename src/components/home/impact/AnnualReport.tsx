@@ -2,6 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Download } from 'lucide-react';
+import reportCover from '@/assets/annual-report-cover.jpg';
 
 const AnnualReport = () => {
   const handleDownloadReport = () => {
@@ -15,12 +16,12 @@ const AnnualReport = () => {
       <div className="md:flex items-center">
         <div className="md:w-1/3 mb-6 md:mb-0 md:pr-8">
           <img 
-            src="/lovable-uploads/b07d8f50-577a-4699-87ba-8759e7ace688.png" 
-            alt="Impact Report" 
+            src={reportCover}
+            alt="Utu Wa Kiafrika 2024 Annual Report cover featuring smiling community members and children"
+            loading="lazy"
+            width={1024}
+            height={1024}
             className="rounded-lg shadow-md w-full"
-            onError={(e) => {
-              (e.target as HTMLImageElement).src = "/placeholder.svg";
-            }}
           />
         </div>
         <div className="md:w-2/3">

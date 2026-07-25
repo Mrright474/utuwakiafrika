@@ -1,5 +1,6 @@
 
 import React from 'react';
+import ugandaMap from '@/assets/uganda-impact-map.jpg';
 
 const UgandaMap = () => {
   return (
@@ -8,8 +9,11 @@ const UgandaMap = () => {
       <div className="bg-white p-6 rounded-lg shadow-md">
         <div className="relative">
           <img
-            src="/lovable-uploads/b9465bc7-3765-4b25-a3ec-30f8bed81725.png"
-            alt="Map of Uganda showing our impact locations"
+            src={ugandaMap}
+            alt="Illustrated map of Uganda with red markers highlighting the districts where Utu Wa Kiafrika programs are active"
+            loading="lazy"
+            width={1024}
+            height={1024}
             className="w-full h-auto object-contain rounded-md"
           />
         </div>
