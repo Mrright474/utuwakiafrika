@@ -90,14 +90,16 @@ const Communities = () => {
                   supports your growth in return.
                 </p>
               </div>
-              <div className="rounded-2xl overflow-hidden shadow-xl">
+              <figure className="rounded-2xl overflow-hidden shadow-xl">
                 <img
                   src={communityMeeting}
-                  alt="Ubuntu Community members in a circle meeting discussing business ideas"
+                  alt="Ubuntu Community members gathered in a circle, sharing business ideas and mentoring one another"
                   className="w-full h-auto object-cover"
                   loading="lazy"
+                  decoding="async"
                 />
-              </div>
+                <figcaption className="sr-only">A monthly Ubuntu Community circle meeting.</figcaption>
+              </figure>
             </div>
           </div>
         </section>
