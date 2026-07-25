@@ -14,16 +14,18 @@ const AnnualReport = () => {
   return (
     <div className="mb-16 bg-white p-8 rounded-lg shadow-md">
       <div className="md:flex items-center">
-        <div className="md:w-1/3 mb-6 md:mb-0 md:pr-8">
+        <figure className="md:w-1/3 mb-6 md:mb-0 md:pr-8">
           <img 
             src={reportCover}
             alt="Utu Wa Kiafrika 2024 Annual Report cover featuring smiling community members and children"
             loading="lazy"
+            decoding="async"
             width={1024}
             height={1024}
             className="rounded-lg shadow-md w-full"
           />
-        </div>
+          <figcaption className="sr-only">Cover of the 2024 Utu Wa Kiafrika Annual Impact Report.</figcaption>
+        </figure>
         <div className="md:w-2/3">
           <h3 className="text-xl font-bold mb-4 text-utu-black">2024 Annual Impact Report</h3>
           <p className="text-utu-gray mb-4">
