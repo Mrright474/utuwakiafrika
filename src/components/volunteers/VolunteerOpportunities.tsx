@@ -127,7 +127,9 @@ const VolunteerOpportunities = () => {
                     <div className="h-28 overflow-hidden">
                       <img
                         src={program.image_url}
-                        alt={program.title}
+                        alt={`Photo from the ${program.title} volunteer program`}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     </div>
