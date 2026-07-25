@@ -72,9 +72,10 @@ const ProjectDetail = () => {
                 <p className="text-muted-foreground leading-relaxed">{project.vision}</p>
               </div>
             </div>
-            <div className="rounded-2xl overflow-hidden shadow-2xl">
-              <img src={project.sectionImage} alt={`${project.title} vision`} className="w-full h-[400px] object-cover" />
-            </div>
+            <figure className="rounded-2xl overflow-hidden shadow-2xl">
+              <img src={project.sectionImage} alt={`Illustration of the vision behind the ${project.title} project`} loading="lazy" decoding="async" className="w-full h-[400px] object-cover" />
+              <figcaption className="sr-only">{project.title} vision imagery</figcaption>
+            </figure>
           </div>
         </div>
       </section>
