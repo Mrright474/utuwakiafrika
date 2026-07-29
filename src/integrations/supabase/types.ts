@@ -734,6 +734,1188 @@ export type Database = {
         }
         Relationships: []
       }
+      unp_assets: {
+        Row: {
+          asset_tag: string | null
+          category: string | null
+          condition: string | null
+          created_at: string
+          currency: string | null
+          custodian_id: string | null
+          department_id: string | null
+          id: string
+          location: string | null
+          name: string
+          notes: string | null
+          purchase_cost: number | null
+          purchase_date: string | null
+          status: string
+          updated_at: string
+          warranty_expiry: string | null
+        }
+        Insert: {
+          asset_tag?: string | null
+          category?: string | null
+          condition?: string | null
+          created_at?: string
+          currency?: string | null
+          custodian_id?: string | null
+          department_id?: string | null
+          id?: string
+          location?: string | null
+          name: string
+          notes?: string | null
+          purchase_cost?: number | null
+          purchase_date?: string | null
+          status?: string
+          updated_at?: string
+          warranty_expiry?: string | null
+        }
+        Update: {
+          asset_tag?: string | null
+          category?: string | null
+          condition?: string | null
+          created_at?: string
+          currency?: string | null
+          custodian_id?: string | null
+          department_id?: string | null
+          id?: string
+          location?: string | null
+          name?: string
+          notes?: string | null
+          purchase_cost?: number | null
+          purchase_date?: string | null
+          status?: string
+          updated_at?: string
+          warranty_expiry?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "unp_assets_custodian_id_fkey"
+            columns: ["custodian_id"]
+            isOneToOne: false
+            referencedRelation: "org_staff"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "unp_assets_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "org_departments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      unp_beneficiaries: {
+        Row: {
+          beneficiary_code: string | null
+          country: string | null
+          created_at: string
+          date_of_birth: string | null
+          district: string | null
+          full_name: string
+          gender: string | null
+          household_head: string | null
+          household_size: number | null
+          id: string
+          latitude: number | null
+          longitude: number | null
+          national_id: string | null
+          notes: string | null
+          phone: string | null
+          photo_url: string | null
+          programme: string | null
+          status: string
+          updated_at: string
+          village: string | null
+        }
+        Insert: {
+          beneficiary_code?: string | null
+          country?: string | null
+          created_at?: string
+          date_of_birth?: string | null
+          district?: string | null
+          full_name: string
+          gender?: string | null
+          household_head?: string | null
+          household_size?: number | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          national_id?: string | null
+          notes?: string | null
+          phone?: string | null
+          photo_url?: string | null
+          programme?: string | null
+          status?: string
+          updated_at?: string
+          village?: string | null
+        }
+        Update: {
+          beneficiary_code?: string | null
+          country?: string | null
+          created_at?: string
+          date_of_birth?: string | null
+          district?: string | null
+          full_name?: string
+          gender?: string | null
+          household_head?: string | null
+          household_size?: number | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          national_id?: string | null
+          notes?: string | null
+          phone?: string | null
+          photo_url?: string | null
+          programme?: string | null
+          status?: string
+          updated_at?: string
+          village?: string | null
+        }
+        Relationships: []
+      }
+      unp_cases: {
+        Row: {
+          action_taken: string | null
+          assigned_to: string | null
+          beneficiary_id: string | null
+          case_number: string | null
+          case_type: string
+          closed_date: string | null
+          created_at: string
+          department_id: string | null
+          id: string
+          opened_date: string | null
+          priority: string
+          referral: string | null
+          status: string
+          summary: string | null
+          updated_at: string
+        }
+        Insert: {
+          action_taken?: string | null
+          assigned_to?: string | null
+          beneficiary_id?: string | null
+          case_number?: string | null
+          case_type?: string
+          closed_date?: string | null
+          created_at?: string
+          department_id?: string | null
+          id?: string
+          opened_date?: string | null
+          priority?: string
+          referral?: string | null
+          status?: string
+          summary?: string | null
+          updated_at?: string
+        }
+        Update: {
+          action_taken?: string | null
+          assigned_to?: string | null
+          beneficiary_id?: string | null
+          case_number?: string | null
+          case_type?: string
+          closed_date?: string | null
+          created_at?: string
+          department_id?: string | null
+          id?: string
+          opened_date?: string | null
+          priority?: string
+          referral?: string | null
+          status?: string
+          summary?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "unp_cases_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "org_staff"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "unp_cases_beneficiary_id_fkey"
+            columns: ["beneficiary_id"]
+            isOneToOne: false
+            referencedRelation: "unp_beneficiaries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "unp_cases_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "org_departments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      unp_community_activities: {
+        Row: {
+          activity_date: string
+          activity_type: string
+          created_at: string
+          district: string | null
+          facilitator: string | null
+          group_name: string | null
+          id: string
+          outcomes: string | null
+          participants_female: number | null
+          participants_total: number | null
+          participants_youth: number | null
+          photo_url: string | null
+          project_id: string | null
+          title: string
+          updated_at: string
+          village: string | null
+        }
+        Insert: {
+          activity_date?: string
+          activity_type?: string
+          created_at?: string
+          district?: string | null
+          facilitator?: string | null
+          group_name?: string | null
+          id?: string
+          outcomes?: string | null
+          participants_female?: number | null
+          participants_total?: number | null
+          participants_youth?: number | null
+          photo_url?: string | null
+          project_id?: string | null
+          title: string
+          updated_at?: string
+          village?: string | null
+        }
+        Update: {
+          activity_date?: string
+          activity_type?: string
+          created_at?: string
+          district?: string | null
+          facilitator?: string | null
+          group_name?: string | null
+          id?: string
+          outcomes?: string | null
+          participants_female?: number | null
+          participants_total?: number | null
+          participants_youth?: number | null
+          photo_url?: string | null
+          project_id?: string | null
+          title?: string
+          updated_at?: string
+          village?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "unp_community_activities_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "org_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      unp_documents: {
+        Row: {
+          confidentiality: string | null
+          created_at: string
+          department_id: string | null
+          description: string | null
+          doc_type: string | null
+          file_url: string | null
+          id: string
+          owner: string | null
+          project_id: string | null
+          review_date: string | null
+          status: string
+          title: string
+          updated_at: string
+          version: string | null
+        }
+        Insert: {
+          confidentiality?: string | null
+          created_at?: string
+          department_id?: string | null
+          description?: string | null
+          doc_type?: string | null
+          file_url?: string | null
+          id?: string
+          owner?: string | null
+          project_id?: string | null
+          review_date?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+          version?: string | null
+        }
+        Update: {
+          confidentiality?: string | null
+          created_at?: string
+          department_id?: string | null
+          description?: string | null
+          doc_type?: string | null
+          file_url?: string | null
+          id?: string
+          owner?: string | null
+          project_id?: string | null
+          review_date?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+          version?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "unp_documents_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "org_departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "unp_documents_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "org_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      unp_donors: {
+        Row: {
+          contact_person: string | null
+          country: string | null
+          created_at: string
+          currency: string | null
+          donor_type: string
+          email: string | null
+          id: string
+          name: string
+          notes: string | null
+          phone: string | null
+          relationship_status: string
+          total_funded: number | null
+          updated_at: string
+        }
+        Insert: {
+          contact_person?: string | null
+          country?: string | null
+          created_at?: string
+          currency?: string | null
+          donor_type?: string
+          email?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          phone?: string | null
+          relationship_status?: string
+          total_funded?: number | null
+          updated_at?: string
+        }
+        Update: {
+          contact_person?: string | null
+          country?: string | null
+          created_at?: string
+          currency?: string | null
+          donor_type?: string
+          email?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          relationship_status?: string
+          total_funded?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      unp_field_reports: {
+        Row: {
+          challenges: string | null
+          created_at: string
+          district: string | null
+          findings: string | null
+          id: string
+          latitude: number | null
+          longitude: number | null
+          photo_url: string | null
+          project_id: string | null
+          recommendations: string | null
+          report_date: string
+          submitted_by: string | null
+          sync_status: string
+          title: string
+          updated_at: string
+          village: string | null
+        }
+        Insert: {
+          challenges?: string | null
+          created_at?: string
+          district?: string | null
+          findings?: string | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          photo_url?: string | null
+          project_id?: string | null
+          recommendations?: string | null
+          report_date?: string
+          submitted_by?: string | null
+          sync_status?: string
+          title: string
+          updated_at?: string
+          village?: string | null
+        }
+        Update: {
+          challenges?: string | null
+          created_at?: string
+          district?: string | null
+          findings?: string | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          photo_url?: string | null
+          project_id?: string | null
+          recommendations?: string | null
+          report_date?: string
+          submitted_by?: string | null
+          sync_status?: string
+          title?: string
+          updated_at?: string
+          village?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "unp_field_reports_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "org_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      unp_finance_transactions: {
+        Row: {
+          amount: number
+          category: string | null
+          cost_center: string | null
+          created_at: string
+          currency: string
+          department_id: string | null
+          description: string
+          grant_id: string | null
+          id: string
+          payment_method: string | null
+          project_id: string | null
+          reference_no: string | null
+          status: string
+          transaction_date: string
+          transaction_type: string
+          updated_at: string
+        }
+        Insert: {
+          amount?: number
+          category?: string | null
+          cost_center?: string | null
+          created_at?: string
+          currency?: string
+          department_id?: string | null
+          description: string
+          grant_id?: string | null
+          id?: string
+          payment_method?: string | null
+          project_id?: string | null
+          reference_no?: string | null
+          status?: string
+          transaction_date?: string
+          transaction_type?: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          category?: string | null
+          cost_center?: string | null
+          created_at?: string
+          currency?: string
+          department_id?: string | null
+          description?: string
+          grant_id?: string | null
+          id?: string
+          payment_method?: string | null
+          project_id?: string | null
+          reference_no?: string | null
+          status?: string
+          transaction_date?: string
+          transaction_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "unp_finance_transactions_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "org_departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "unp_finance_transactions_grant_id_fkey"
+            columns: ["grant_id"]
+            isOneToOne: false
+            referencedRelation: "unp_grants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "unp_finance_transactions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "org_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      unp_grants: {
+        Row: {
+          amount: number | null
+          created_at: string
+          currency: string | null
+          department_id: string | null
+          description: string | null
+          donor_id: string | null
+          end_date: string | null
+          id: string
+          project_id: string | null
+          reference_no: string | null
+          reporting_schedule: string | null
+          stage: string
+          start_date: string | null
+          submission_deadline: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          amount?: number | null
+          created_at?: string
+          currency?: string | null
+          department_id?: string | null
+          description?: string | null
+          donor_id?: string | null
+          end_date?: string | null
+          id?: string
+          project_id?: string | null
+          reference_no?: string | null
+          reporting_schedule?: string | null
+          stage?: string
+          start_date?: string | null
+          submission_deadline?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number | null
+          created_at?: string
+          currency?: string | null
+          department_id?: string | null
+          description?: string | null
+          donor_id?: string | null
+          end_date?: string | null
+          id?: string
+          project_id?: string | null
+          reference_no?: string | null
+          reporting_schedule?: string | null
+          stage?: string
+          start_date?: string | null
+          submission_deadline?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "unp_grants_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "org_departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "unp_grants_donor_id_fkey"
+            columns: ["donor_id"]
+            isOneToOne: false
+            referencedRelation: "unp_donors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "unp_grants_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "org_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      unp_indicator_entries: {
+        Row: {
+          created_at: string
+          district: string | null
+          entry_date: string
+          evidence_url: string | null
+          id: string
+          indicator_id: string
+          notes: string | null
+          period_label: string | null
+          updated_at: string
+          value: number
+        }
+        Insert: {
+          created_at?: string
+          district?: string | null
+          entry_date?: string
+          evidence_url?: string | null
+          id?: string
+          indicator_id: string
+          notes?: string | null
+          period_label?: string | null
+          updated_at?: string
+          value?: number
+        }
+        Update: {
+          created_at?: string
+          district?: string | null
+          entry_date?: string
+          evidence_url?: string | null
+          id?: string
+          indicator_id?: string
+          notes?: string | null
+          period_label?: string | null
+          updated_at?: string
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "unp_indicator_entries_indicator_id_fkey"
+            columns: ["indicator_id"]
+            isOneToOne: false
+            referencedRelation: "unp_indicators"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      unp_indicators: {
+        Row: {
+          achieved: number | null
+          baseline: number | null
+          created_at: string
+          data_source: string | null
+          disaggregation: string | null
+          frequency: string | null
+          id: string
+          indicator_level: string
+          name: string
+          project_id: string | null
+          status: string
+          target: number | null
+          unit: string | null
+          updated_at: string
+        }
+        Insert: {
+          achieved?: number | null
+          baseline?: number | null
+          created_at?: string
+          data_source?: string | null
+          disaggregation?: string | null
+          frequency?: string | null
+          id?: string
+          indicator_level?: string
+          name: string
+          project_id?: string | null
+          status?: string
+          target?: number | null
+          unit?: string | null
+          updated_at?: string
+        }
+        Update: {
+          achieved?: number | null
+          baseline?: number | null
+          created_at?: string
+          data_source?: string | null
+          disaggregation?: string | null
+          frequency?: string | null
+          id?: string
+          indicator_level?: string
+          name?: string
+          project_id?: string | null
+          status?: string
+          target?: number | null
+          unit?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "unp_indicators_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "org_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      unp_inventory_items: {
+        Row: {
+          category: string | null
+          created_at: string
+          expiry_date: string | null
+          id: string
+          item_name: string
+          notes: string | null
+          quantity: number
+          reorder_level: number | null
+          sku: string | null
+          status: string
+          unit: string | null
+          unit_cost: number | null
+          updated_at: string
+          warehouse: string | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          expiry_date?: string | null
+          id?: string
+          item_name: string
+          notes?: string | null
+          quantity?: number
+          reorder_level?: number | null
+          sku?: string | null
+          status?: string
+          unit?: string | null
+          unit_cost?: number | null
+          updated_at?: string
+          warehouse?: string | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          expiry_date?: string | null
+          id?: string
+          item_name?: string
+          notes?: string | null
+          quantity?: number
+          reorder_level?: number | null
+          sku?: string | null
+          status?: string
+          unit?: string | null
+          unit_cost?: number | null
+          updated_at?: string
+          warehouse?: string | null
+        }
+        Relationships: []
+      }
+      unp_knowledge: {
+        Row: {
+          author: string | null
+          content: string | null
+          created_at: string
+          file_url: string | null
+          id: string
+          knowledge_type: string
+          project_id: string | null
+          published_date: string | null
+          status: string
+          summary: string | null
+          tags: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author?: string | null
+          content?: string | null
+          created_at?: string
+          file_url?: string | null
+          id?: string
+          knowledge_type?: string
+          project_id?: string | null
+          published_date?: string | null
+          status?: string
+          summary?: string | null
+          tags?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author?: string | null
+          content?: string | null
+          created_at?: string
+          file_url?: string | null
+          id?: string
+          knowledge_type?: string
+          project_id?: string | null
+          published_date?: string | null
+          status?: string
+          summary?: string | null
+          tags?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "unp_knowledge_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "org_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      unp_partners: {
+        Row: {
+          agreement_end: string | null
+          agreement_start: string | null
+          agreement_type: string | null
+          collaboration_areas: string | null
+          country: string | null
+          created_at: string
+          email: string | null
+          focal_person: string | null
+          id: string
+          name: string
+          partner_type: string
+          phone: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          agreement_end?: string | null
+          agreement_start?: string | null
+          agreement_type?: string | null
+          collaboration_areas?: string | null
+          country?: string | null
+          created_at?: string
+          email?: string | null
+          focal_person?: string | null
+          id?: string
+          name: string
+          partner_type?: string
+          phone?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          agreement_end?: string | null
+          agreement_start?: string | null
+          agreement_type?: string | null
+          collaboration_areas?: string | null
+          country?: string | null
+          created_at?: string
+          email?: string | null
+          focal_person?: string | null
+          id?: string
+          name?: string
+          partner_type?: string
+          phone?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      unp_procurement_requests: {
+        Row: {
+          actual_cost: number | null
+          created_at: string
+          currency: string | null
+          delivery_date: string | null
+          department_id: string | null
+          description: string | null
+          estimated_cost: number | null
+          id: string
+          request_date: string | null
+          request_no: string | null
+          requested_by: string | null
+          stage: string
+          supplier: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          actual_cost?: number | null
+          created_at?: string
+          currency?: string | null
+          delivery_date?: string | null
+          department_id?: string | null
+          description?: string | null
+          estimated_cost?: number | null
+          id?: string
+          request_date?: string | null
+          request_no?: string | null
+          requested_by?: string | null
+          stage?: string
+          supplier?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          actual_cost?: number | null
+          created_at?: string
+          currency?: string | null
+          delivery_date?: string | null
+          department_id?: string | null
+          description?: string | null
+          estimated_cost?: number | null
+          id?: string
+          request_date?: string | null
+          request_no?: string | null
+          requested_by?: string | null
+          stage?: string
+          supplier?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "unp_procurement_requests_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "org_departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "unp_procurement_requests_requested_by_fkey"
+            columns: ["requested_by"]
+            isOneToOne: false
+            referencedRelation: "org_staff"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      unp_risks: {
+        Row: {
+          category: string | null
+          created_at: string
+          id: string
+          impact: string
+          likelihood: string
+          mitigation: string | null
+          owner: string | null
+          project_id: string | null
+          review_date: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          impact?: string
+          likelihood?: string
+          mitigation?: string | null
+          owner?: string | null
+          project_id?: string | null
+          review_date?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          impact?: string
+          likelihood?: string
+          mitigation?: string | null
+          owner?: string | null
+          project_id?: string | null
+          review_date?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "unp_risks_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "org_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      unp_staff_accounts: {
+        Row: {
+          access_level: Database["public"]["Enums"]["unp_access_level"]
+          approved_at: string | null
+          approved_by: string | null
+          avatar_url: string | null
+          created_at: string
+          department_id: string | null
+          email: string
+          first_name: string
+          id: string
+          last_name: string
+          phone: string | null
+          position: string | null
+          status: Database["public"]["Enums"]["unp_account_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_level?: Database["public"]["Enums"]["unp_access_level"]
+          approved_at?: string | null
+          approved_by?: string | null
+          avatar_url?: string | null
+          created_at?: string
+          department_id?: string | null
+          email: string
+          first_name: string
+          id?: string
+          last_name: string
+          phone?: string | null
+          position?: string | null
+          status?: Database["public"]["Enums"]["unp_account_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_level?: Database["public"]["Enums"]["unp_access_level"]
+          approved_at?: string | null
+          approved_by?: string | null
+          avatar_url?: string | null
+          created_at?: string
+          department_id?: string | null
+          email?: string
+          first_name?: string
+          id?: string
+          last_name?: string
+          phone?: string | null
+          position?: string | null
+          status?: Database["public"]["Enums"]["unp_account_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "unp_staff_accounts_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "org_departments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      unp_trips: {
+        Row: {
+          created_at: string
+          destination: string | null
+          distance_km: number | null
+          driver: string | null
+          fuel_cost: number | null
+          id: string
+          origin: string | null
+          purpose: string | null
+          status: string
+          trip_date: string
+          updated_at: string
+          vehicle_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          destination?: string | null
+          distance_km?: number | null
+          driver?: string | null
+          fuel_cost?: number | null
+          id?: string
+          origin?: string | null
+          purpose?: string | null
+          status?: string
+          trip_date?: string
+          updated_at?: string
+          vehicle_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          destination?: string | null
+          distance_km?: number | null
+          driver?: string | null
+          fuel_cost?: number | null
+          id?: string
+          origin?: string | null
+          purpose?: string | null
+          status?: string
+          trip_date?: string
+          updated_at?: string
+          vehicle_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "unp_trips_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "unp_vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      unp_vehicles: {
+        Row: {
+          assigned_driver: string | null
+          created_at: string
+          department_id: string | null
+          id: string
+          insurance_expiry: string | null
+          last_service_date: string | null
+          make: string | null
+          model: string | null
+          notes: string | null
+          odometer: number | null
+          plate_number: string
+          status: string
+          updated_at: string
+          vehicle_type: string | null
+          year: number | null
+        }
+        Insert: {
+          assigned_driver?: string | null
+          created_at?: string
+          department_id?: string | null
+          id?: string
+          insurance_expiry?: string | null
+          last_service_date?: string | null
+          make?: string | null
+          model?: string | null
+          notes?: string | null
+          odometer?: number | null
+          plate_number: string
+          status?: string
+          updated_at?: string
+          vehicle_type?: string | null
+          year?: number | null
+        }
+        Update: {
+          assigned_driver?: string | null
+          created_at?: string
+          department_id?: string | null
+          id?: string
+          insurance_expiry?: string | null
+          last_service_date?: string | null
+          make?: string | null
+          model?: string | null
+          notes?: string | null
+          odometer?: number | null
+          plate_number?: string
+          status?: string
+          updated_at?: string
+          vehicle_type?: string | null
+          year?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "unp_vehicles_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "org_departments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -965,9 +2147,19 @@ export type Database = {
         Args: { story_id: string }
         Returns: undefined
       }
+      unp_access: {
+        Args: { _user_id: string }
+        Returns: Database["public"]["Enums"]["unp_access_level"]
+      }
+      unp_can_delete: { Args: { _user_id: string }; Returns: boolean }
+      unp_can_write: { Args: { _user_id: string }; Returns: boolean }
+      unp_department: { Args: { _user_id: string }; Returns: string }
+      unp_is_approved: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "volunteer" | "user"
+      unp_access_level: "admin" | "manager" | "staff" | "viewer"
+      unp_account_status: "pending" | "approved" | "suspended" | "rejected"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1096,6 +2288,8 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "volunteer", "user"],
+      unp_access_level: ["admin", "manager", "staff", "viewer"],
+      unp_account_status: ["pending", "approved", "suspended", "rejected"],
     },
   },
 } as const

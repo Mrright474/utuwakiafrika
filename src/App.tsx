@@ -68,8 +68,15 @@ const VolunteerDashboard = lazyRetry(() => import("./pages/VolunteerDashboard"))
 const ProjectDetail = lazyRetry(() => import("./pages/ProjectDetail"));
 const Communities = lazyRetry(() => import("./pages/Communities"));
 const NotFound = lazyRetry(() => import("./pages/NotFound"));
+const UnpAuth = lazyRetry(() => import("./pages/unp/UnpAuth"));
+const UnpDashboard = lazyRetry(() => import("./pages/unp/UnpDashboard"));
+const UnpApprovals = lazyRetry(() => import("./pages/unp/UnpApprovals"));
+const UnpModulePage = lazyRetry(() => import("./pages/unp/UnpModulePage"));
 
 import ProtectedAdminRoute from "./components/admin/ProtectedAdminRoute";
+import UnpProtectedRoute from "./components/unp/UnpProtectedRoute";
+import UnpLayout from "./components/unp/UnpLayout";
+
 
 // Loading component for Suspense fallback
 const PageLoader = () => (
@@ -124,7 +131,12 @@ const App = () => {
             <Route path="/admin/content" element={<ProtectedAdminRoute><ContentManagement /></ProtectedAdminRoute>} />
             <Route path="/communities" element={<Communities />} />
             <Route path="/projects/:slug" element={<ProjectDetail />} />
+            <Route path="/unp/auth" element={<UnpAuth />} />
+            <Route path="/unp" element={<UnpProtectedRoute><UnpLayout><UnpDashboard /></UnpLayout></UnpProtectedRoute>} />
+            <Route path="/unp/approvals" element={<UnpProtectedRoute adminOnly><UnpLayout><UnpApprovals /></UnpLayout></UnpProtectedRoute>} />
+            <Route path="/unp/m/:moduleId" element={<UnpProtectedRoute><UnpLayout><UnpModulePage /></UnpLayout></UnpProtectedRoute>} />
             <Route path="/admin/*" element={<ProtectedAdminRoute><Admin /></ProtectedAdminRoute>} />
+
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
             </Routes>
