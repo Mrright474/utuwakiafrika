@@ -131,7 +131,12 @@ const App = () => {
             <Route path="/admin/content" element={<ProtectedAdminRoute><ContentManagement /></ProtectedAdminRoute>} />
             <Route path="/communities" element={<Communities />} />
             <Route path="/projects/:slug" element={<ProjectDetail />} />
+            <Route path="/unp/auth" element={<UnpAuth />} />
+            <Route path="/unp" element={<UnpProtectedRoute><UnpLayout><UnpDashboard /></UnpLayout></UnpProtectedRoute>} />
+            <Route path="/unp/approvals" element={<UnpProtectedRoute adminOnly><UnpLayout><UnpApprovals /></UnpLayout></UnpProtectedRoute>} />
+            <Route path="/unp/m/:moduleId" element={<UnpProtectedRoute><UnpLayout><UnpModulePage /></UnpLayout></UnpProtectedRoute>} />
             <Route path="/admin/*" element={<ProtectedAdminRoute><Admin /></ProtectedAdminRoute>} />
+
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
             </Routes>
