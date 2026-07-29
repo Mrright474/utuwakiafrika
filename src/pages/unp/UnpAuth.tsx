@@ -100,8 +100,10 @@ const UnpAuth = () => {
       <SEO
         title="Staff Login | Ubuntu NGO Platform"
         description="Secure staff access to the Utu Wa Kiafrika Ubuntu NGO Platform for programmes, grants, finance and field operations."
+        path="/unp/auth"
         noindex
       />
+
       <div className="w-full max-w-md">
         <div className="mb-6 text-center">
           <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
