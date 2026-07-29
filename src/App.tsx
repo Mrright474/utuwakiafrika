@@ -68,8 +68,15 @@ const VolunteerDashboard = lazyRetry(() => import("./pages/VolunteerDashboard"))
 const ProjectDetail = lazyRetry(() => import("./pages/ProjectDetail"));
 const Communities = lazyRetry(() => import("./pages/Communities"));
 const NotFound = lazyRetry(() => import("./pages/NotFound"));
+const UnpAuth = lazyRetry(() => import("./pages/unp/UnpAuth"));
+const UnpDashboard = lazyRetry(() => import("./pages/unp/UnpDashboard"));
+const UnpApprovals = lazyRetry(() => import("./pages/unp/UnpApprovals"));
+const UnpModulePage = lazyRetry(() => import("./pages/unp/UnpModulePage"));
 
 import ProtectedAdminRoute from "./components/admin/ProtectedAdminRoute";
+import UnpProtectedRoute from "./components/unp/UnpProtectedRoute";
+import UnpLayout from "./components/unp/UnpLayout";
+
 
 // Loading component for Suspense fallback
 const PageLoader = () => (
