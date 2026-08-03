@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { useUnpStaff } from '@/hooks/useUnpStaff';
+import { useUnpPermissions } from '@/hooks/useUnpPermissions';
 import type { UnpField, UnpModule } from '@/lib/unp/modules';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -54,7 +54,8 @@ const badgeVariant = (value: string) => {
 };
 
 const ModuleCrud = ({ module }: { module: UnpModule }) => {
-  const { canWrite, canDelete } = useUnpStaff();
+  const { abilityFor, loading: permsLoading } = useUnpPermissions();
+  const { canView, canCreate, canEdit, canDelete } = abilityFor(module.id);
   const { toast } = useToast();
   const [rows, setRows] = useState<Row[]>([]);
   const [refs, setRefs] = useState<Record<string, Row[]>>({});
