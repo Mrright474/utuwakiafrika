@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { UNP_GROUPS, UNP_MODULES } from '@/lib/unp/modules';
@@ -171,8 +171,8 @@ const UnpPermissions = () => {
                 </TableHeader>
                 <TableBody>
                   {grouped.map(({ group, modules }) => (
-                    <>
-                      <TableRow key={group} className="bg-muted/40 hover:bg-muted/40">
+                    <Fragment key={group}>
+                      <TableRow className="bg-muted/40 hover:bg-muted/40">
                         <TableCell colSpan={5} className="py-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                           {group}
                         </TableCell>
@@ -192,7 +192,7 @@ const UnpPermissions = () => {
                           ))}
                         </TableRow>
                       ))}
-                    </>
+                    </Fragment>
                   ))}
                 </TableBody>
               </Table>
