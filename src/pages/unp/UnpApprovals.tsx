@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useUnpStaff, type UnpStaffAccount } from '@/hooks/useUnpStaff';
+import { logUnpAudit } from '@/lib/unp/audit';
 import SEO from '@/components/seo/SEO';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -35,6 +36,17 @@ const UnpApprovals = () => {
       toast({ title: 'Update failed', description: error.message, variant: 'destructive' });
       return;
     }
+    const target = accounts.find((a) => a.id === id);
+    const status = values.status as string | undefined;
+    void logUnpAudit({
+      action: status === 'approved' ? 'approve' : status === 'rejected' ? 'reject' : 'permission_change',
+      moduleId: 'staff-accounts',
+      moduleLabel: 'Staff Access Control',
+      recordId: id,
+      recordLabel: target ? `${target.first_name} ${target.last_name}` : null,
+      description: `Updated staff account (${Object.keys(values).join(', ')})`,
+      metadata: values,
+    });
     toast({ title: 'Updated', description: 'Staff account updated.' });
     void load();
   };
