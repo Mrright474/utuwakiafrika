@@ -1,7 +1,7 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import * as Icons from 'lucide-react';
-import { Menu, LogOut, LayoutDashboard, UserCheck, ShieldCheck, Home, SlidersHorizontal } from 'lucide-react';
+import { Menu, LogOut, LayoutDashboard, UserCheck, ShieldCheck, Home, SlidersHorizontal, ScrollText, ClipboardPlus } from 'lucide-react';
 import { UNP_GROUPS, UNP_MODULES } from '@/lib/unp/modules';
 import { useUnpStaff } from '@/hooks/useUnpStaff';
 import { useUnpPermissions } from '@/hooks/useUnpPermissions';
@@ -48,7 +48,16 @@ const SidebarNav = ({ onNavigate }: { onNavigate?: () => void }) => {
               Module Permissions
             </NavLink>
           )}
+          <NavLink to="/unp/field" className={linkClass} onClick={onNavigate}>
+            <ClipboardPlus className="h-4 w-4" />
+            Field Data Collection
+          </NavLink>
+          <NavLink to="/unp/audit" className={linkClass} onClick={onNavigate}>
+            <ScrollText className="h-4 w-4" />
+            Audit Log
+          </NavLink>
         </div>
+
 
         {UNP_GROUPS.map((group) => {
           const modules = UNP_MODULES.filter((m) => m.group === group && abilityFor(m.id).canView);
