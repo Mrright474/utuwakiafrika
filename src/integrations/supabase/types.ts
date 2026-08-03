@@ -806,6 +806,51 @@ export type Database = {
           },
         ]
       }
+      unp_audit_log: {
+        Row: {
+          action: string
+          actor_email: string | null
+          actor_name: string | null
+          created_at: string
+          description: string | null
+          id: string
+          metadata: Json
+          module_id: string | null
+          module_label: string | null
+          record_id: string | null
+          record_label: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          actor_email?: string | null
+          actor_name?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          metadata?: Json
+          module_id?: string | null
+          module_label?: string | null
+          record_id?: string | null
+          record_label?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          actor_email?: string | null
+          actor_name?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          metadata?: Json
+          module_id?: string | null
+          module_label?: string | null
+          record_id?: string | null
+          record_label?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       unp_beneficiaries: {
         Row: {
           beneficiary_code: string | null
