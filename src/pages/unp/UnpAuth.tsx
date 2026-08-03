@@ -3,6 +3,7 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useUnpStaff } from '@/hooks/useUnpStaff';
 import { useToast } from '@/hooks/use-toast';
+import { logUnpAudit } from '@/lib/unp/audit';
 import SEO from '@/components/seo/SEO';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -44,6 +45,7 @@ const UnpAuth = () => {
       toast({ title: 'Sign in failed', description: error.message, variant: 'destructive' });
       return;
     }
+    void logUnpAudit({ action: 'login', description: 'Signed in to the Ubuntu NGO Platform' });
     navigate('/unp');
   };
 

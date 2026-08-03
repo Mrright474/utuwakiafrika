@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useUnpPermissions } from '@/hooks/useUnpPermissions';
 import type { UnpField, UnpModule } from '@/lib/unp/modules';
+import { logUnpAudit } from '@/lib/unp/audit';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -158,6 +159,14 @@ const ModuleCrud = ({ module }: { module: UnpModule }) => {
       toast({ title: 'Save failed', description: error.message, variant: 'destructive' });
       return;
     }
+    void logUnpAudit({
+      action: editing.id ? 'edit' : 'create',
+      moduleId: module.id,
+      moduleLabel: module.label,
+      recordId: editing.id ?? null,
+      recordLabel: String(editing[module.titleField] ?? payload[module.titleField] ?? ''),
+      description: `${editing.id ? 'Updated' : 'Created'} a ${module.label} record`,
+    });
     toast({ title: 'Saved', description: `${module.label} record saved successfully.` });
     setOpen(false);
     setEditing(null);
@@ -172,6 +181,14 @@ const ModuleCrud = ({ module }: { module: UnpModule }) => {
       toast({ title: 'Delete failed', description: error.message, variant: 'destructive' });
       return;
     }
+    void logUnpAudit({
+      action: 'delete',
+      moduleId: module.id,
+      moduleLabel: module.label,
+      recordId: deleteTarget.id,
+      recordLabel: String(deleteTarget[module.titleField] ?? ''),
+      description: `Deleted a ${module.label} record`,
+    });
     toast({ title: 'Deleted', description: 'Record removed.' });
     void load();
   };
