@@ -1,9 +1,10 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import * as Icons from 'lucide-react';
-import { Menu, LogOut, LayoutDashboard, UserCheck, ShieldCheck, Home } from 'lucide-react';
+import { Menu, LogOut, LayoutDashboard, UserCheck, ShieldCheck, Home, SlidersHorizontal } from 'lucide-react';
 import { UNP_GROUPS, UNP_MODULES } from '@/lib/unp/modules';
 import { useUnpStaff } from '@/hooks/useUnpStaff';
+import { useUnpPermissions } from '@/hooks/useUnpPermissions';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -17,6 +18,7 @@ const DynamicIcon = ({ name, className }: { name: string; className?: string }) 
 
 const SidebarNav = ({ onNavigate }: { onNavigate?: () => void }) => {
   const { isPlatformAdmin } = useUnpStaff();
+  const { abilityFor } = useUnpPermissions();
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>
     cn(
@@ -40,10 +42,16 @@ const SidebarNav = ({ onNavigate }: { onNavigate?: () => void }) => {
               Staff Access Control
             </NavLink>
           )}
+          {isPlatformAdmin && (
+            <NavLink to="/unp/permissions" className={linkClass} onClick={onNavigate}>
+              <SlidersHorizontal className="h-4 w-4" />
+              Module Permissions
+            </NavLink>
+          )}
         </div>
 
         {UNP_GROUPS.map((group) => {
-          const modules = UNP_MODULES.filter((m) => m.group === group);
+          const modules = UNP_MODULES.filter((m) => m.group === group && abilityFor(m.id).canView);
           if (!modules.length) return null;
           return (
             <div key={group} className="space-y-1">
