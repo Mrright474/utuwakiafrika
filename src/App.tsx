@@ -72,6 +72,7 @@ const UnpAuth = lazyRetry(() => import("./pages/unp/UnpAuth"));
 const UnpDashboard = lazyRetry(() => import("./pages/unp/UnpDashboard"));
 const UnpApprovals = lazyRetry(() => import("./pages/unp/UnpApprovals"));
 const UnpModulePage = lazyRetry(() => import("./pages/unp/UnpModulePage"));
+const UnpPermissions = lazyRetry(() => import("./pages/unp/UnpPermissions"));
 
 import ProtectedAdminRoute from "./components/admin/ProtectedAdminRoute";
 import UnpProtectedRoute from "./components/unp/UnpProtectedRoute";
@@ -134,6 +135,7 @@ const App = () => {
             <Route path="/unp/auth" element={<UnpAuth />} />
             <Route path="/unp" element={<UnpProtectedRoute><UnpLayout><UnpDashboard /></UnpLayout></UnpProtectedRoute>} />
             <Route path="/unp/approvals" element={<UnpProtectedRoute adminOnly><UnpLayout><UnpApprovals /></UnpLayout></UnpProtectedRoute>} />
+            <Route path="/unp/permissions" element={<UnpProtectedRoute adminOnly><UnpLayout><UnpPermissions /></UnpLayout></UnpProtectedRoute>} />
             <Route path="/unp/m/:moduleId" element={<UnpProtectedRoute><UnpLayout><UnpModulePage /></UnpLayout></UnpProtectedRoute>} />
             <Route path="/admin/*" element={<ProtectedAdminRoute><Admin /></ProtectedAdminRoute>} />
 

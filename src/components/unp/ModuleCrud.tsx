@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { useUnpStaff } from '@/hooks/useUnpStaff';
+import { useUnpPermissions } from '@/hooks/useUnpPermissions';
 import type { UnpField, UnpModule } from '@/lib/unp/modules';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -22,7 +22,7 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { Plus, Search, Pencil, Trash2, Download, Loader2, Inbox } from 'lucide-react';
+import { Plus, Search, Pencil, Trash2, Download, Loader2, Inbox, Lock } from 'lucide-react';
 
 type Row = Record<string, any>;
 
@@ -54,7 +54,8 @@ const badgeVariant = (value: string) => {
 };
 
 const ModuleCrud = ({ module }: { module: UnpModule }) => {
-  const { canWrite, canDelete } = useUnpStaff();
+  const { abilityFor, loading: permsLoading } = useUnpPermissions();
+  const { canView, canCreate, canEdit, canDelete } = abilityFor(module.id);
   const { toast } = useToast();
   const [rows, setRows] = useState<Row[]>([]);
   const [refs, setRefs] = useState<Record<string, Row[]>>({});
@@ -232,6 +233,29 @@ const ModuleCrud = ({ module }: { module: UnpModule }) => {
     );
   };
 
+  if (permsLoading) {
+    return (
+      <div className="flex items-center justify-center py-24">
+        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!canView) {
+    return (
+      <Card>
+        <CardContent className="flex flex-col items-center gap-2 py-16 text-center">
+          <Lock className="h-8 w-8 text-muted-foreground" />
+          <p className="font-medium">No access to {module.label}</p>
+          <p className="max-w-sm text-sm text-muted-foreground">
+            Your department does not have permission to view this module. Contact a platform admin
+            if you need access.
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -243,7 +267,7 @@ const ModuleCrud = ({ module }: { module: UnpModule }) => {
           <Button variant="outline" size="sm" onClick={exportCsv} disabled={!filtered.length}>
             <Download className="mr-2 h-4 w-4" /> Export CSV
           </Button>
-          {canWrite && (
+          {canCreate && (
             <Button size="sm" onClick={startCreate}>
               <Plus className="mr-2 h-4 w-4" /> New record
             </Button>
@@ -273,7 +297,7 @@ const ModuleCrud = ({ module }: { module: UnpModule }) => {
               <Inbox className="h-8 w-8 text-muted-foreground" />
               <p className="font-medium">No records yet</p>
               <p className="max-w-sm text-sm text-muted-foreground">{module.description}</p>
-              {canWrite && (
+              {canCreate && (
                 <Button size="sm" className="mt-2" onClick={startCreate}>
                   <Plus className="mr-2 h-4 w-4" /> Add the first record
                 </Button>
@@ -306,7 +330,7 @@ const ModuleCrud = ({ module }: { module: UnpModule }) => {
                       ))}
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-1">
-                          {canWrite && (
+                          {canEdit && (
                             <Button variant="ghost" size="icon" aria-label="Edit record" onClick={() => startEdit(row)}>
                               <Pencil className="h-4 w-4" />
                             </Button>

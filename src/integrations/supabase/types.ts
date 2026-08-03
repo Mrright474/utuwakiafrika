@@ -1566,6 +1566,50 @@ export type Database = {
           },
         ]
       }
+      unp_module_permissions: {
+        Row: {
+          can_create: boolean
+          can_delete: boolean
+          can_edit: boolean
+          can_view: boolean
+          created_at: string
+          department_id: string
+          id: string
+          module_id: string
+          updated_at: string
+        }
+        Insert: {
+          can_create?: boolean
+          can_delete?: boolean
+          can_edit?: boolean
+          can_view?: boolean
+          created_at?: string
+          department_id: string
+          id?: string
+          module_id: string
+          updated_at?: string
+        }
+        Update: {
+          can_create?: boolean
+          can_delete?: boolean
+          can_edit?: boolean
+          can_view?: boolean
+          created_at?: string
+          department_id?: string
+          id?: string
+          module_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "unp_module_permissions_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "org_departments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       unp_partners: {
         Row: {
           agreement_end: string | null
