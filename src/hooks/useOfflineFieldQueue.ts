@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { logUnpAudit } from '@/lib/unp/audit';
+import { flushBufferedAudit, logUnpAudit } from '@/lib/unp/audit';
 import { decryptJson, encryptJson, secureStoreAvailable } from '@/lib/unp/secureStore';
 
 const STORAGE_KEY = 'unp_field_queue_v2';
@@ -42,8 +42,23 @@ const read = async (): Promise<QueuedFieldReport[]> => {
     }
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
-    return (await decryptJson<QueuedFieldReport[]>(raw)) ?? [];
-  } catch {
+    const items = (await decryptJson<QueuedFieldReport[]>(raw)) ?? [];
+    void logUnpAudit({
+      action: 'decrypt',
+      moduleId: 'field-reports',
+      moduleLabel: 'Field Reports',
+      description: `Decrypted ${items.length} cached field submission${items.length === 1 ? '' : 's'} on device`,
+      metadata: { items: items.length, storage: 'aes-gcm-indexeddb' },
+    });
+    return items;
+  } catch (err) {
+    void logUnpAudit({
+      action: 'decrypt',
+      moduleId: 'field-reports',
+      moduleLabel: 'Field Reports',
+      description: 'Failed to decrypt cached field submissions on device',
+      metadata: { outcome: 'failure', error: err instanceof Error ? err.message : 'Unknown error' },
+    });
     return [];
   }
 };
@@ -56,8 +71,22 @@ const write = async (items: QueuedFieldReport[]) => {
       return;
     }
     localStorage.setItem(STORAGE_KEY, await encryptJson(items));
-  } catch {
+    void logUnpAudit({
+      action: 'encrypt',
+      moduleId: 'field-reports',
+      moduleLabel: 'Field Reports',
+      description: `Encrypted ${items.length} field submission${items.length === 1 ? '' : 's'} at rest on device`,
+      metadata: { items: items.length, outcome: 'success', storage: 'aes-gcm-indexeddb' },
+    });
+  } catch (err) {
     // storage full or crypto unavailable — keep in-memory state only
+    void logUnpAudit({
+      action: 'encrypt',
+      moduleId: 'field-reports',
+      moduleLabel: 'Field Reports',
+      description: 'Failed to encrypt field submissions on device',
+      metadata: { items: items.length, outcome: 'failure', error: err instanceof Error ? err.message : 'Unknown error' },
+    });
   }
 };
 
@@ -133,8 +162,38 @@ export const useOfflineFieldQueue = () => {
 
         if (error) throw error;
         synced += 1;
+        void logUnpAudit({
+          action: 'sync',
+          moduleId: 'field-reports',
+          moduleLabel: 'Field Reports',
+          recordLabel: item.payload.title,
+          description: `Field submission "${item.payload.title}" synced successfully`,
+          metadata: {
+            outcome: 'success',
+            local_id: item.localId,
+            attempts: item.attempts + 1,
+            queued_at: item.createdAt,
+            has_photo: Boolean(item.photoDataUrl),
+            latitude: item.payload.latitude,
+            longitude: item.payload.longitude,
+          },
+        });
       } catch (err) {
         failed += 1;
+        void logUnpAudit({
+          action: 'sync_failed',
+          moduleId: 'field-reports',
+          moduleLabel: 'Field Reports',
+          recordLabel: item.payload.title,
+          description: `Field submission "${item.payload.title}" failed to sync`,
+          metadata: {
+            outcome: 'failure',
+            local_id: item.localId,
+            attempts: item.attempts + 1,
+            queued_at: item.createdAt,
+            error: err instanceof Error ? err.message : 'Unknown error',
+          },
+        });
         remaining.push({
           ...item,
           attempts: item.attempts + 1,
@@ -145,6 +204,7 @@ export const useOfflineFieldQueue = () => {
 
     await persist(remaining);
     setSyncing(false);
+    await flushBufferedAudit();
     if (synced > 0) {
       setLastSyncedAt(new Date().toISOString());
       void logUnpAudit({
@@ -165,6 +225,7 @@ export const useOfflineFieldQueue = () => {
   useEffect(() => {
     const goOnline = () => {
       setOnline(true);
+      void flushBufferedAudit();
       void sync();
     };
     const goOffline = () => setOnline(false);

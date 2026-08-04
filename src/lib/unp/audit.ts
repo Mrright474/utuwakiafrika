@@ -10,7 +10,10 @@ export type UnpAuditAction =
   | 'reject'
   | 'permission_change'
   | 'export'
-  | 'sync';
+  | 'sync'
+  | 'sync_failed'
+  | 'encrypt'
+  | 'decrypt';
 
 export interface UnpAuditEntry {
   action: UnpAuditAction;
@@ -33,6 +36,9 @@ export const UNP_AUDIT_ACTIONS: UnpAuditAction[] = [
   'permission_change',
   'export',
   'sync',
+  'sync_failed',
+  'encrypt',
+  'decrypt',
 ];
 
 export const AUDIT_ACTION_LABELS: Record<UnpAuditAction, string> = {
@@ -46,6 +52,36 @@ export const AUDIT_ACTION_LABELS: Record<UnpAuditAction, string> = {
   permission_change: 'Permissions changed',
   export: 'Data exported',
   sync: 'Offline data synced',
+  sync_failed: 'Offline sync failed',
+  encrypt: 'Device encryption',
+  decrypt: 'Device decryption',
+};
+
+const OFFLINE_BUFFER_KEY = 'unp_audit_buffer_v1';
+
+const bufferOffline = (entry: UnpAuditEntry) => {
+  try {
+    const raw = localStorage.getItem(OFFLINE_BUFFER_KEY);
+    const items = raw ? (JSON.parse(raw) as UnpAuditEntry[]) : [];
+    items.push({ ...entry, metadata: { ...(entry.metadata ?? {}), occurred_at: new Date().toISOString(), buffered_offline: true } });
+    localStorage.setItem(OFFLINE_BUFFER_KEY, JSON.stringify(items.slice(-100)));
+  } catch {
+    // buffer is best-effort
+  }
+};
+
+/** Flushes audit events that were recorded while the device was offline. */
+export const flushBufferedAudit = async (): Promise<void> => {
+  let items: UnpAuditEntry[] = [];
+  try {
+    const raw = localStorage.getItem(OFFLINE_BUFFER_KEY);
+    if (!raw) return;
+    items = JSON.parse(raw) as UnpAuditEntry[];
+    localStorage.removeItem(OFFLINE_BUFFER_KEY);
+  } catch {
+    return;
+  }
+  for (const item of items) await logUnpAudit(item);
 };
 
 /**
@@ -53,6 +89,10 @@ export const AUDIT_ACTION_LABELS: Record<UnpAuditAction, string> = {
  * Fire-and-forget: logging must never block or break the user's action.
  */
 export const logUnpAudit = async (entry: UnpAuditEntry): Promise<void> => {
+  if (typeof navigator !== 'undefined' && !navigator.onLine) {
+    bufferOffline(entry);
+    return;
+  }
   try {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
@@ -78,6 +118,6 @@ export const logUnpAudit = async (entry: UnpAuditEntry): Promise<void> => {
       metadata: (entry.metadata ?? {}) as never,
     });
   } catch {
-    // Audit logging is best-effort and intentionally silent.
+    bufferOffline(entry);
   }
 };
