@@ -163,7 +163,7 @@ const UnpFieldCollect = () => {
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Field Data Collection</h1>
           <p className="text-sm text-muted-foreground">
-            Works without internet. Reports are stored on your device and sync automatically.
+            Works without internet. Reports are encrypted on your device and sync automatically.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -329,7 +329,7 @@ const UnpFieldCollect = () => {
                   </p>
                   {q.lastError && <p className="text-xs text-destructive">{q.lastError}</p>}
                 </div>
-                <Button variant="ghost" size="icon" aria-label="Discard queued report" onClick={() => remove(q.localId)}>
+                <Button variant="ghost" size="icon" aria-label="Discard queued report" onClick={() => void remove(q.localId)}>
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
