@@ -13,7 +13,8 @@ export type UnpAuditAction =
   | 'sync'
   | 'sync_failed'
   | 'encrypt'
-  | 'decrypt';
+  | 'decrypt'
+  | 'integrity_failed';
 
 export interface UnpAuditEntry {
   action: UnpAuditAction;
@@ -39,6 +40,7 @@ export const UNP_AUDIT_ACTIONS: UnpAuditAction[] = [
   'sync_failed',
   'encrypt',
   'decrypt',
+  'integrity_failed',
 ];
 
 export const AUDIT_ACTION_LABELS: Record<UnpAuditAction, string> = {
@@ -55,6 +57,7 @@ export const AUDIT_ACTION_LABELS: Record<UnpAuditAction, string> = {
   sync_failed: 'Offline sync failed',
   encrypt: 'Device encryption',
   decrypt: 'Device decryption',
+  integrity_failed: 'Integrity check failed',
 };
 
 const OFFLINE_BUFFER_KEY = 'unp_audit_buffer_v1';
