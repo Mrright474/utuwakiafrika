@@ -43,13 +43,16 @@ const read = async (): Promise<QueuedFieldReport[]> => {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
     const items = (await decryptJson<QueuedFieldReport[]>(raw)) ?? [];
-    void logUnpAudit({
-      action: 'decrypt',
-      moduleId: 'field-reports',
-      moduleLabel: 'Field Reports',
-      description: `Decrypted ${items.length} cached field submission${items.length === 1 ? '' : 's'} on device`,
-      metadata: { items: items.length, storage: 'aes-gcm-indexeddb' },
-    });
+    if (items.length && !decryptLogged) {
+      decryptLogged = true;
+      void logUnpAudit({
+        action: 'decrypt',
+        moduleId: 'field-reports',
+        moduleLabel: 'Field Reports',
+        description: `Decrypted ${items.length} cached field submission${items.length === 1 ? '' : 's'} on device`,
+        metadata: { items: items.length, outcome: 'success', storage: 'aes-gcm-indexeddb' },
+      });
+    }
     return items;
   } catch (err) {
     void logUnpAudit({
@@ -89,6 +92,8 @@ const write = async (items: QueuedFieldReport[]) => {
     });
   }
 };
+
+let decryptLogged = false;
 
 const dataUrlToBlob = async (dataUrl: string) => (await fetch(dataUrl)).blob();
 
