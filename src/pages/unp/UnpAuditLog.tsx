@@ -26,7 +26,7 @@ interface AuditRow {
 const ALL = '__all__';
 
 const actionVariant = (action: string) => {
-  if (['delete', 'reject'].includes(action)) return 'destructive' as const;
+  if (['delete', 'reject', 'sync_failed'].includes(action)) return 'destructive' as const;
   if (['approve', 'create', 'sync'].includes(action)) return 'default' as const;
   return 'secondary' as const;
 };
