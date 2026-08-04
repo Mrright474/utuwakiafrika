@@ -11,7 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, MapPin, Wifi, WifiOff, RefreshCw, Camera, Trash2, CloudUpload, CheckCircle2 } from 'lucide-react';
+import { Loader2, MapPin, Wifi, WifiOff, RefreshCw, Camera, Trash2, CloudUpload, CheckCircle2, ShieldCheck, ShieldAlert } from 'lucide-react';
 
 const NONE = '__none__';
 
@@ -53,7 +53,7 @@ const compressImage = (file: File): Promise<string> =>
 const UnpFieldCollect = () => {
   const { account } = useUnpStaff();
   const { toast } = useToast();
-  const { queue, online, syncing, lastSyncedAt, enqueue, remove, sync } = useOfflineFieldQueue();
+  const { queue, online, syncing, lastSyncedAt, encrypted, enqueue, remove, sync } = useOfflineFieldQueue();
   const [form, setForm] = useState(emptyForm());
   const [projects, setProjects] = useState<{ id: string; title: string }[]>([]);
   const [photo, setPhoto] = useState<string | null>(null);
@@ -110,7 +110,7 @@ const UnpFieldCollect = () => {
     }
     setSubmitting(true);
 
-    enqueue({
+    await enqueue({
       photoDataUrl: photo,
       payload: {
         title: form.title.trim(),
@@ -163,13 +163,19 @@ const UnpFieldCollect = () => {
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Field Data Collection</h1>
           <p className="text-sm text-muted-foreground">
-            Works without internet. Reports are stored on your device and sync automatically.
+            Works without internet. Reports are encrypted on your device and sync automatically.
           </p>
         </div>
-        <Badge variant={online ? 'default' : 'destructive'} className="gap-1.5">
-          {online ? <Wifi className="h-3.5 w-3.5" /> : <WifiOff className="h-3.5 w-3.5" />}
-          {online ? 'Online' : 'Offline'}
-        </Badge>
+        <div className="flex flex-wrap items-center gap-2">
+          <Badge variant={encrypted ? 'secondary' : 'outline'} className="gap-1.5">
+            {encrypted ? <ShieldCheck className="h-3.5 w-3.5" /> : <ShieldAlert className="h-3.5 w-3.5" />}
+            {encrypted ? 'Encrypted on device' : 'Encryption unavailable'}
+          </Badge>
+          <Badge variant={online ? 'default' : 'destructive'} className="gap-1.5">
+            {online ? <Wifi className="h-3.5 w-3.5" /> : <WifiOff className="h-3.5 w-3.5" />}
+            {online ? 'Online' : 'Offline'}
+          </Badge>
+        </div>
       </div>
 
       {(queue.length > 0 || lastSyncedAt) && (
@@ -323,7 +329,7 @@ const UnpFieldCollect = () => {
                   </p>
                   {q.lastError && <p className="text-xs text-destructive">{q.lastError}</p>}
                 </div>
-                <Button variant="ghost" size="icon" aria-label="Discard queued report" onClick={() => remove(q.localId)}>
+                <Button variant="ghost" size="icon" aria-label="Discard queued report" onClick={() => void remove(q.localId)}>
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </div>

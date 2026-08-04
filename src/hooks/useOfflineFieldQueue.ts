@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { logUnpAudit } from '@/lib/unp/audit';
+import { decryptJson, encryptJson, secureStoreAvailable } from '@/lib/unp/secureStore';
 
-const STORAGE_KEY = 'unp_field_queue_v1';
+const STORAGE_KEY = 'unp_field_queue_v2';
+const LEGACY_STORAGE_KEY = 'unp_field_queue_v1';
 
 export interface QueuedFieldReport {
   localId: string;
@@ -26,20 +28,36 @@ export interface QueuedFieldReport {
   };
 }
 
-const read = (): QueuedFieldReport[] => {
+/** Reads and decrypts the on-device queue, migrating any legacy plaintext cache. */
+const read = async (): Promise<QueuedFieldReport[]> => {
   try {
+    const legacy = localStorage.getItem(LEGACY_STORAGE_KEY);
+    if (legacy) {
+      localStorage.removeItem(LEGACY_STORAGE_KEY);
+      const parsed = JSON.parse(legacy) as QueuedFieldReport[];
+      const current = await read();
+      const merged = [...current, ...parsed];
+      await write(merged);
+      return merged;
+    }
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as QueuedFieldReport[]) : [];
+    if (!raw) return [];
+    return (await decryptJson<QueuedFieldReport[]>(raw)) ?? [];
   } catch {
     return [];
   }
 };
 
-const write = (items: QueuedFieldReport[]) => {
+/** Encrypts the queue (reports + GPS + photo evidence) before it touches disk. */
+const write = async (items: QueuedFieldReport[]) => {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    if (!items.length) {
+      localStorage.removeItem(STORAGE_KEY);
+      return;
+    }
+    localStorage.setItem(STORAGE_KEY, await encryptJson(items));
   } catch {
-    // storage full — keep in-memory state only
+    // storage full or crypto unavailable — keep in-memory state only
   }
 };
 
@@ -47,42 +65,47 @@ const dataUrlToBlob = async (dataUrl: string) => (await fetch(dataUrl)).blob();
 
 /**
  * Offline-first queue for field data collection.
- * Reports are persisted to localStorage immediately and pushed to Supabase
- * as soon as connectivity is available.
+ * Reports are encrypted at rest (AES-GCM, non-extractable key in IndexedDB) and
+ * pushed to Supabase as soon as connectivity is available.
  */
 export const useOfflineFieldQueue = () => {
-  const [queue, setQueue] = useState<QueuedFieldReport[]>(() => read());
+  const [queue, setQueue] = useState<QueuedFieldReport[]>([]);
   const [online, setOnline] = useState<boolean>(() => navigator.onLine);
   const [syncing, setSyncing] = useState(false);
   const [lastSyncedAt, setLastSyncedAt] = useState<string | null>(null);
+  const [encrypted] = useState(() => secureStoreAvailable());
 
-  const persist = useCallback((items: QueuedFieldReport[]) => {
+  const persist = useCallback(async (items: QueuedFieldReport[]) => {
     setQueue(items);
-    write(items);
+    await write(items);
+  }, []);
+
+  const refresh = useCallback(async () => {
+    setQueue(await read());
   }, []);
 
   const enqueue = useCallback(
-    (report: Omit<QueuedFieldReport, 'localId' | 'createdAt' | 'attempts'>) => {
+    async (report: Omit<QueuedFieldReport, 'localId' | 'createdAt' | 'attempts'>) => {
       const item: QueuedFieldReport = {
         ...report,
         localId: crypto.randomUUID(),
         createdAt: new Date().toISOString(),
         attempts: 0,
       };
-      persist([...read(), item]);
+      await persist([...(await read()), item]);
       return item;
     },
     [persist]
   );
 
   const remove = useCallback(
-    (localId: string) => persist(read().filter((i) => i.localId !== localId)),
+    async (localId: string) => persist((await read()).filter((i) => i.localId !== localId)),
     [persist]
   );
 
   const sync = useCallback(async (): Promise<{ synced: number; failed: number }> => {
     if (!navigator.onLine) return { synced: 0, failed: 0 };
-    const pending = read();
+    const pending = await read();
     if (!pending.length) return { synced: 0, failed: 0 };
 
     setSyncing(true);
@@ -120,7 +143,7 @@ export const useOfflineFieldQueue = () => {
       }
     }
 
-    persist(remaining);
+    await persist(remaining);
     setSyncing(false);
     if (synced > 0) {
       setLastSyncedAt(new Date().toISOString());
@@ -134,6 +157,10 @@ export const useOfflineFieldQueue = () => {
     }
     return { synced, failed };
   }, [persist]);
+
+  useEffect(() => {
+    void refresh();
+  }, [refresh]);
 
   useEffect(() => {
     const goOnline = () => {
@@ -150,5 +177,5 @@ export const useOfflineFieldQueue = () => {
     };
   }, [sync]);
 
-  return { queue, online, syncing, lastSyncedAt, enqueue, remove, sync, refresh: () => setQueue(read()) };
+  return { queue, online, syncing, lastSyncedAt, encrypted, enqueue, remove, sync, refresh };
 };
