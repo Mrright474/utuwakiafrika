@@ -2,6 +2,12 @@ import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { flushBufferedAudit, logUnpAudit } from '@/lib/unp/audit';
 import { decryptJson, encryptJson, secureStoreAvailable } from '@/lib/unp/secureStore';
+import {
+  createIntegrityStamp,
+  INTEGRITY_REASON_LABELS,
+  verifyIntegrity,
+  type IntegrityStamp,
+} from '@/lib/unp/integrity';
 
 const STORAGE_KEY = 'unp_field_queue_v2';
 const LEGACY_STORAGE_KEY = 'unp_field_queue_v1';
@@ -11,7 +17,9 @@ export interface QueuedFieldReport {
   createdAt: string;
   attempts: number;
   lastError?: string;
+  rejected?: boolean;
   photoDataUrl?: string | null;
+  integrity?: IntegrityStamp;
   payload: {
     title: string;
     report_date: string;
@@ -125,6 +133,7 @@ export const useOfflineFieldQueue = () => {
         localId: crypto.randomUUID(),
         createdAt: new Date().toISOString(),
         attempts: 0,
+        integrity: await createIntegrityStamp(report.payload, report.photoDataUrl),
       };
       await persist([...(await read()), item]);
       return item;
@@ -137,17 +146,46 @@ export const useOfflineFieldQueue = () => {
     [persist]
   );
 
-  const sync = useCallback(async (): Promise<{ synced: number; failed: number }> => {
-    if (!navigator.onLine) return { synced: 0, failed: 0 };
+  const sync = useCallback(async (): Promise<{ synced: number; failed: number; rejected: number }> => {
+    if (!navigator.onLine) return { synced: 0, failed: 0, rejected: 0 };
     const pending = await read();
-    if (!pending.length) return { synced: 0, failed: 0 };
+    if (!pending.length) return { synced: 0, failed: 0, rejected: 0 };
 
     setSyncing(true);
     let synced = 0;
     let failed = 0;
+    let rejected = 0;
     const remaining: QueuedFieldReport[] = [];
 
     for (const item of pending) {
+      // Integrity gate: never upload a cached submission that no longer matches
+      // the fingerprint taken when it was captured in the field.
+      const integrity = await verifyIntegrity(item.integrity, item.payload, item.photoDataUrl);
+      if (!integrity.ok) {
+        rejected += 1;
+        remaining.push({
+          ...item,
+          rejected: true,
+          lastError: INTEGRITY_REASON_LABELS[integrity.reason],
+        });
+        void logUnpAudit({
+          action: 'integrity_failed',
+          moduleId: 'field-reports',
+          moduleLabel: 'Field Reports',
+          recordLabel: item.payload.title,
+          description: `Field submission "${item.payload.title}" rejected during sync: ${INTEGRITY_REASON_LABELS[integrity.reason]}`,
+          metadata: {
+            outcome: 'rejected',
+            reason: integrity.reason,
+            local_id: item.localId,
+            queued_at: item.createdAt,
+            expected_hash: integrity.expected ?? null,
+            actual_hash: integrity.actual ?? null,
+          },
+        });
+        continue;
+      }
+
       try {
         let photoUrl: string | null = null;
         if (item.photoDataUrl) {
@@ -175,6 +213,7 @@ export const useOfflineFieldQueue = () => {
           description: `Field submission "${item.payload.title}" synced successfully`,
           metadata: {
             outcome: 'success',
+            integrity_hash: integrity.hash,
             local_id: item.localId,
             attempts: item.attempts + 1,
             queued_at: item.createdAt,
@@ -201,6 +240,7 @@ export const useOfflineFieldQueue = () => {
         });
         remaining.push({
           ...item,
+          rejected: false,
           attempts: item.attempts + 1,
           lastError: err instanceof Error ? err.message : 'Unknown error',
         });
@@ -217,10 +257,10 @@ export const useOfflineFieldQueue = () => {
         moduleId: 'field-reports',
         moduleLabel: 'Field Reports',
         description: `Synced ${synced} offline field report${synced === 1 ? '' : 's'}`,
-        metadata: { synced, failed },
+        metadata: { synced, failed, rejected },
       });
     }
-    return { synced, failed };
+    return { synced, failed, rejected };
   }, [persist]);
 
   useEffect(() => {

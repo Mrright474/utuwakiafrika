@@ -134,12 +134,19 @@ const UnpFieldCollect = () => {
     if (fileRef.current) fileRef.current.value = '';
 
     if (navigator.onLine) {
-      const { synced, failed } = await sync();
+      const { synced, failed, rejected } = await sync();
       toast({
-        title: synced ? 'Report submitted' : 'Saved on this device',
-        description: synced
-          ? 'Your field report was uploaded successfully.'
-          : `Upload did not go through (${failed} pending). It will retry automatically.`,
+        title: rejected
+          ? 'Integrity check failed'
+          : synced
+            ? 'Report submitted'
+            : 'Saved on this device',
+        description: rejected
+          ? `${rejected} cached submission${rejected === 1 ? ' was' : 's were'} blocked because the stored data no longer matches its fingerprint.`
+          : synced
+            ? 'Your field report was uploaded successfully.'
+            : `Upload did not go through (${failed} pending). It will retry automatically.`,
+        variant: rejected ? 'destructive' : undefined,
       });
     } else {
       toast({
@@ -315,7 +322,7 @@ const UnpFieldCollect = () => {
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">Pending on this device</CardTitle>
-            <CardDescription>These reports upload automatically once connectivity returns.</CardDescription>
+            <CardDescription>Each report is fingerprinted (SHA-256) when saved and verified before upload; tampered items are blocked.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
             {queue.map((q) => (
@@ -327,6 +334,11 @@ const UnpFieldCollect = () => {
                     {q.payload.district ? ` · ${q.payload.district}` : ''}
                     {q.attempts ? ` · ${q.attempts} failed attempt${q.attempts === 1 ? '' : 's'}` : ''}
                   </p>
+                  {q.rejected && (
+                    <p className="text-xs font-medium text-destructive">
+                      Blocked: failed integrity verification — this submission will not upload.
+                    </p>
+                  )}
                   {q.lastError && <p className="text-xs text-destructive">{q.lastError}</p>}
                 </div>
                 <Button variant="ghost" size="icon" aria-label="Discard queued report" onClick={() => void remove(q.localId)}>
