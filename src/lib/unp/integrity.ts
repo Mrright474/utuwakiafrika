@@ -62,9 +62,19 @@ export const createIntegrityStamp = async (
   hashedAt: new Date().toISOString(),
 });
 
-export type IntegrityResult =
-  | { ok: true; hash: string }
-  | { ok: false; reason: 'missing_stamp' | 'unsupported_version' | 'hash_mismatch' | 'unavailable'; expected?: string; actual?: string };
+export type IntegrityFailureReason =
+  | 'missing_stamp'
+  | 'unsupported_version'
+  | 'hash_mismatch'
+  | 'unavailable';
+
+export interface IntegrityResult {
+  ok: boolean;
+  hash?: string;
+  reason?: IntegrityFailureReason;
+  expected?: string;
+  actual?: string;
+}
 
 /** Verifies a queued submission against its stored stamp. */
 export const verifyIntegrity = async (
