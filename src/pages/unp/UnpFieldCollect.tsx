@@ -189,6 +189,12 @@ const UnpFieldCollect = () => {
             {encrypted ? <ShieldCheck className="h-3.5 w-3.5" /> : <ShieldAlert className="h-3.5 w-3.5" />}
             {encrypted ? 'Encrypted on device' : 'Encryption unavailable'}
           </Badge>
+          {encrypted && keyGeneration !== null && (
+            <Badge variant="outline" className="gap-1.5">
+              Key v{keyGeneration}
+              {keyRotatedAt && ` · rotated ${new Date(keyRotatedAt).toLocaleDateString()}`}
+            </Badge>
+          )}
           <Badge variant={online ? 'default' : 'destructive'} className="gap-1.5">
             {online ? <Wifi className="h-3.5 w-3.5" /> : <WifiOff className="h-3.5 w-3.5" />}
             {online ? 'Online' : 'Offline'}
