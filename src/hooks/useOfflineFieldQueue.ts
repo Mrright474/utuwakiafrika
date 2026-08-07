@@ -123,6 +123,10 @@ export const useOfflineFieldQueue = () => {
   const [syncing, setSyncing] = useState(false);
   const [lastSyncedAt, setLastSyncedAt] = useState<string | null>(null);
   const [encrypted] = useState(() => secureStoreAvailable());
+  const [keyGeneration, setKeyGeneration] = useState<number | null>(null);
+  const [keyRotatedAt, setKeyRotatedAt] = useState<string | null>(null);
+  const rotating = useRef(false);
+
 
   const persist = useCallback(async (items: QueuedFieldReport[]) => {
     setQueue(items);
