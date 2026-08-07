@@ -1,7 +1,14 @@
 import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { flushBufferedAudit, logUnpAudit } from '@/lib/unp/audit';
-import { decryptJson, encryptJson, secureStoreAvailable } from '@/lib/unp/secureStore';
+import {
+  decryptJson,
+  encryptJson,
+  getKeyMeta,
+  keyRotationDue,
+  rotateEncryptionKey,
+  secureStoreAvailable,
+} from '@/lib/unp/secureStore';
 import {
   createIntegrityStamp,
   INTEGRITY_REASON_LABELS,
