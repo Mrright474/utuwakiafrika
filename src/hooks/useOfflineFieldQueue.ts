@@ -137,6 +137,52 @@ export const useOfflineFieldQueue = () => {
     setQueue(await read());
   }, []);
 
+  /**
+   * Rotates the device encryption key and re-encrypts every queued item under
+   * the new generation. Old key material is only discarded after the rewrite
+   * succeeds, so a pending submission can never become unreadable.
+   */
+  const rotateKey = useCallback(
+    async (force = false) => {
+      if (!secureStoreAvailable() || rotating.current) return;
+      if (!force && !(await keyRotationDue())) return;
+      rotating.current = true;
+      const outcome = await rotateEncryptionKey(async () => {
+        const items = await read(); // decrypted with the retired key
+        await write(items); // re-encrypted with the new active key
+        setQueue(items);
+        return items.length;
+      });
+      rotating.current = false;
+
+      if (outcome.rotated) {
+        const meta = await getKeyMeta();
+        setKeyGeneration(meta?.generation ?? null);
+        setKeyRotatedAt(meta?.createdAt ?? null);
+      }
+
+      void logUnpAudit({
+        action: outcome.rotated ? 'encrypt' : 'sync_failed',
+        moduleId: 'field-reports',
+        moduleLabel: 'Field Reports',
+        description: outcome.rotated
+          ? `Rotated device encryption key (generation ${outcome.from} → ${outcome.to}) and re-encrypted ${outcome.reEncrypted} queued submission${outcome.reEncrypted === 1 ? '' : 's'}`
+          : 'Device encryption key rotation failed',
+        metadata: {
+          event: 'key_rotation',
+          outcome: outcome.rotated ? 'success' : 'failure',
+          from_generation: outcome.from ?? null,
+          to_generation: outcome.to ?? null,
+          re_encrypted: outcome.reEncrypted ?? 0,
+          forced: force,
+          error: outcome.error ?? null,
+        },
+      });
+      return outcome;
+    },
+    []
+  );
+
   const enqueue = useCallback(
     async (report: Omit<QueuedFieldReport, 'localId' | 'createdAt' | 'attempts'>) => {
       const item: QueuedFieldReport = {
