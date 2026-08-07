@@ -94,10 +94,7 @@ export const verifyIntegrity = async (
   return { ok: true, hash: actual };
 };
 
-export const INTEGRITY_REASON_LABELS: Record<
-  Exclude<IntegrityResult, { ok: true }>['reason'],
-  string
-> = {
+export const INTEGRITY_REASON_LABELS: Record<IntegrityFailureReason, string> = {
   missing_stamp: 'No integrity fingerprint was stored with this submission',
   unsupported_version: 'Integrity fingerprint uses an unsupported format',
   hash_mismatch: 'Cached submission was modified after it was saved',
