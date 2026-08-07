@@ -324,6 +324,25 @@ export const useOfflineFieldQueue = () => {
     void refresh();
   }, [refresh]);
 
+  // Scheduled key rotation: check on mount, then hourly while the app is open.
+  useEffect(() => {
+    let cancelled = false;
+    const check = async () => {
+      if (cancelled) return;
+      const meta = await getKeyMeta();
+      if (cancelled) return;
+      setKeyGeneration(meta?.generation ?? null);
+      setKeyRotatedAt(meta?.createdAt ?? null);
+      await rotateKey();
+    };
+    void check();
+    const timer = window.setInterval(() => void check(), 60 * 60 * 1000);
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+    };
+  }, [rotateKey]);
+
   useEffect(() => {
     const goOnline = () => {
       setOnline(true);
