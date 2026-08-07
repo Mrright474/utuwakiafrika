@@ -1,7 +1,14 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { flushBufferedAudit, logUnpAudit } from '@/lib/unp/audit';
-import { decryptJson, encryptJson, secureStoreAvailable } from '@/lib/unp/secureStore';
+import {
+  decryptJson,
+  encryptJson,
+  getKeyMeta,
+  keyRotationDue,
+  rotateEncryptionKey,
+  secureStoreAvailable,
+} from '@/lib/unp/secureStore';
 import {
   createIntegrityStamp,
   INTEGRITY_REASON_LABELS,
@@ -116,6 +123,10 @@ export const useOfflineFieldQueue = () => {
   const [syncing, setSyncing] = useState(false);
   const [lastSyncedAt, setLastSyncedAt] = useState<string | null>(null);
   const [encrypted] = useState(() => secureStoreAvailable());
+  const [keyGeneration, setKeyGeneration] = useState<number | null>(null);
+  const [keyRotatedAt, setKeyRotatedAt] = useState<string | null>(null);
+  const rotating = useRef(false);
+
 
   const persist = useCallback(async (items: QueuedFieldReport[]) => {
     setQueue(items);
@@ -125,6 +136,52 @@ export const useOfflineFieldQueue = () => {
   const refresh = useCallback(async () => {
     setQueue(await read());
   }, []);
+
+  /**
+   * Rotates the device encryption key and re-encrypts every queued item under
+   * the new generation. Old key material is only discarded after the rewrite
+   * succeeds, so a pending submission can never become unreadable.
+   */
+  const rotateKey = useCallback(
+    async (force = false) => {
+      if (!secureStoreAvailable() || rotating.current) return;
+      if (!force && !(await keyRotationDue())) return;
+      rotating.current = true;
+      const outcome = await rotateEncryptionKey(async () => {
+        const items = await read(); // decrypted with the retired key
+        await write(items); // re-encrypted with the new active key
+        setQueue(items);
+        return items.length;
+      });
+      rotating.current = false;
+
+      if (outcome.rotated) {
+        const meta = await getKeyMeta();
+        setKeyGeneration(meta?.generation ?? null);
+        setKeyRotatedAt(meta?.createdAt ?? null);
+      }
+
+      void logUnpAudit({
+        action: outcome.rotated ? 'encrypt' : 'sync_failed',
+        moduleId: 'field-reports',
+        moduleLabel: 'Field Reports',
+        description: outcome.rotated
+          ? `Rotated device encryption key (generation ${outcome.from} → ${outcome.to}) and re-encrypted ${outcome.reEncrypted} queued submission${outcome.reEncrypted === 1 ? '' : 's'}`
+          : 'Device encryption key rotation failed',
+        metadata: {
+          event: 'key_rotation',
+          outcome: outcome.rotated ? 'success' : 'failure',
+          from_generation: outcome.from ?? null,
+          to_generation: outcome.to ?? null,
+          re_encrypted: outcome.reEncrypted ?? 0,
+          forced: force,
+          error: outcome.error ?? null,
+        },
+      });
+      return outcome;
+    },
+    []
+  );
 
   const enqueue = useCallback(
     async (report: Omit<QueuedFieldReport, 'localId' | 'createdAt' | 'attempts'>) => {
@@ -267,6 +324,25 @@ export const useOfflineFieldQueue = () => {
     void refresh();
   }, [refresh]);
 
+  // Scheduled key rotation: check on mount, then hourly while the app is open.
+  useEffect(() => {
+    let cancelled = false;
+    const check = async () => {
+      if (cancelled) return;
+      const meta = await getKeyMeta();
+      if (cancelled) return;
+      setKeyGeneration(meta?.generation ?? null);
+      setKeyRotatedAt(meta?.createdAt ?? null);
+      await rotateKey();
+    };
+    void check();
+    const timer = window.setInterval(() => void check(), 60 * 60 * 1000);
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+    };
+  }, [rotateKey]);
+
   useEffect(() => {
     const goOnline = () => {
       setOnline(true);
@@ -283,5 +359,18 @@ export const useOfflineFieldQueue = () => {
     };
   }, [sync]);
 
-  return { queue, online, syncing, lastSyncedAt, encrypted, enqueue, remove, sync, refresh };
+  return {
+    queue,
+    online,
+    syncing,
+    lastSyncedAt,
+    encrypted,
+    keyGeneration,
+    keyRotatedAt,
+    rotateKey,
+    enqueue,
+    remove,
+    sync,
+    refresh,
+  };
 };

@@ -53,7 +53,18 @@ const compressImage = (file: File): Promise<string> =>
 const UnpFieldCollect = () => {
   const { account } = useUnpStaff();
   const { toast } = useToast();
-  const { queue, online, syncing, lastSyncedAt, encrypted, enqueue, remove, sync } = useOfflineFieldQueue();
+  const {
+    queue,
+    online,
+    syncing,
+    lastSyncedAt,
+    encrypted,
+    keyGeneration,
+    keyRotatedAt,
+    enqueue,
+    remove,
+    sync,
+  } = useOfflineFieldQueue();
   const [form, setForm] = useState(emptyForm());
   const [projects, setProjects] = useState<{ id: string; title: string }[]>([]);
   const [photo, setPhoto] = useState<string | null>(null);
@@ -178,6 +189,12 @@ const UnpFieldCollect = () => {
             {encrypted ? <ShieldCheck className="h-3.5 w-3.5" /> : <ShieldAlert className="h-3.5 w-3.5" />}
             {encrypted ? 'Encrypted on device' : 'Encryption unavailable'}
           </Badge>
+          {encrypted && keyGeneration !== null && (
+            <Badge variant="outline" className="gap-1.5">
+              Key v{keyGeneration}
+              {keyRotatedAt && ` · rotated ${new Date(keyRotatedAt).toLocaleDateString()}`}
+            </Badge>
+          )}
           <Badge variant={online ? 'default' : 'destructive'} className="gap-1.5">
             {online ? <Wifi className="h-3.5 w-3.5" /> : <WifiOff className="h-3.5 w-3.5" />}
             {online ? 'Online' : 'Offline'}
