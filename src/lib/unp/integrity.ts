@@ -62,9 +62,19 @@ export const createIntegrityStamp = async (
   hashedAt: new Date().toISOString(),
 });
 
-export type IntegrityResult =
-  | { ok: true; hash: string }
-  | { ok: false; reason: 'missing_stamp' | 'unsupported_version' | 'hash_mismatch' | 'unavailable'; expected?: string; actual?: string };
+export type IntegrityFailureReason =
+  | 'missing_stamp'
+  | 'unsupported_version'
+  | 'hash_mismatch'
+  | 'unavailable';
+
+export interface IntegrityResult {
+  ok: boolean;
+  hash?: string;
+  reason?: IntegrityFailureReason;
+  expected?: string;
+  actual?: string;
+}
 
 /** Verifies a queued submission against its stored stamp. */
 export const verifyIntegrity = async (
@@ -84,10 +94,7 @@ export const verifyIntegrity = async (
   return { ok: true, hash: actual };
 };
 
-export const INTEGRITY_REASON_LABELS: Record<
-  Exclude<IntegrityResult, { ok: true }>['reason'],
-  string
-> = {
+export const INTEGRITY_REASON_LABELS: Record<IntegrityFailureReason, string> = {
   missing_stamp: 'No integrity fingerprint was stored with this submission',
   unsupported_version: 'Integrity fingerprint uses an unsupported format',
   hash_mismatch: 'Cached submission was modified after it was saved',
