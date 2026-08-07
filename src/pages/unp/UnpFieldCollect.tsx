@@ -53,7 +53,18 @@ const compressImage = (file: File): Promise<string> =>
 const UnpFieldCollect = () => {
   const { account } = useUnpStaff();
   const { toast } = useToast();
-  const { queue, online, syncing, lastSyncedAt, encrypted, enqueue, remove, sync } = useOfflineFieldQueue();
+  const {
+    queue,
+    online,
+    syncing,
+    lastSyncedAt,
+    encrypted,
+    keyGeneration,
+    keyRotatedAt,
+    enqueue,
+    remove,
+    sync,
+  } = useOfflineFieldQueue();
   const [form, setForm] = useState(emptyForm());
   const [projects, setProjects] = useState<{ id: string; title: string }[]>([]);
   const [photo, setPhoto] = useState<string | null>(null);
