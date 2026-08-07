@@ -359,5 +359,18 @@ export const useOfflineFieldQueue = () => {
     };
   }, [sync]);
 
-  return { queue, online, syncing, lastSyncedAt, encrypted, enqueue, remove, sync, refresh };
+  return {
+    queue,
+    online,
+    syncing,
+    lastSyncedAt,
+    encrypted,
+    keyGeneration,
+    keyRotatedAt,
+    rotateKey,
+    enqueue,
+    remove,
+    sync,
+    refresh,
+  };
 };
