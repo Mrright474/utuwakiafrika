@@ -434,6 +434,8 @@ export const useOfflineFieldQueue = () => {
     rotationError,
     rotationAttempts,
     rotationRetryAt,
+    rotationIntervalMs,
+    setRotationIntervalDays,
 
     rotateKey,
     enqueue,
