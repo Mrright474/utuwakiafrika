@@ -417,6 +417,10 @@ export const useOfflineFieldQueue = () => {
     encrypted,
     keyGeneration,
     keyRotatedAt,
+    rotationError,
+    rotationAttempts,
+    rotationRetryAt,
+
     rotateKey,
     enqueue,
     remove,
