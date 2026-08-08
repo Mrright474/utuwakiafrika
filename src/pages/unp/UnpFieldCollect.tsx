@@ -64,6 +64,9 @@ const UnpFieldCollect = () => {
     rotationError,
     rotationAttempts,
     rotationRetryAt,
+    rotationIntervalMs,
+    setRotationIntervalDays,
+
 
     enqueue,
     remove,
