@@ -132,9 +132,18 @@ export const useOfflineFieldQueue = () => {
   const [rotationError, setRotationError] = useState<string | null>(null);
   const [rotationAttempts, setRotationAttempts] = useState(0);
   const [rotationRetryAt, setRotationRetryAt] = useState<string | null>(null);
+  const [rotationIntervalMs, setRotationIntervalMsState] = useState(() => getKeyRotationInterval());
   const rotating = useRef(false);
   const retryTimer = useRef<number | null>(null);
   const attemptsRef = useRef(0);
+
+  /** Updates the rotation schedule, clamped to the safe min/max bounds. */
+  const setRotationIntervalDays = useCallback((days: number) => {
+    const { intervalMs, clamped } = setKeyRotationInterval(daysToMs(days));
+    setRotationIntervalMsState(intervalMs);
+    return { intervalMs, clamped };
+  }, []);
+
 
 
   const persist = useCallback(async (items: QueuedFieldReport[]) => {
