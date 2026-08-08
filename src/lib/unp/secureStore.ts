@@ -15,8 +15,12 @@ const LEGACY_KEY_ID = 'field_queue_key_v1';
 const META_ID = 'field_queue_key_meta';
 const keyId = (generation: number) => `field_queue_key_g${generation}`;
 
-/** Rotate the device encryption key every 30 days. */
-export const KEY_ROTATION_INTERVAL_MS = 30 * 24 * 60 * 60 * 1000;
+/**
+ * Rotation interval is operator-configurable (clamped to safe bounds) — see
+ * `src/config/fieldEncryption.ts`. Defaults to 30 days.
+ */
+export const KEY_ROTATION_INTERVAL_MS = DEFAULT_KEY_ROTATION_INTERVAL_MS;
+
 
 export interface KeyMeta {
   generation: number;
