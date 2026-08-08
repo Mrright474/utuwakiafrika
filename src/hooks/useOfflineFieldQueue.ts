@@ -15,6 +15,11 @@ import {
   verifyIntegrity,
   type IntegrityStamp,
 } from '@/lib/unp/integrity';
+import {
+  daysToMs,
+  getKeyRotationInterval,
+  setKeyRotationInterval,
+} from '@/config/fieldEncryption';
 
 const STORAGE_KEY = 'unp_field_queue_v2';
 const LEGACY_STORAGE_KEY = 'unp_field_queue_v1';
