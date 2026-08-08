@@ -9,6 +9,8 @@
  * loses data.
  */
 
+import { DEFAULT_KEY_ROTATION_INTERVAL_MS, getKeyRotationInterval } from '@/config/fieldEncryption';
+
 const DB_NAME = 'unp_secure_store';
 const DB_STORE = 'keys';
 const LEGACY_KEY_ID = 'field_queue_key_v1';
