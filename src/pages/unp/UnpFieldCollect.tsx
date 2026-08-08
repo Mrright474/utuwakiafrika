@@ -12,6 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Loader2, MapPin, Wifi, WifiOff, RefreshCw, Camera, Trash2, CloudUpload, CheckCircle2, ShieldCheck, ShieldAlert } from 'lucide-react';
+import { KEY_ROTATION_PRESETS, msToDays } from '@/config/fieldEncryption';
 
 const NONE = '__none__';
 
