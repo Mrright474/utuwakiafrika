@@ -144,8 +144,8 @@ export const getKeyMeta = async (): Promise<KeyMeta | null> => {
   }
 };
 
-/** True when the active key is older than the rotation interval. */
-export const keyRotationDue = async (intervalMs = KEY_ROTATION_INTERVAL_MS): Promise<boolean> => {
+/** True when the active key is older than the configured rotation interval. */
+export const keyRotationDue = async (intervalMs = getKeyRotationInterval()): Promise<boolean> => {
   const meta = await getKeyMeta();
   if (!meta) return false;
   return Date.now() - new Date(meta.createdAt).getTime() >= intervalMs;
