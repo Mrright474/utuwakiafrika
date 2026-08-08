@@ -238,7 +238,7 @@ export const useOfflineFieldQueue = () => {
       });
       return outcome;
     },
-    []
+    [rotationIntervalMs]
   );
 
 
