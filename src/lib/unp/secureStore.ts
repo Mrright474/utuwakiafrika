@@ -9,14 +9,20 @@
  * loses data.
  */
 
+import { DEFAULT_KEY_ROTATION_INTERVAL_MS, getKeyRotationInterval } from '@/config/fieldEncryption';
+
 const DB_NAME = 'unp_secure_store';
 const DB_STORE = 'keys';
 const LEGACY_KEY_ID = 'field_queue_key_v1';
 const META_ID = 'field_queue_key_meta';
 const keyId = (generation: number) => `field_queue_key_g${generation}`;
 
-/** Rotate the device encryption key every 30 days. */
-export const KEY_ROTATION_INTERVAL_MS = 30 * 24 * 60 * 60 * 1000;
+/**
+ * Rotation interval is operator-configurable (clamped to safe bounds) — see
+ * `src/config/fieldEncryption.ts`. Defaults to 30 days.
+ */
+export const KEY_ROTATION_INTERVAL_MS = DEFAULT_KEY_ROTATION_INTERVAL_MS;
+
 
 export interface KeyMeta {
   generation: number;
@@ -138,8 +144,8 @@ export const getKeyMeta = async (): Promise<KeyMeta | null> => {
   }
 };
 
-/** True when the active key is older than the rotation interval. */
-export const keyRotationDue = async (intervalMs = KEY_ROTATION_INTERVAL_MS): Promise<boolean> => {
+/** True when the active key is older than the configured rotation interval. */
+export const keyRotationDue = async (intervalMs = getKeyRotationInterval()): Promise<boolean> => {
   const meta = await getKeyMeta();
   if (!meta) return false;
   return Date.now() - new Date(meta.createdAt).getTime() >= intervalMs;

@@ -12,6 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Loader2, MapPin, Wifi, WifiOff, RefreshCw, Camera, Trash2, CloudUpload, CheckCircle2, ShieldCheck, ShieldAlert } from 'lucide-react';
+import { KEY_ROTATION_PRESETS, msToDays } from '@/config/fieldEncryption';
 
 const NONE = '__none__';
 
@@ -64,6 +65,9 @@ const UnpFieldCollect = () => {
     rotationError,
     rotationAttempts,
     rotationRetryAt,
+    rotationIntervalMs,
+    setRotationIntervalDays,
+
 
     enqueue,
     remove,
@@ -199,6 +203,30 @@ const UnpFieldCollect = () => {
               {keyRotatedAt && ` · rotated ${new Date(keyRotatedAt).toLocaleDateString()}`}
             </Badge>
           )}
+          {encrypted && (
+            <Select
+              value={String(msToDays(rotationIntervalMs))}
+              onValueChange={(v) => {
+                const { intervalMs, clamped } = setRotationIntervalDays(Number(v));
+                toast({
+                  title: 'Rotation schedule updated',
+                  description: `Device key rotates every ${msToDays(intervalMs)} days${clamped ? ' (adjusted to the allowed range)' : ''}.`,
+                });
+              }}
+            >
+              <SelectTrigger className="h-7 w-[190px] text-xs" aria-label="Encryption key rotation schedule">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {KEY_ROTATION_PRESETS.map((p) => (
+                  <SelectItem key={p.days} value={String(p.days)}>
+                    {p.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+
           {rotationError && (
             <Badge variant="destructive" className="gap-1.5">
               <ShieldAlert className="h-3.5 w-3.5" />

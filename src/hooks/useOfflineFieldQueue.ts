@@ -15,6 +15,11 @@ import {
   verifyIntegrity,
   type IntegrityStamp,
 } from '@/lib/unp/integrity';
+import {
+  daysToMs,
+  getKeyRotationInterval,
+  setKeyRotationInterval,
+} from '@/config/fieldEncryption';
 
 const STORAGE_KEY = 'unp_field_queue_v2';
 const LEGACY_STORAGE_KEY = 'unp_field_queue_v1';
@@ -132,9 +137,18 @@ export const useOfflineFieldQueue = () => {
   const [rotationError, setRotationError] = useState<string | null>(null);
   const [rotationAttempts, setRotationAttempts] = useState(0);
   const [rotationRetryAt, setRotationRetryAt] = useState<string | null>(null);
+  const [rotationIntervalMs, setRotationIntervalMsState] = useState(() => getKeyRotationInterval());
   const rotating = useRef(false);
   const retryTimer = useRef<number | null>(null);
   const attemptsRef = useRef(0);
+
+  /** Updates the rotation schedule, clamped to the safe min/max bounds. */
+  const setRotationIntervalDays = useCallback((days: number) => {
+    const { intervalMs, clamped } = setKeyRotationInterval(daysToMs(days));
+    setRotationIntervalMsState(intervalMs);
+    return { intervalMs, clamped };
+  }, []);
+
 
 
   const persist = useCallback(async (items: QueuedFieldReport[]) => {
@@ -155,7 +169,7 @@ export const useOfflineFieldQueue = () => {
   const rotateKey = useCallback(
     async (force = false) => {
       if (!secureStoreAvailable() || rotating.current) return;
-      if (!force && !(await keyRotationDue())) return;
+      if (!force && !(await keyRotationDue(rotationIntervalMs))) return;
       if (force) {
         attemptsRef.current = 0;
         setRotationAttempts(0);
@@ -224,7 +238,7 @@ export const useOfflineFieldQueue = () => {
       });
       return outcome;
     },
-    []
+    [rotationIntervalMs]
   );
 
 
@@ -420,6 +434,8 @@ export const useOfflineFieldQueue = () => {
     rotationError,
     rotationAttempts,
     rotationRetryAt,
+    rotationIntervalMs,
+    setRotationIntervalDays,
 
     rotateKey,
     enqueue,
