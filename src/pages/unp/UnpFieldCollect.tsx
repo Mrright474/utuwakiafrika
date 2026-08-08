@@ -61,6 +61,10 @@ const UnpFieldCollect = () => {
     encrypted,
     keyGeneration,
     keyRotatedAt,
+    rotationError,
+    rotationAttempts,
+    rotationRetryAt,
+
     enqueue,
     remove,
     sync,
