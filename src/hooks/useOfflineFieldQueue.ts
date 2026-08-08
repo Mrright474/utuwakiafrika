@@ -117,6 +117,10 @@ const dataUrlToBlob = async (dataUrl: string) => (await fetch(dataUrl)).blob();
  * Reports are encrypted at rest (AES-GCM, non-extractable key in IndexedDB) and
  * pushed to Supabase as soon as connectivity is available.
  */
+/** Exponential backoff between failed key-rotation attempts (capped at 1h). */
+const ROTATION_BACKOFF_MS = [30 * 1000, 2 * 60 * 1000, 10 * 60 * 1000, 30 * 60 * 1000, 60 * 60 * 1000];
+const MAX_ROTATION_ATTEMPTS = ROTATION_BACKOFF_MS.length;
+
 export const useOfflineFieldQueue = () => {
   const [queue, setQueue] = useState<QueuedFieldReport[]>([]);
   const [online, setOnline] = useState<boolean>(() => navigator.onLine);
@@ -125,7 +129,12 @@ export const useOfflineFieldQueue = () => {
   const [encrypted] = useState(() => secureStoreAvailable());
   const [keyGeneration, setKeyGeneration] = useState<number | null>(null);
   const [keyRotatedAt, setKeyRotatedAt] = useState<string | null>(null);
+  const [rotationError, setRotationError] = useState<string | null>(null);
+  const [rotationAttempts, setRotationAttempts] = useState(0);
+  const [rotationRetryAt, setRotationRetryAt] = useState<string | null>(null);
   const rotating = useRef(false);
+  const retryTimer = useRef<number | null>(null);
+  const attemptsRef = useRef(0);
 
 
   const persist = useCallback(async (items: QueuedFieldReport[]) => {
@@ -140,12 +149,17 @@ export const useOfflineFieldQueue = () => {
   /**
    * Rotates the device encryption key and re-encrypts every queued item under
    * the new generation. Old key material is only discarded after the rewrite
-   * succeeds, so a pending submission can never become unreadable.
+   * succeeds, so a pending submission can never become unreadable. Failures are
+   * retried with exponential backoff and recorded in the audit log.
    */
   const rotateKey = useCallback(
     async (force = false) => {
       if (!secureStoreAvailable() || rotating.current) return;
       if (!force && !(await keyRotationDue())) return;
+      if (force) {
+        attemptsRef.current = 0;
+        setRotationAttempts(0);
+      }
       rotating.current = true;
       const outcome = await rotateEncryptionKey(async () => {
         const items = await read(); // decrypted with the retired key
@@ -155,10 +169,34 @@ export const useOfflineFieldQueue = () => {
       });
       rotating.current = false;
 
+      const meta = await getKeyMeta();
+      setKeyGeneration(meta?.generation ?? null);
+      setKeyRotatedAt(meta?.createdAt ?? null);
+
       if (outcome.rotated) {
-        const meta = await getKeyMeta();
-        setKeyGeneration(meta?.generation ?? null);
-        setKeyRotatedAt(meta?.createdAt ?? null);
+        attemptsRef.current = 0;
+        setRotationAttempts(0);
+        setRotationError(null);
+        setRotationRetryAt(null);
+        if (retryTimer.current) {
+          window.clearTimeout(retryTimer.current);
+          retryTimer.current = null;
+        }
+      } else if (outcome.stage !== 'unavailable') {
+        // Schedule a backed-off retry; key material for every generation is
+        // retained meanwhile so queued submissions stay readable.
+        const attempt = Math.min(attemptsRef.current + 1, MAX_ROTATION_ATTEMPTS);
+        attemptsRef.current = attempt;
+        setRotationAttempts(attempt);
+        setRotationError(outcome.error ?? 'Key rotation failed');
+        const delay = ROTATION_BACKOFF_MS[attempt - 1];
+        const retryAt = new Date(Date.now() + delay).toISOString();
+        setRotationRetryAt(retryAt);
+        if (retryTimer.current) window.clearTimeout(retryTimer.current);
+        retryTimer.current = window.setTimeout(() => {
+          retryTimer.current = null;
+          void rotateKey(true);
+        }, delay);
       }
 
       void logUnpAudit({
@@ -167,21 +205,28 @@ export const useOfflineFieldQueue = () => {
         moduleLabel: 'Field Reports',
         description: outcome.rotated
           ? `Rotated device encryption key (generation ${outcome.from} → ${outcome.to}) and re-encrypted ${outcome.reEncrypted} queued submission${outcome.reEncrypted === 1 ? '' : 's'}`
-          : 'Device encryption key rotation failed',
+          : `Device encryption key rotation failed at "${outcome.stage}" stage: ${outcome.error ?? 'Unknown error'}${outcome.rolledBack ? ' — active key rolled back to previous generation' : ''}`,
         metadata: {
           event: 'key_rotation',
           outcome: outcome.rotated ? 'success' : 'failure',
+          stage: outcome.stage,
           from_generation: outcome.from ?? null,
           to_generation: outcome.to ?? null,
           re_encrypted: outcome.reEncrypted ?? 0,
           forced: force,
           error: outcome.error ?? null,
+          rolled_back: outcome.rolledBack ?? false,
+          retained_generations: outcome.retained ?? [],
+          data_safe: outcome.dataSafe ?? null,
+          attempt: outcome.rotated ? 0 : attemptsRef.current,
+          queued_items: (await read()).length,
         },
       });
       return outcome;
     },
     []
   );
+
 
   const enqueue = useCallback(
     async (report: Omit<QueuedFieldReport, 'localId' | 'createdAt' | 'attempts'>) => {
@@ -340,8 +385,13 @@ export const useOfflineFieldQueue = () => {
     return () => {
       cancelled = true;
       window.clearInterval(timer);
+      if (retryTimer.current) {
+        window.clearTimeout(retryTimer.current);
+        retryTimer.current = null;
+      }
     };
   }, [rotateKey]);
+
 
   useEffect(() => {
     const goOnline = () => {
@@ -367,6 +417,10 @@ export const useOfflineFieldQueue = () => {
     encrypted,
     keyGeneration,
     keyRotatedAt,
+    rotationError,
+    rotationAttempts,
+    rotationRetryAt,
+
     rotateKey,
     enqueue,
     remove,

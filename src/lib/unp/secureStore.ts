@@ -145,29 +145,48 @@ export const keyRotationDue = async (intervalMs = KEY_ROTATION_INTERVAL_MS): Pro
   return Date.now() - new Date(meta.createdAt).getTime() >= intervalMs;
 };
 
+/** Where a rotation attempt stopped, used for audit + retry decisions. */
+export type RotationStage = 'unavailable' | 'key_create' | 'promote' | 're_encrypt' | 'cleanup' | 'done';
+
 export interface RotationOutcome {
   rotated: boolean;
   from?: number;
   to?: number;
   reEncrypted?: number;
   error?: string;
+  /** Stage the attempt reached (or failed at). */
+  stage: RotationStage;
+  /** True when the active generation was rolled back after a failure. */
+  rolledBack?: boolean;
+  /** Generations still held in IndexedDB so cached payloads stay readable. */
+  retained?: number[];
+  /** True when data is safe despite the failure (old keys retained). */
+  dataSafe?: boolean;
 }
 
 /**
  * Rotates the device key and re-encrypts cached data under the new generation.
  *
- * `reEncrypt` receives the new generation number and must rewrite every cached
- * payload (reading with the old key still available, writing with the new active
- * key). Old generations are only destroyed after it resolves, so a failure mid
- * rotation leaves the data readable rather than lost.
+ * Failure handling: the new key is created and promoted before re-encryption,
+ * but *no* key material is destroyed until the rewrite succeeds. If the rewrite
+ * throws, the active generation is rolled back to the previous one and every
+ * generation (old + new) is retained, so cached payloads written under either
+ * key remain readable and the caller can retry with backoff.
  */
 export const rotateEncryptionKey = async (
   reEncrypt: (generation: number) => Promise<number>
 ): Promise<RotationOutcome> => {
-  if (!secureStoreAvailable()) return { rotated: false, error: 'Secure storage unavailable' };
+  if (!secureStoreAvailable())
+    return { rotated: false, stage: 'unavailable', error: 'Secure storage unavailable', dataSafe: true };
+
+  let stage: RotationStage = 'key_create';
+  let current: KeyMeta | null = null;
+  let next: number | null = null;
+  let promoted = false;
+
   try {
-    const current = await getMeta();
-    const next = current.generation + 1;
+    current = await getMeta();
+    next = current.generation + 1;
 
     // 1. Create + persist the new key while the old one is still active.
     const key = await newKey();
@@ -176,6 +195,7 @@ export const rotateEncryptionKey = async (
 
     // 2. Promote it. Old generations stay in IndexedDB so nothing becomes
     //    unreadable if the re-encryption pass is interrupted.
+    stage = 'promote';
     const meta: KeyMeta = {
       generation: next,
       createdAt: new Date().toISOString(),
@@ -183,11 +203,14 @@ export const rotateEncryptionKey = async (
     };
     await idb('readwrite', (s) => s.put(meta, META_ID));
     metaPromise = Promise.resolve(meta);
+    promoted = true;
 
     // 3. Rewrite cached payloads under the new key.
+    stage = 're_encrypt';
     const reEncrypted = await reEncrypt(next);
 
     // 4. Only now discard retired key material.
+    stage = 'cleanup';
     for (const gen of meta.retired) {
       await idb('readwrite', (s) => s.delete(keyId(gen)));
       keyCache.delete(gen);
@@ -197,12 +220,59 @@ export const rotateEncryptionKey = async (
     await idb('readwrite', (s) => s.put(cleaned, META_ID));
     metaPromise = Promise.resolve(cleaned);
 
-    return { rotated: true, from: current.generation, to: next, reEncrypted };
+    return {
+      rotated: true,
+      stage: 'done',
+      from: current.generation,
+      to: next,
+      reEncrypted,
+      retained: [next],
+      dataSafe: true,
+    };
   } catch (err) {
-    metaPromise = null;
-    return { rotated: false, error: err instanceof Error ? err.message : 'Unknown error' };
+    const error = err instanceof Error ? err.message : 'Unknown error';
+    let rolledBack = false;
+    const retained = new Set<number>();
+    if (current) {
+      current.retired.forEach((g) => retained.add(g));
+      retained.add(current.generation);
+    }
+    if (promoted && next !== null) retained.add(next);
+
+    // Roll the active generation back so new writes use the key the cache was
+    // last written with; keep every key so nothing becomes unreadable.
+    if (promoted && current) {
+      try {
+        const restored: KeyMeta = {
+          generation: current.generation,
+          createdAt: current.createdAt,
+          retired: Array.from(retained).filter((g) => g !== current!.generation),
+        };
+        await idb('readwrite', (s) => s.put(restored, META_ID));
+        metaPromise = Promise.resolve(restored);
+        rolledBack = true;
+      } catch {
+        metaPromise = null;
+      }
+    } else {
+      metaPromise = null;
+    }
+
+    return {
+      rotated: false,
+      stage,
+      from: current?.generation,
+      to: next ?? undefined,
+      error,
+      rolledBack,
+      retained: Array.from(retained).sort((a, b) => a - b),
+      // Data is safe as long as no key material was deleted, i.e. we never
+      // reached (or completed) cleanup.
+      dataSafe: stage !== 'cleanup',
+    };
   }
 };
+
 
 /** True when the browser can actually protect the cache at rest. */
 export const secureStoreAvailable = () =>
