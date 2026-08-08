@@ -385,8 +385,13 @@ export const useOfflineFieldQueue = () => {
     return () => {
       cancelled = true;
       window.clearInterval(timer);
+      if (retryTimer.current) {
+        window.clearTimeout(retryTimer.current);
+        retryTimer.current = null;
+      }
     };
   }, [rotateKey]);
+
 
   useEffect(() => {
     const goOnline = () => {
