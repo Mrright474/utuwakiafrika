@@ -169,7 +169,7 @@ export const useOfflineFieldQueue = () => {
   const rotateKey = useCallback(
     async (force = false) => {
       if (!secureStoreAvailable() || rotating.current) return;
-      if (!force && !(await keyRotationDue())) return;
+      if (!force && !(await keyRotationDue(rotationIntervalMs))) return;
       if (force) {
         attemptsRef.current = 0;
         setRotationAttempts(0);
