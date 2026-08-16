@@ -191,6 +191,15 @@ const UnpFieldCollect = () => {
           <p className="text-sm text-muted-foreground">
             Works without internet. Reports are encrypted on your device and sync automatically.
           </p>
+          {encrypted && keyRotatedAt && (
+            <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
+              <Calendar className="h-3 w-3" />
+              <span>
+                Last rotation: {new Date(keyRotatedAt).toLocaleString()} · Next:{' '}
+                {new Date(new Date(keyRotatedAt).getTime() + rotationIntervalMs).toLocaleString()}
+              </span>
+            </p>
+          )}
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Badge variant={encrypted ? 'secondary' : 'outline'} className="gap-1.5">
