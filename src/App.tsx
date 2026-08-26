@@ -75,6 +75,8 @@ const UnpModulePage = lazyRetry(() => import("./pages/unp/UnpModulePage"));
 const UnpPermissions = lazyRetry(() => import("./pages/unp/UnpPermissions"));
 const UnpAuditLog = lazyRetry(() => import("./pages/unp/UnpAuditLog"));
 const UnpFieldCollect = lazyRetry(() => import("./pages/unp/UnpFieldCollect"));
+const OfflineHarness = lazyRetry(() => import("./pages/dev/OfflineHarness"));
+
 
 import ProtectedAdminRoute from "./components/admin/ProtectedAdminRoute";
 import UnpProtectedRoute from "./components/unp/UnpProtectedRoute";
@@ -141,7 +143,11 @@ const App = () => {
             <Route path="/unp/audit" element={<UnpProtectedRoute><UnpLayout><UnpAuditLog /></UnpLayout></UnpProtectedRoute>} />
             <Route path="/unp/field" element={<UnpProtectedRoute><UnpLayout><UnpFieldCollect /></UnpLayout></UnpProtectedRoute>} />
             <Route path="/unp/m/:moduleId" element={<UnpProtectedRoute><UnpLayout><UnpModulePage /></UnpLayout></UnpProtectedRoute>} />
+            {import.meta.env.DEV && (
+              <Route path="/dev/offline-harness" element={<OfflineHarness />} />
+            )}
             <Route path="/admin/*" element={<ProtectedAdminRoute><Admin /></ProtectedAdminRoute>} />
+
 
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
