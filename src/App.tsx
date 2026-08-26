@@ -75,6 +75,8 @@ const UnpModulePage = lazyRetry(() => import("./pages/unp/UnpModulePage"));
 const UnpPermissions = lazyRetry(() => import("./pages/unp/UnpPermissions"));
 const UnpAuditLog = lazyRetry(() => import("./pages/unp/UnpAuditLog"));
 const UnpFieldCollect = lazyRetry(() => import("./pages/unp/UnpFieldCollect"));
+const OfflineHarness = lazyRetry(() => import("./pages/dev/OfflineHarness"));
+
 
 import ProtectedAdminRoute from "./components/admin/ProtectedAdminRoute";
 import UnpProtectedRoute from "./components/unp/UnpProtectedRoute";
