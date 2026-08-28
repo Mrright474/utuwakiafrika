@@ -168,8 +168,9 @@ const OfflineHarness = () => {
     setQueue(items);
   };
 
-  const sync = async () => {
-    if (!online) return;
+  const sync = async (force = false) => {
+    if (!online && !force) return;
+
     setBusy(true);
     const pending = await readQueue();
     const remaining: HarnessItem[] = [];
