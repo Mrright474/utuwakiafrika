@@ -1,6 +1,7 @@
 import React from 'react';
 import Layout from '@/components/layout/Layout';
 import DonationForm from '@/components/donation/DonationForm';
+import MobileMoneyDonate from '@/components/donation/MobileMoneyDonate';
 import { Heart, Users, Globe, Sparkles } from 'lucide-react';
 import SEO from '@/components/seo/SEO';
 
