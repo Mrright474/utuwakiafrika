@@ -246,7 +246,7 @@ const OfflineHarness = () => {
       if (b.length) setAudit((a) => [...b.map((r) => ({ ...r, buffered: true })).reverse(), ...a]);
       return [];
     });
-    await sync();
+    await sync(true);
   };
 
   const rotate = async () => {
