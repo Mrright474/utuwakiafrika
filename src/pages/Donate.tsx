@@ -82,6 +82,8 @@ const Donate = () => {
             </div>
           </div>
 
+          <MobileMoneyDonate />
+
           <DonationForm />
 
           {/* Ubuntu Trust Statement */}
