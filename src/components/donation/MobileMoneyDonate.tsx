@@ -1,15 +1,18 @@
 import React from 'react';
 import { Smartphone, Copy, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 
 // Founder mobile money lines (names: Ben Kazigo Luweru)
 const AIRTEL_NUMBER = '0744496195';
 const MTN_NUMBER = '0778777976';
 
-// USSD deep-links — "#" must be URL-encoded as %23 in tel: links
-const AIRTEL_USSD = `tel:*185*1*1*${AIRTEL_NUMBER}%23`; // Airtel Money → Send Money
-const MTN_USSD = `tel:*165*1*1*${MTN_NUMBER}%23`; // MTN MoMo → Send Money
+const PRESETS = [10000, 20000, 50000, 100000, 200000];
+
+const formatAmount = (value: number) =>
+  value.toLocaleString('en-UG', { maximumFractionDigits: 0 });
 
 const MobileMoneyDonate = () => {
   const { toast } = useToast();
