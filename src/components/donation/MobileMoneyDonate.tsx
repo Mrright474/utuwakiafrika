@@ -150,7 +150,6 @@ const MobileMoneyDonate = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {channels.map((c) => {
           const code = amountValid ? c.code(amount) : c.code(0).replace('*0', '');
-          const href = amountValid ? c.href(amount) : '#';
           return (
             <div
               key={c.key}
