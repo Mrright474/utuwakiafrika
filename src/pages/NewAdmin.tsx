@@ -17,6 +17,8 @@ import WorkplanTab from '@/components/admin/WorkplanTab';
 import OrgOverviewTab from '@/components/admin/OrgOverviewTab';
 import GanttTimeline from '@/components/admin/GanttTimeline';
 import MfaSettings from '@/components/admin/MfaSettings';
+import DonationsTab from '@/components/admin/DonationsTab';
+import { HandCoins } from 'lucide-react';
 import { Shield } from 'lucide-react';
 
 const formatDate = (dateString: string) => {
