@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
+import DonationDetailsDialog from './DonationDetailsDialog';
 
 // Founder mobile money lines (names: Ben Kazigo Luweru)
 const AIRTEL_NUMBER = '0744496195';
@@ -24,6 +25,13 @@ const MobileMoneyDonate = () => {
   const [amount, setAmount] = React.useState<number | ''>(50000);
   const [customValue, setCustomValue] = React.useState('');
   const [copied, setCopied] = React.useState<string | null>(null);
+  const [detailsOpen, setDetailsOpen] = React.useState(false);
+  const [activeChannel, setActiveChannel] = React.useState<{
+    key: string;
+    name: string;
+    number: string;
+    href: (amt: number) => string;
+  } | null>(null);
 
   const copyNumber = async (label: string, number: string) => {
     try {
