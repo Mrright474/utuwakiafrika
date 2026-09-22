@@ -209,6 +209,14 @@ const MobileMoneyDonate = () => {
       <p className="text-center text-sm text-utu-gray mt-6 max-w-xl mx-auto">
         The tap-to-donate buttons work best on a mobile phone. On a desktop, simply dial the code shown on your phone instead.
       </p>
+
+      <DonationDetailsDialog
+        open={detailsOpen}
+        onOpenChange={setDetailsOpen}
+        channel={activeChannel}
+        amount={typeof amount === 'number' ? amount : 0}
+        dialHref={(amt) => (activeChannel ? activeChannel.href(amt) : '#')}
+      />
     </div>
   );
 };
