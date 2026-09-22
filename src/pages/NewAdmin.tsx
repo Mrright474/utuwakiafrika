@@ -17,6 +17,8 @@ import WorkplanTab from '@/components/admin/WorkplanTab';
 import OrgOverviewTab from '@/components/admin/OrgOverviewTab';
 import GanttTimeline from '@/components/admin/GanttTimeline';
 import MfaSettings from '@/components/admin/MfaSettings';
+import DonationsTab from '@/components/admin/DonationsTab';
+import { HandCoins } from 'lucide-react';
 import { Shield } from 'lucide-react';
 
 const formatDate = (dateString: string) => {
@@ -144,7 +146,7 @@ const NewAdmin = () => {
             </div>
           ) : (
             <Tabs value={activeTab} onValueChange={(v) => { setActiveTab(v); if (v !== 'workplan') setSelectedProjectId(null); }} className="w-full">
-              <TabsList className="grid w-full grid-cols-11 mb-8">
+              <TabsList className="grid w-full grid-cols-12 mb-8">
                 <TabsTrigger value="overview">
                   <LayoutDashboard className="mr-1 h-4 w-4" />
                   <span className="hidden lg:inline">Overview</span>
@@ -185,11 +187,19 @@ const NewAdmin = () => {
                   <ListTodo className="mr-1 h-4 w-4" />
                   <span className="hidden lg:inline">Workplan</span> ({tasks.length})
                 </TabsTrigger>
+                <TabsTrigger value="donations">
+                  <HandCoins className="mr-1 h-4 w-4" />
+                  <span className="hidden lg:inline">Donations</span>
+                </TabsTrigger>
                 <TabsTrigger value="security">
                   <Shield className="mr-1 h-4 w-4" />
                   <span className="hidden lg:inline">Security</span>
                 </TabsTrigger>
               </TabsList>
+
+              <TabsContent value="donations">
+                <DonationsTab />
+              </TabsContent>
 
               <TabsContent value="volunteers">
                 <Card>
