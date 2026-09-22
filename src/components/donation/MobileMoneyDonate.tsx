@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
+import DonationDetailsDialog from './DonationDetailsDialog';
 
 // Founder mobile money lines (names: Ben Kazigo Luweru)
 const AIRTEL_NUMBER = '0744496195';
@@ -24,6 +25,13 @@ const MobileMoneyDonate = () => {
   const [amount, setAmount] = React.useState<number | ''>(50000);
   const [customValue, setCustomValue] = React.useState('');
   const [copied, setCopied] = React.useState<string | null>(null);
+  const [detailsOpen, setDetailsOpen] = React.useState(false);
+  const [activeChannel, setActiveChannel] = React.useState<{
+    key: string;
+    name: string;
+    number: string;
+    href: (amt: number) => string;
+  } | null>(null);
 
   const copyNumber = async (label: string, number: string) => {
     try {
@@ -142,7 +150,6 @@ const MobileMoneyDonate = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {channels.map((c) => {
           const code = amountValid ? c.code(amount) : c.code(0).replace('*0', '');
-          const href = amountValid ? c.href(amount) : '#';
           return (
             <div
               key={c.key}
@@ -158,15 +165,17 @@ const MobileMoneyDonate = () => {
               <p className="text-xs text-utu-gray mb-5">Ben Kazigo Luweru</p>
 
               {amountValid ? (
-                <a href={href} className="block">
-                  <Button
-                    size="lg"
-                    className={`w-full bg-gradient-to-r ${c.gradient} text-white font-bold text-lg py-6 hover:opacity-90 transition-opacity`}
-                  >
-                    <Smartphone className="mr-2 h-5 w-5" />
-                    Tap to Donate UGX {formatAmount(amount)}
-                  </Button>
-                </a>
+                <Button
+                  size="lg"
+                  onClick={() => {
+                    setActiveChannel({ key: c.key, name: c.name, number: c.number, href: c.href });
+                    setDetailsOpen(true);
+                  }}
+                  className={`w-full bg-gradient-to-r ${c.gradient} text-white font-bold text-lg py-6 hover:opacity-90 transition-opacity`}
+                >
+                  <Smartphone className="mr-2 h-5 w-5" />
+                  Tap to Donate UGX {formatAmount(amount)}
+                </Button>
               ) : (
                 <Button
                   size="lg"
@@ -199,6 +208,14 @@ const MobileMoneyDonate = () => {
       <p className="text-center text-sm text-utu-gray mt-6 max-w-xl mx-auto">
         The tap-to-donate buttons work best on a mobile phone. On a desktop, simply dial the code shown on your phone instead.
       </p>
+
+      <DonationDetailsDialog
+        open={detailsOpen}
+        onOpenChange={setDetailsOpen}
+        channel={activeChannel}
+        amount={typeof amount === 'number' ? amount : 0}
+        dialHref={(amt) => (activeChannel ? activeChannel.href(amt) : '#')}
+      />
     </div>
   );
 };
