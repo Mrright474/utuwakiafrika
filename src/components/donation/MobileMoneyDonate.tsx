@@ -166,15 +166,17 @@ const MobileMoneyDonate = () => {
               <p className="text-xs text-utu-gray mb-5">Ben Kazigo Luweru</p>
 
               {amountValid ? (
-                <a href={href} className="block">
-                  <Button
-                    size="lg"
-                    className={`w-full bg-gradient-to-r ${c.gradient} text-white font-bold text-lg py-6 hover:opacity-90 transition-opacity`}
-                  >
-                    <Smartphone className="mr-2 h-5 w-5" />
-                    Tap to Donate UGX {formatAmount(amount)}
-                  </Button>
-                </a>
+                <Button
+                  size="lg"
+                  onClick={() => {
+                    setActiveChannel({ key: c.key, name: c.name, number: c.number, href: c.href });
+                    setDetailsOpen(true);
+                  }}
+                  className={`w-full bg-gradient-to-r ${c.gradient} text-white font-bold text-lg py-6 hover:opacity-90 transition-opacity`}
+                >
+                  <Smartphone className="mr-2 h-5 w-5" />
+                  Tap to Donate UGX {formatAmount(amount)}
+                </Button>
               ) : (
                 <Button
                   size="lg"
