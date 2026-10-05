@@ -17,3 +17,6 @@ verify_jwt = false
 
 [functions.create-volunteer-profile]
 verify_jwt = false
+
+[functions.donation-insights]
+verify_jwt = false
