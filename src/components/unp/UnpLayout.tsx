@@ -48,6 +48,10 @@ const SidebarNav = ({ onNavigate }: { onNavigate?: () => void }) => {
               Module Permissions
             </NavLink>
           )}
+          <NavLink to="/unp/review" className={linkClass} onClick={onNavigate}>
+            <Icons.Inbox className="h-4 w-4" />
+            Review Centre
+          </NavLink>
           <NavLink to="/unp/field" className={linkClass} onClick={onNavigate}>
             <ClipboardPlus className="h-4 w-4" />
             Field Data Collection

@@ -75,6 +75,7 @@ const UnpModulePage = lazyRetry(() => import("./pages/unp/UnpModulePage"));
 const UnpPermissions = lazyRetry(() => import("./pages/unp/UnpPermissions"));
 const UnpAuditLog = lazyRetry(() => import("./pages/unp/UnpAuditLog"));
 const UnpFieldCollect = lazyRetry(() => import("./pages/unp/UnpFieldCollect"));
+const UnpReview = lazyRetry(() => import("./pages/unp/UnpReview"));
 const OfflineHarness = lazyRetry(() => import("./pages/dev/OfflineHarness"));
 
 
@@ -142,6 +143,7 @@ const App = () => {
             <Route path="/unp/permissions" element={<UnpProtectedRoute adminOnly><UnpLayout><UnpPermissions /></UnpLayout></UnpProtectedRoute>} />
             <Route path="/unp/audit" element={<UnpProtectedRoute><UnpLayout><UnpAuditLog /></UnpLayout></UnpProtectedRoute>} />
             <Route path="/unp/field" element={<UnpProtectedRoute><UnpLayout><UnpFieldCollect /></UnpLayout></UnpProtectedRoute>} />
+            <Route path="/unp/review" element={<UnpProtectedRoute><UnpLayout><UnpReview /></UnpLayout></UnpProtectedRoute>} />
             <Route path="/unp/m/:moduleId" element={<UnpProtectedRoute><UnpLayout><UnpModulePage /></UnpLayout></UnpProtectedRoute>} />
             {import.meta.env.DEV && (
               <Route path="/dev/offline-harness" element={<OfflineHarness />} />
