@@ -3,10 +3,12 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Loader2, HandCoins, CheckCircle, XCircle, Download, Phone, Clock } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Loader2, HandCoins, Download, Phone, Clock, RefreshCw } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { exportToCSV } from '@/utils/exportData';
+import DonationInsights from './DonationInsights';
 
 interface DonationRequest {
   id: string;
@@ -19,7 +21,15 @@ interface DonationRequest {
   note: string | null;
   status: string;
   created_at: string;
+  status_updated_at: string | null;
 }
+
+type DonationStatus = 'pending' | 'confirmed' | 'rejected';
+const STATUSES: { value: DonationStatus; label: string }[] = [
+  { value: 'pending', label: 'Pending' },
+  { value: 'confirmed', label: 'Confirmed' },
+  { value: 'rejected', label: 'Rejected' },
+];
 
 const providerLabel: Record<string, string> = {
   airtel: 'Airtel Money',
@@ -27,7 +37,7 @@ const providerLabel: Record<string, string> = {
 };
 
 const statusVariant = (status: string) =>
-  status === 'confirmed' ? 'default' : status === 'cancelled' ? 'destructive' : 'secondary';
+  status === 'confirmed' ? 'default' : status === 'rejected' ? 'destructive' : 'secondary';
 
 const formatMoney = (amount: number, currency: string) =>
   `${currency} ${Number(amount).toLocaleString('en-UG', { maximumFractionDigits: 0 })}`;
@@ -44,7 +54,7 @@ const DonationsTab = () => {
         .select('*')
         .order('created_at', { ascending: false });
       if (error) throw error;
-      return data as DonationRequest[];
+      return data as unknown as DonationRequest[];
     },
   });
 
@@ -61,13 +71,13 @@ const DonationsTab = () => {
   }, [queryClient]);
 
   const updateStatus = useMutation({
-    mutationFn: async ({ id, status }: { id: string; status: string }) => {
+    mutationFn: async ({ id, status }: { id: string; status: DonationStatus }) => {
       const { error } = await supabase.from('donation_requests').update({ status }).eq('id', id);
       if (error) throw error;
     },
-    onSuccess: () => {
+    onSuccess: (_d, v) => {
       queryClient.invalidateQueries({ queryKey: ['donation-requests'] });
-      toast({ title: 'Donation updated' });
+      toast({ title: `Donation marked ${v.status}` });
     },
     onError: () => toast({ title: 'Could not update donation', variant: 'destructive' }),
   });
@@ -86,8 +96,19 @@ const DonationsTab = () => {
 
   const handleExport = () => {
     exportToCSV(
-      donations.map((d) => ({ ...d, provider: providerLabel[d.provider] ?? d.provider })),
-      ['donor_name', 'phone', 'email', 'amount', 'currency', 'provider', 'status', 'note', 'created_at'],
+      donations.map((d) => ({
+        amount: d.amount,
+        currency: d.currency,
+        operator: providerLabel[d.provider] ?? d.provider,
+        donor_name: d.donor_name,
+        donor_phone: d.phone,
+        donor_email: d.email ?? '',
+        note: d.note ?? '',
+        status: d.status,
+        submitted_at: d.created_at,
+        status_updated_at: d.status_updated_at ?? '',
+      })),
+      ['amount', 'currency', 'operator', 'donor_name', 'donor_phone', 'donor_email', 'note', 'status', 'submitted_at', 'status_updated_at'],
       `donations-${new Date().toISOString().slice(0, 10)}`
     );
   };
@@ -103,31 +124,13 @@ const DonationsTab = () => {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>Confirmed total</CardDescription>
-            <CardTitle className="text-2xl">{formatMoney(totals.confirmedAmount, 'UGX')}</CardTitle>
-          </CardHeader>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>Pending total</CardDescription>
-            <CardTitle className="text-2xl">{formatMoney(totals.pendingAmount, 'UGX')}</CardTitle>
-          </CardHeader>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>Confirmed donations</CardDescription>
-            <CardTitle className="text-2xl">{totals.confirmedCount}</CardTitle>
-          </CardHeader>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>Awaiting confirmation</CardDescription>
-            <CardTitle className="text-2xl">{totals.pendingCount}</CardTitle>
-          </CardHeader>
-        </Card>
+        <Card><CardHeader className="pb-2"><CardDescription>Confirmed total</CardDescription><CardTitle className="text-2xl">{formatMoney(totals.confirmedAmount, 'UGX')}</CardTitle></CardHeader></Card>
+        <Card><CardHeader className="pb-2"><CardDescription>Pending total</CardDescription><CardTitle className="text-2xl">{formatMoney(totals.pendingAmount, 'UGX')}</CardTitle></CardHeader></Card>
+        <Card><CardHeader className="pb-2"><CardDescription>Confirmed donations</CardDescription><CardTitle className="text-2xl">{totals.confirmedCount}</CardTitle></CardHeader></Card>
+        <Card><CardHeader className="pb-2"><CardDescription>Awaiting confirmation</CardDescription><CardTitle className="text-2xl">{totals.pendingCount}</CardTitle></CardHeader></Card>
       </div>
+
+      <DonationInsights />
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
@@ -136,9 +139,7 @@ const DonationsTab = () => {
               <HandCoins className="mr-2 h-5 w-5" />
               Mobile Money Donations
             </CardTitle>
-            <CardDescription>
-              Every tap-to-donate submission with amount, operator and time received.
-            </CardDescription>
+            <CardDescription>Every Airtel and MTN submission. Change the status to confirm or reject it.</CardDescription>
           </div>
           <Button variant="outline" size="sm" onClick={handleExport} disabled={donations.length === 0}>
             <Download className="mr-2 h-4 w-4" />
@@ -151,10 +152,7 @@ const DonationsTab = () => {
           ) : (
             <div className="space-y-3">
               {donations.map((d) => (
-                <div
-                  key={d.id}
-                  className="flex flex-col md:flex-row md:items-center justify-between gap-3 border rounded-lg p-4"
-                >
+                <div key={d.id} className="flex flex-col md:flex-row md:items-center justify-between gap-3 border rounded-lg p-4">
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="font-semibold">{d.donor_name}</span>
@@ -162,41 +160,31 @@ const DonationsTab = () => {
                       <Badge variant={statusVariant(d.status)}>{d.status}</Badge>
                     </div>
                     <div className="text-sm text-muted-foreground flex items-center gap-4 flex-wrap">
-                      <span className="flex items-center">
-                        <Phone className="mr-1 h-3.5 w-3.5" />
-                        {d.phone}
-                      </span>
+                      <span className="flex items-center"><Phone className="mr-1 h-3.5 w-3.5" />{d.phone}</span>
                       {d.email && <span>{d.email}</span>}
-                      <span className="flex items-center">
-                        <Clock className="mr-1 h-3.5 w-3.5" />
-                        {new Date(d.created_at).toLocaleString()}
-                      </span>
+                      <span className="flex items-center"><Clock className="mr-1 h-3.5 w-3.5" />Submitted {new Date(d.created_at).toLocaleString()}</span>
+                      {d.status_updated_at && (
+                        <span className="flex items-center"><RefreshCw className="mr-1 h-3.5 w-3.5" />Status updated {new Date(d.status_updated_at).toLocaleString()}</span>
+                      )}
                     </div>
                     {d.note && <p className="text-sm italic text-muted-foreground">"{d.note}"</p>}
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="text-lg font-bold whitespace-nowrap">
-                      {formatMoney(d.amount, d.currency)}
-                    </span>
-                    {d.status === 'pending' && (
-                      <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          onClick={() => updateStatus.mutate({ id: d.id, status: 'confirmed' })}
-                        >
-                          <CheckCircle className="mr-1 h-4 w-4" />
-                          Confirm
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => updateStatus.mutate({ id: d.id, status: 'cancelled' })}
-                        >
-                          <XCircle className="mr-1 h-4 w-4" />
-                          Cancel
-                        </Button>
-                      </div>
-                    )}
+                    <span className="text-lg font-bold whitespace-nowrap">{formatMoney(d.amount, d.currency)}</span>
+                    <Select
+                      value={d.status}
+                      onValueChange={(v) => updateStatus.mutate({ id: d.id, status: v as DonationStatus })}
+                      disabled={updateStatus.isPending}
+                    >
+                      <SelectTrigger className="w-36" aria-label={`Status for ${d.donor_name}`}>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {STATUSES.map((s) => (
+                          <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
               ))}
