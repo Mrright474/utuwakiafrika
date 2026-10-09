@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Loader2, Download, FileText, HandCoins, ScrollText, RefreshCw } from 'lucide-react';
 import { exportToCSV } from '@/utils/exportData';
+import ReviewInsights from '@/components/unp/ReviewInsights';
 
 const fmtDate = (v?: string | null) => (v ? new Date(v).toLocaleString() : '—');
 const matches = (row: Record<string, unknown>, q: string) =>
@@ -33,44 +34,64 @@ const ErrorNote = () => (
   </p>
 );
 
+const inRange = (value: unknown, from: string, to: string) => {
+  if (!from && !to) return true;
+  if (!value) return false;
+  const day = String(value).slice(0, 10);
+  return (!from || day >= from) && (!to || day <= to);
+};
+
 export default function UnpReview() {
   const [q, setQ] = useState('');
+  const [from, setFrom] = useState('');
+  const [to, setTo] = useState('');
   const reports = useTable('unp_field_reports', 'report_date');
   const donations = useTable('donation_requests', 'created_at');
   const audit = useTable('unp_audit_log', 'created_at');
 
-  const fReports = useMemo(() => (reports.data ?? []).filter((r) => matches(r, q)), [reports.data, q]);
-  const fDonations = useMemo(() => (donations.data ?? []).filter((r) => matches(r, q)), [donations.data, q]);
-  const fAudit = useMemo(() => (audit.data ?? []).filter((r) => matches(r, q)), [audit.data, q]);
+  const fReports = useMemo(() => (reports.data ?? []).filter((r) => inRange(r.report_date, from, to) && matches(r, q)), [reports.data, q, from, to]);
+  const fDonations = useMemo(() => (donations.data ?? []).filter((r) => inRange(r.created_at, from, to) && matches(r, q)), [donations.data, q, from, to]);
+  const fAudit = useMemo(() => (audit.data ?? []).filter((r) => inRange(r.created_at, from, to) && matches(r, q)), [audit.data, q, from, to]);
 
-  const donationTotal = (donations.data ?? []).reduce((s, d) => s + Number(d.amount || 0), 0);
+  const donationTotal = fDonations.reduce((s, d) => s + Number(d.amount || 0), 0);
   const refreshAll = () => { reports.refetch(); donations.refetch(); audit.refetch(); };
   const stamp = new Date().toISOString().slice(0, 10);
+  const badRange = !!from && !!to && from > to;
 
   const body = (state: { isLoading: boolean; error: unknown }, rows: unknown[], emptyText: string, table: JSX.Element) =>
     state.isLoading ? <div className="flex justify-center py-10"><Loader2 className="h-6 w-6 animate-spin" /></div>
     : state.error ? <ErrorNote />
-    : rows.length === 0 ? <Empty text={emptyText} />
+    : rows.length === 0 ? <Empty text={from || to ? 'No records in this date range.' : emptyText} />
     : <div className="overflow-x-auto">{table}</div>;
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <h1 className="text-2xl font-bold">Review Centre</h1>
           <p className="text-sm text-muted-foreground">Field reports, donations and activity history in one place.</p>
         </div>
-        <div className="flex gap-2">
-          <Input placeholder="Search…" value={q} onChange={(e) => setQ(e.target.value)} className="w-56" />
+        <div className="flex flex-wrap items-end gap-2">
+          <label className="text-xs text-muted-foreground">From
+            <Input type="date" value={from} max={to || undefined} onChange={(e) => setFrom(e.target.value)} className="w-40" aria-label="From date" />
+          </label>
+          <label className="text-xs text-muted-foreground">To
+            <Input type="date" value={to} min={from || undefined} onChange={(e) => setTo(e.target.value)} className="w-40" aria-label="To date" />
+          </label>
+          {(from || to) && <Button variant="ghost" size="sm" onClick={() => { setFrom(''); setTo(''); }}>Clear dates</Button>}
+          <Input placeholder="Search…" value={q} onChange={(e) => setQ(e.target.value)} className="w-48" />
           <Button variant="outline" size="icon" onClick={refreshAll} aria-label="Refresh"><RefreshCw className="h-4 w-4" /></Button>
         </div>
       </div>
+      {badRange && <p className="text-sm text-destructive">The start date is after the end date.</p>}
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <Card><CardHeader className="pb-2"><CardDescription>Field reports</CardDescription><CardTitle>{reports.data?.length ?? 0}</CardTitle></CardHeader></Card>
-        <Card><CardHeader className="pb-2"><CardDescription>Donations (UGX {donationTotal.toLocaleString()})</CardDescription><CardTitle>{donations.data?.length ?? 0}</CardTitle></CardHeader></Card>
-        <Card><CardHeader className="pb-2"><CardDescription>Audit entries</CardDescription><CardTitle>{audit.data?.length ?? 0}</CardTitle></CardHeader></Card>
+        <Card><CardHeader className="pb-2"><CardDescription>Field reports</CardDescription><CardTitle>{fReports.length}</CardTitle></CardHeader></Card>
+        <Card><CardHeader className="pb-2"><CardDescription>Donations (UGX {donationTotal.toLocaleString()})</CardDescription><CardTitle>{fDonations.length}</CardTitle></CardHeader></Card>
+        <Card><CardHeader className="pb-2"><CardDescription>Audit entries</CardDescription><CardTitle>{fAudit.length}</CardTitle></CardHeader></Card>
       </div>
+
+      <ReviewInsights from={from} to={to} />
 
       <Tabs defaultValue="reports">
         <TabsList>
